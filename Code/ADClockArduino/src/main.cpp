@@ -1,11 +1,15 @@
 #include <Arduino.h>
 
+#define HALL_DATA_PIN_1 A0
+#define HALL_DATA_PIN_2 A1
+
 void setup()
 {
-  // put your setup code here, to run once:
+  Serial.begin(9600);
 }
 
 void loop()
 {
-  // put your main code here, to run repeatedly:
+  auto a = analogRead(HALL_DATA_PIN_1);
+  Serial.println(a);
 }
