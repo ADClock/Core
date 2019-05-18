@@ -12,7 +12,7 @@
 #define MOTOR_1_PIN_3 10
 #define MOTOR_1_PIN_4 11
 
-Motor motor1(MOTOR_1_PIN_1, MOTOR_1_PIN_2, MOTOR_1_PIN_3, MOTOR_1_PIN_4);
+Motor motor1(MOTOR_1_PIN_1, MOTOR_1_PIN_2, MOTOR_1_PIN_3, MOTOR_1_PIN_4, HALL_DATA_PIN_1);
 
 void setup()
 {
@@ -22,6 +22,12 @@ void setup()
   // Interrupt für Datenempfang
   pinMode(DATA_INTERRUPT, INPUT_PULLUP);
   // attachInterrupt(digitalPinToInterrupt(DATA_INTERRUPT), DataCom::reciveData, CHANGE);
+
+  motor1.start_calibraton();
+  while (!motor1.calibrate())
+  {
+    delay(2);
+  }
 }
 
 void loop()
@@ -30,7 +36,7 @@ void loop()
   // DataCom::sendData(42);
   // delay(1000);
 
-  motor1.set_target_pos(2050);
+  motor1.set_target_pos(1);
 
   while (1)
   {

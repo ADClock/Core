@@ -1,11 +1,12 @@
 #include "Motor.h"
 
-Motor::Motor(size_t pin1, size_t pin2, size_t pin3, size_t pin4)
+Motor::Motor(size_t pin1, size_t pin2, size_t pin3, size_t pin4, size_t hallPin)
 {
   this->pin1 = pin1;
   this->pin2 = pin2;
   this->pin3 = pin3;
   this->pin4 = pin4;
+  this->hall_pin = hallPin;
   this->step_delay = 2;
   this->coil_state = 1;
 
@@ -68,9 +69,36 @@ void Motor::try_step()
       this->step();
     }
   }
+  else
+  {
+    digitalWrite(pin1, LOW);
+    digitalWrite(pin2, LOW);
+    digitalWrite(pin3, LOW);
+    digitalWrite(pin4, LOW);
+  }
 }
 
 void Motor::reset_position()
 {
   this->current_pos = 0;
+}
+
+void Motor::start_calibraton()
+{
+  this->calibrated = false;
+}
+
+bool Motor::calibrate()
+{
+  if (this->calibrated)
+    return true;
+
+  this->step();
+  this->current_pos = 0;
+  if (analogRead(this->hall_pin) < 0.1)
+  {
+    this->calibrated = true;
+    return true;
+  }
+  return false;
 }
