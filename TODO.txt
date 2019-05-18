@@ -1,0 +1,3 @@
+- MotorCOntroller halterung -> schrauben (maybe nur 2)
+- Motorhalterung schraube von oben
+- Motorhalterung entkoppeln (but how???)
