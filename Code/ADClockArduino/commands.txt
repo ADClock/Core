@@ -1,0 +1,13 @@
+Commands:
+
+0x01 -- Init (Reset, Calibration)
+  -- NO ARGS
+  
+0x02 -- Move Motor 1
+  -- 0x0000 bis 0x0801 (0 bis 2049) position of clock hand
+
+0x03 -- Move Motor 2
+  -- 0x0000 bis 0x0801 (0 bis 2049) position of clock hand
+
+0x04 -- MovementiInstruction end (Clocks start reading values again instead of passing them on)
+  -- NO ARGS
