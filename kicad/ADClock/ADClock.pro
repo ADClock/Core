@@ -1,4 +1,4 @@
-update=18.05.2019 00:25:06
+update=19.05.2019 01:01:20
 version=1
 last_client=kicad
 [general]
@@ -15,7 +15,7 @@ LibDir=
 [pcbnew]
 version=1
 PageLayoutDescrFile=
-LastNetListRead=ADClock.net
+LastNetListRead=ADClock3.net
 CopperLayerCount=2
 BoardThickness=1.6
 AllowMicroVias=0
