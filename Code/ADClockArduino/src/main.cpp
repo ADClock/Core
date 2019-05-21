@@ -1,8 +1,6 @@
 #include <Arduino.h>
-#include "DataCom.h"
+#include "MyDataCom.h"
 #include "Motor.h"
-
-#define DATA_INTERRUPT 2
 
 #define HALL_DATA_PIN_1 A0
 #define HALL_DATA_PIN_2 A1
@@ -23,11 +21,8 @@ Motor motor2(MOTOR_2_PIN_1, MOTOR_2_PIN_2, MOTOR_2_PIN_3, MOTOR_2_PIN_4, HALL_DA
 void setup()
 {
   Serial.begin(9600);
-  DataCom::init();
-
-  // Interrupt für Datenempfang
-  pinMode(DATA_INTERRUPT, INPUT_PULLUP);
-  // attachInterrupt(digitalPinToInterrupt(DATA_INTERRUPT), DataCom::reciveData, CHANGE);
+  MyDataCom::init();
+  Serial.println("Setup done");
 
   motor1.start_calibraton();
   while (!motor1.calibrate() || !motor2.calibrate())
@@ -38,9 +33,12 @@ void setup()
 
 void loop()
 {
-  Serial.println("Sending data..");
-  // DataCom::sendData(42);
-  // delay(1000);
+  MyDataCom::checkForData();
+  /*for (int i = 0; i < 500; i++)
+  {
+    MyDataCom::sendData(42);
+  }
+  Serial.println("500 byte send");*/
 
   motor1.set_target_pos(1);
 
