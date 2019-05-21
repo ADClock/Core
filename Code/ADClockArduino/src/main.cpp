@@ -6,20 +6,20 @@
 #define HALL_DATA_PIN_1 A0
 #define HALL_DATA_PIN_2 A1
 
-#define MOTOR_1_PIN_1 0
-#define MOTOR_1_PIN_2 1
-#define MOTOR_1_PIN_3 2
-#define MOTOR_1_PIN_4 3
+#define MOTOR_1_PIN_1 2
+#define MOTOR_1_PIN_2 3
+#define MOTOR_1_PIN_3 4
+#define MOTOR_1_PIN_4 5
 
-#define MOTOR_2_PIN_1 4
-#define MOTOR_2_PIN_2 5
-#define MOTOR_2_PIN_3 6
-#define MOTOR_2_PIN_4 7
+#define MOTOR_2_PIN_1 6
+#define MOTOR_2_PIN_2 7
+#define MOTOR_2_PIN_3 8
+#define MOTOR_2_PIN_4 9
 
 Motor motor1(MOTOR_1_PIN_1, MOTOR_1_PIN_2, MOTOR_1_PIN_3, MOTOR_1_PIN_4, HALL_DATA_PIN_1);
-Motor motor2(MOTOR_2_PIN_1, MOTOR_2_PIN_2, MOTOR_2_PIN_3, MOTOR_2_PIN_4, HALL_DATA_PIN_1);
+// Motor motor2(MOTOR_2_PIN_1, MOTOR_2_PIN_2, MOTOR_2_PIN_3, MOTOR_2_PIN_4, HALL_DATA_PIN_1);
 
-NewCommunication com;
+// NewCommunication com;
 
 void setup()
 {
@@ -27,11 +27,12 @@ void setup()
   // MyDataCom::init();
   Serial.println("Setup done");
 
-  // motor1.start_calibraton();
+  motor1.start_calibraton();
   // while (!motor1.calibrate() || !motor2.calibrate())
-  // {
-  //   delay(2);
-  // }
+  while (!motor1.calibrate())
+  {
+    delay(2);
+  }
 }
 
 void loop()
@@ -50,7 +51,7 @@ void loop()
   //   motor1.try_step();
   // }
 
-  com.write(0x7A);
+  // com.write(0x7A);
   delay(10);
 
   // Serial.println((char)com.read());

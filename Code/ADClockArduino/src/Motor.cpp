@@ -97,7 +97,7 @@ bool Motor::calibrate()
 
   this->step();
   this->current_pos = 0;
-  if (analogRead(this->hall_pin) < 0.1)
+  if (analogRead(this->hall_pin) < 100)
   {
     this->calibrated = true;
     return true;
