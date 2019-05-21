@@ -1,9 +1,6 @@
 #include <Arduino.h>
 #include "MyDataCom.h"
-#include "DataCom.h"
 #include "Motor.h"
-
-#define DATA_INTERRUPT 2
 
 #define HALL_DATA_PIN_1 A0
 #define HALL_DATA_PIN_2 A1
