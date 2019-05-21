@@ -1,5 +1,6 @@
 #include <Arduino.h>
-#include "MyDataCom.h"
+// #include "MyDataCom.h"
+#include "NewCommunication.h"
 #include "Motor.h"
 
 #define HALL_DATA_PIN_1 A0
@@ -18,32 +19,40 @@
 Motor motor1(MOTOR_1_PIN_1, MOTOR_1_PIN_2, MOTOR_1_PIN_3, MOTOR_1_PIN_4, HALL_DATA_PIN_1);
 Motor motor2(MOTOR_2_PIN_1, MOTOR_2_PIN_2, MOTOR_2_PIN_3, MOTOR_2_PIN_4, HALL_DATA_PIN_1);
 
+NewCommunication com;
+
 void setup()
 {
   Serial.begin(9600);
-  MyDataCom::init();
+  // MyDataCom::init();
   Serial.println("Setup done");
 
-  motor1.start_calibraton();
-  while (!motor1.calibrate() || !motor2.calibrate())
-  {
-    delay(2);
-  }
+  // motor1.start_calibraton();
+  // while (!motor1.calibrate() || !motor2.calibrate())
+  // {
+  //   delay(2);
+  // }
 }
 
 void loop()
 {
-  MyDataCom::checkForData();
-  /*for (int i = 0; i < 500; i++)
-  {
-    MyDataCom::sendData(42);
-  }
-  Serial.println("500 byte send");*/
+  // MyDataCom::checkForData();
+  // /*for (int i = 0; i < 500; i++)
+  // {
+  //   MyDataCom::sendData(42);
+  // }
+  // Serial.println("500 byte send");*/
 
-  motor1.set_target_pos(1);
+  // motor1.set_target_pos(1);
 
-  while (1)
-  {
-    motor1.try_step();
-  }
+  // while (1)
+  // {
+  //   motor1.try_step();
+  // }
+
+  com.write(0x7A);
+  delay(10);
+
+  // Serial.println((char)com.read());
+  // com.read();
 }
