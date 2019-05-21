@@ -1,23 +1,20 @@
 #include <Arduino.h>
-#include "DataCom.h"
-
-#define DATA_INTERRUPT 2
+#include "MyDataCom.h"
 
 void setup()
 {
   // put your setup code here, to run once:
   Serial.begin(9600);
-  DataCom::init();
-
-  // Interrupt für Datenempfang
-  pinMode(DATA_INTERRUPT, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(DATA_INTERRUPT), DataCom::reciveData, CHANGE);
+  MyDataCom::init();
+  Serial.println("Setup done");
 }
 
 void loop()
 {
-  // put your main code here, to run repeatedly:
-  Serial.println("Sending data..");
-  DataCom::sendData(42);
-  delay(1000);
+  MyDataCom::checkForData();
+  /*for (int i = 0; i < 500; i++)
+  {
+    MyDataCom::sendData(42);
+  }
+  Serial.println("500 byte send");*/
 }
