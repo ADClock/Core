@@ -15,6 +15,8 @@ Motor::Motor(size_t pin1, size_t pin2, size_t pin3, size_t pin4, size_t hallPin)
   pinMode(pin3, OUTPUT);
   pinMode(pin4, OUTPUT);
 
+  pinMode(hall_pin, INPUT_PULLUP);
+
   digitalWrite(pin1, HIGH);
 }
 
