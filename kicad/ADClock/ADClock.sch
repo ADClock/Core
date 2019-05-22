@@ -199,17 +199,6 @@ Wire Wire Line
 Wire Wire Line
 	2000 2250 2000 3650
 $Comp
-L Connector:Conn_01x06_Male ExtDigital1
-U 1 1 5CDA59E4
-P 6600 2600
-F 0 "ExtDigital1" H 6708 2981 50  0000 C CNN
-F 1 "Conn_Ext_digital" H 6708 2890 50  0000 C CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x06_P2.54mm_Vertical" H 6600 2600 50  0001 C CNN
-F 3 "~" H 6600 2600 50  0001 C CNN
-	1    6600 2600
-	1    0    0    -1  
-$EndComp
-$Comp
 L Mechanical:MountingHole_Pad H1
 U 1 1 5CF3FE1E
 P 1650 5000
@@ -323,7 +312,7 @@ $EndComp
 Wire Wire Line
 	3000 850  2400 850 
 Wire Wire Line
-	2400 850  2400 1350
+	2400 850  2400 1000
 Connection ~ 2400 1350
 Wire Wire Line
 	2400 1350 2350 1350
@@ -339,15 +328,11 @@ Wire Wire Line
 	4450 2950 5450 2950
 Wire Wire Line
 	5450 2950 5450 2400
-Wire Wire Line
-	5450 2400 6800 2400
 Connection ~ 4450 2950
 Wire Wire Line
 	4450 3050 5500 3050
 Wire Wire Line
 	5500 3050 5500 2500
-Wire Wire Line
-	5500 2500 6800 2500
 Connection ~ 4450 3050
 Wire Wire Line
 	4450 3150 5550 3150
@@ -356,8 +341,6 @@ Wire Wire Line
 Wire Wire Line
 	5550 2600 6800 2600
 Wire Wire Line
-	6800 2700 5600 2700
-Wire Wire Line
 	5600 2700 5600 3250
 Wire Wire Line
 	5600 3250 4450 3250
@@ -365,8 +348,6 @@ Wire Wire Line
 	4450 3350 5650 3350
 Wire Wire Line
 	5650 3350 5650 2800
-Wire Wire Line
-	5650 2800 6800 2800
 Wire Wire Line
 	4450 3450 5700 3450
 Wire Wire Line
@@ -386,12 +367,8 @@ Wire Wire Line
 Wire Wire Line
 	7050 800  6800 800 
 Wire Wire Line
-	6950 1550 6950 3150
-Wire Wire Line
 	6950 3200 6650 3200
 Connection ~ 6950 1550
-Wire Wire Line
-	6950 3200 6950 3650
 Wire Wire Line
 	6950 3700 6650 3700
 Connection ~ 6950 3200
@@ -421,48 +398,6 @@ Wire Wire Line
 	4600 3300 4600 2150
 Wire Wire Line
 	4600 2150 4450 2150
-$Comp
-L Device:R R3
-U 1 1 5CE9AB24
-P 7850 3800
-F 0 "R3" H 7920 3846 50  0000 L CNN
-F 1 "R" H 7920 3755 50  0000 L CNN
-F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal" V 7780 3800 50  0001 C CNN
-F 3 "~" H 7850 3800 50  0001 C CNN
-	1    7850 3800
-	1    0    0    -1  
-$EndComp
-$Comp
-L Device:R R2
-U 1 1 5CE9D05E
-P 7850 3300
-F 0 "R2" H 7920 3346 50  0000 L CNN
-F 1 "R" H 7920 3255 50  0000 L CNN
-F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal" V 7780 3300 50  0001 C CNN
-F 3 "~" H 7850 3300 50  0001 C CNN
-	1    7850 3300
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	7850 3150 6950 3150
-Connection ~ 6950 3150
-Wire Wire Line
-	6950 3150 6950 3200
-Wire Wire Line
-	7850 3650 6950 3650
-Connection ~ 6950 3650
-Wire Wire Line
-	6950 3650 6950 3700
-Wire Wire Line
-	7850 3450 6650 3450
-Wire Wire Line
-	6650 3450 6650 3400
-Connection ~ 6650 3400
-Wire Wire Line
-	7850 3950 6650 3950
-Wire Wire Line
-	6650 3950 6650 3900
-Connection ~ 6650 3900
 Wire Wire Line
 	4450 3550 5750 3550
 Wire Wire Line
@@ -556,4 +491,98 @@ Wire Wire Line
 	3450 900  3300 900 
 Wire Wire Line
 	4400 700  6800 700 
+Wire Wire Line
+	6950 1550 6950 3200
+Wire Wire Line
+	6950 3200 6950 3700
+$Comp
+L Connector:Conn_01x10_Male Ext1
+U 1 1 5CE5C683
+P 7400 2650
+F 0 "Ext1" H 7372 2532 50  0000 R CNN
+F 1 "Conn_Ext" H 7372 2623 50  0000 R CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x10_P2.54mm_Vertical" H 7400 2650 50  0001 C CNN
+F 3 "~" H 7400 2650 50  0001 C CNN
+	1    7400 2650
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	6800 2900 6800 3050
+Wire Wire Line
+	6800 3050 7200 3050
+Wire Wire Line
+	6850 2800 6850 2950
+Wire Wire Line
+	6850 2950 7200 2950
+Wire Wire Line
+	5650 2800 6850 2800
+Wire Wire Line
+	6900 2700 6900 2850
+Wire Wire Line
+	6900 2850 7200 2850
+Wire Wire Line
+	5600 2700 6900 2700
+Wire Wire Line
+	6800 2600 6800 2750
+Wire Wire Line
+	6800 2750 7200 2750
+Wire Wire Line
+	6850 2500 6850 2650
+Wire Wire Line
+	6850 2650 7200 2650
+Wire Wire Line
+	5500 2500 6850 2500
+Wire Wire Line
+	6900 2400 6900 2550
+Wire Wire Line
+	6900 2550 7200 2550
+Wire Wire Line
+	5450 2400 6900 2400
+Wire Wire Line
+	4450 2550 5400 2550
+Wire Wire Line
+	5400 2550 5400 2350
+Wire Wire Line
+	5400 2350 7000 2350
+Wire Wire Line
+	7000 2350 7000 2450
+Wire Wire Line
+	7000 2450 7200 2450
+Wire Wire Line
+	4450 2450 5350 2450
+Wire Wire Line
+	5350 2300 7200 2300
+Wire Wire Line
+	7200 2300 7200 2350
+Wire Wire Line
+	5350 2450 5350 2300
+Wire Wire Line
+	4450 2350 5300 2350
+Wire Wire Line
+	5300 2350 5300 2250
+Wire Wire Line
+	5300 2250 7200 2250
+Wire Wire Line
+	4450 2250 5250 2250
+Wire Wire Line
+	5250 2250 5250 2150
+Wire Wire Line
+	5250 2150 7200 2150
+$Comp
+L Switch:SW_Push SWRESET1
+U 1 1 5CE9807D
+P 2200 1000
+F 0 "SWRESET1" H 2200 1285 50  0000 C CNN
+F 1 "SW_Push" H 2200 1194 50  0000 C CNN
+F 2 "Button_Switch_THT:SW_PUSH_6mm_H5mm" H 2200 1200 50  0001 C CNN
+F 3 "~" H 2200 1200 50  0001 C CNN
+	1    2200 1000
+	1    0    0    -1  
+$EndComp
+Connection ~ 2400 1000
+Wire Wire Line
+	2400 1000 2400 1350
+Wire Wire Line
+	2000 1000 1800 1000
+Connection ~ 1800 1000
 $EndSCHEMATC
