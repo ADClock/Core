@@ -1,5 +1,5 @@
 #include <Arduino.h>
-// #include "MyDataCom.h"
+#include "MyDataCom.h"
 #include "NewCommunication.h"
 #include "Motor.h"
 
@@ -20,6 +20,8 @@ Motor motor1(MOTOR_1_PIN_1, MOTOR_1_PIN_2, MOTOR_1_PIN_3, MOTOR_1_PIN_4, HALL_DA
 // Motor motor2(MOTOR_2_PIN_1, MOTOR_2_PIN_2, MOTOR_2_PIN_3, MOTOR_2_PIN_4, HALL_DATA_PIN_1);
 
 // NewCommunication com;
+
+MyDataCom com;
 
 void setup()
 {
