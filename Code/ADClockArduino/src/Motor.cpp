@@ -23,6 +23,7 @@ Motor::Motor(size_t pin1, size_t pin2, size_t pin3, size_t pin4, size_t hallPin)
 void Motor::set_target_pos(size_t pos)
 {
   this->target_pos = pos;
+  Serial.println("New target pos " + pos);
 }
 
 void Motor::step()
