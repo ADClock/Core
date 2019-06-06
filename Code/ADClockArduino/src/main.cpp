@@ -6,15 +6,15 @@
 #define HALL_DATA_PIN_1 A0
 #define HALL_DATA_PIN_2 A1
 
-#define MOTOR_1_PIN_1 A0
-#define MOTOR_1_PIN_2 A1
-#define MOTOR_1_PIN_3 A2
-#define MOTOR_1_PIN_4 A3
+#define MOTOR_1_PIN_1 2
+#define MOTOR_1_PIN_2 3
+#define MOTOR_1_PIN_3 4
+#define MOTOR_1_PIN_4 5
 
-#define MOTOR_2_PIN_1 A4
-#define MOTOR_2_PIN_2 A5
-#define MOTOR_2_PIN_3 A6
-#define MOTOR_2_PIN_4 A7
+#define MOTOR_2_PIN_1 8
+#define MOTOR_2_PIN_2 9
+#define MOTOR_2_PIN_3 10
+#define MOTOR_2_PIN_4 11
 
 #define IN_RESPONSE 2
 #define IN_DATA 3
@@ -25,7 +25,7 @@
 #define OUT_CLOCK 7
 
 Motor motor1(MOTOR_1_PIN_1, MOTOR_1_PIN_2, MOTOR_1_PIN_3, MOTOR_1_PIN_4, HALL_DATA_PIN_1);
-Motor motor2(MOTOR_2_PIN_1, MOTOR_2_PIN_2, MOTOR_2_PIN_3, MOTOR_2_PIN_4, HALL_DATA_PIN_1);
+Motor motor2(MOTOR_2_PIN_1, MOTOR_2_PIN_2, MOTOR_2_PIN_3, MOTOR_2_PIN_4, HALL_DATA_PIN_2);
 
 InputStream in(IN_CLOCK, IN_DATA, IN_RESPONSE);
 OutputStream out(OUT_CLOCK, OUT_DATA, OUT_RESPONSE);
@@ -46,8 +46,10 @@ void setup()
   // while (!motor1.calibrate() || !motor2.calibrate())
   while (!motor2.calibrate())
   {
-    delay(2);
-  }*/
+    motor1Calibrated = motor1.calibrate();
+    motor2Calibrated = motor2.calibrate();
+    delay(10);
+  } while (!motor1Calibrated || !motor2Calibrated);
 
   motor2.set_target_pos(50);
 
@@ -73,7 +75,7 @@ void setup()
 void loop()
 {
   // /*
-  com.checkForData();
+  // com.checkForData();
 
   motor2.try_step();
   com.delayAndCheck(10);

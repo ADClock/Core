@@ -98,6 +98,9 @@ bool Motor::calibrate()
 
   this->step();
   this->current_pos = 0;
+
+  Serial.println(analogRead(this->hall_pin));
+
   if (analogRead(this->hall_pin) < 100)
   {
     this->calibrated = true;
