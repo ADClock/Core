@@ -21,14 +21,18 @@ byte InputStream::readData()
 
   for (i = 0; i < 8; ++i)
   {
-    if (!hasData()) // Falls Bit unvollständig gesendet
+    if (!hasData() && !waitForClock())
+    { // Falls Bit unvollständig gesendet
+      Serial.println("Bit unvollständig.");
       return 0x00;
+    }
 
     value |= readDataBit() << i;
 
     // Mitteilen, dass Bit gelesen wurde
     if (!sendDataReadingComplete())
     {
+      Serial.println("Clock nicht zurückgesetzt.");
       // Der Sender hat die Clock nicht ausgeschaltet.
       return 0x00;
     }
@@ -37,7 +41,7 @@ byte InputStream::readData()
   return value;
 }
 
-bool InputStream::readDataBit()
+int InputStream::readDataBit()
 {
   return digitalRead(dataPin);
 }
@@ -60,6 +64,23 @@ bool InputStream::sendDataReadingComplete()
   }
 
   digitalWrite(responsePin, LOW);
+
+  return true;
+}
+
+// Wartet darauf das ein Signal an der Clock anliegt.
+bool InputStream::waitForClock()
+{
+  size_t delayTimer = 0;
+  while (!hasData())
+  {
+    if (delayTimer > 10000) // Innerhalb 10000µs = 10ms keine Response
+    {
+      return false; // Langsam hätte die Clock aus sein müssen -> Da kommt nichts mehr...
+    }
+    delayTimer++;
+    delayMicroseconds(1);
+  }
 
   return true;
 }

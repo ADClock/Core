@@ -38,6 +38,10 @@ void setup()
   // MyDataCom::init();
   Serial.println("Setup done");
 
+  pinMode(IN_RESPONSE, OUTPUT);
+  pinMode(OUT_DATA, OUTPUT);
+  pinMode(OUT_CLOCK, OUTPUT);
+
   /*motor2.start_calibraton();
   // while (!motor1.calibrate() || !motor2.calibrate())
   while (!motor2.calibrate())
@@ -48,6 +52,7 @@ void setup()
   motor2.set_target_pos(50);
 
   /*
+  delay(1000); // Es muss mindestens x ms zwischen zwei Übertragungen gewartet werden, falls es bei der letzten Übertragung einen Fehler gegeben hat.
   uint8_t image[] = {0x00, 0x50, 0x00, 0x00, 0x00, 0x50, 0x00, 0x00};
   if (!out.sendData(0x02))
   {

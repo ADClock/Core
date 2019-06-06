@@ -60,5 +60,5 @@ bool OutputStream::checkDataReadingComplete()
     delayMicroseconds(1);
   }
 
-  return false;
+  return true;
 }

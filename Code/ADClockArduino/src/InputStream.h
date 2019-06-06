@@ -18,9 +18,12 @@ public:
 
 private:
   // Liest das Datenbit ein
-  bool readDataBit();
+  int readDataBit();
   // Verschickt die Meldung, dass Daten gelesen wurden.
   bool sendDataReadingComplete();
+
+  // wait for clock
+  bool waitForClock();
 
   uint8_t clockPin;
   uint8_t dataPin;
