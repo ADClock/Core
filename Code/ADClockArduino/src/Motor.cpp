@@ -7,7 +7,7 @@ Motor::Motor(size_t pin1, size_t pin2, size_t pin3, size_t pin4, size_t hallPin)
   this->pin3 = pin3;
   this->pin4 = pin4;
   this->hall_pin = hallPin;
-  this->step_delay = 2;
+  this->step_delay = 4;
   this->coil_state = 1;
 
   pinMode(pin1, OUTPUT);
@@ -63,7 +63,7 @@ void Motor::step()
 
 void Motor::try_step()
 {
-  if (this->current_pos < this->target_pos)
+  if (this->current_pos != this->target_pos)
   {
     auto time_since_step = millis() - this->last_step;
     if (time_since_step > this->step_delay)
