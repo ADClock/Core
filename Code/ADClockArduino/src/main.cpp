@@ -53,7 +53,7 @@ void setup()
 
   /*
   delay(1000); // Es muss mindestens x ms zwischen zwei Übertragungen gewartet werden, falls es bei der letzten Übertragung einen Fehler gegeben hat.
-  uint8_t image[] = {0x00, 0x50, 0x00, 0x00, 0x00, 0x50, 0x00, 0x00};
+  uint8_t image[] = {0x00, 0xA0, 0x00, 0x00, 0x00, 0x50, 0x00, 0x00};
   if (!out.sendData(0x02))
   {
     Serial.println("Sending FAILED");
@@ -76,6 +76,6 @@ void loop()
   com.checkForData();
 
   motor2.try_step();
-  com.delayAndCheck(50);
+  com.delayAndCheck(10);
   // */
 }

@@ -26,9 +26,9 @@ private:
   // Versendet alle folgenden Daten an den nächsten Controller
   void pipeIncommingData();
 
-  InputStream in;
-  OutputStream out;
-  Motor motor1;
-  Motor motor2;
+  InputStream &in;
+  OutputStream &out;
+  Motor &motor1;
+  Motor &motor2;
 };
 #endif

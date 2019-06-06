@@ -16,14 +16,14 @@ public:
   // Liest ein Byte aus
   byte readData();
 
+  // waits short time for data
+  bool waitForData();
+
 private:
   // Liest das Datenbit ein
   int readDataBit();
   // Verschickt die Meldung, dass Daten gelesen wurden.
   bool sendDataReadingComplete();
-
-  // wait for clock
-  bool waitForClock();
 
   uint8_t clockPin;
   uint8_t dataPin;

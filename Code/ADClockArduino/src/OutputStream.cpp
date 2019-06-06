@@ -35,7 +35,7 @@ bool OutputStream::checkDataReadingComplete()
   size_t delayTimer = 0;
   while (!digitalRead(responsePin))
   {
-    if (delayTimer > 100000) // Innerhalb 100000 µs = 100ms keine Response
+    if (delayTimer > 10000) // Innerhalb 10000 µs = 10ms keine Response
     {
       digitalWrite(clockPin, LOW); // Clock deaktivieren
       Serial.println("Keine Response erhalten.");

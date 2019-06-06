@@ -20,14 +20,14 @@ void DataManager::checkForData()
   if (in.hasData())
   {
     reciveData();
-    Serial.println("Data reading complete");
+    // Serial.println("Data reading complete");
   }
 }
 
 void DataManager::reciveData()
 {
   byte command = in.readData();
-
+  Serial.println("Recieving data");
   switch (command)
   {
   case 0x01: // Init
@@ -38,14 +38,17 @@ void DataManager::reciveData()
 
   case 0x02: // Image
     readMyClockImage();
-    out.sendData(command);
-    pipeIncommingData();
+    if (out.sendData(command))
+    {
+      pipeIncommingData();
+    }
     break;
 
   default:
     Serial.println("Unbekannter Command: " + String(command));
     break;
   }
+  Serial.println("Recieving data complete");
 }
 
 void DataManager::pipeIncommingData()
@@ -55,9 +58,11 @@ void DataManager::pipeIncommingData()
 
   while (in.hasData())
   {
-    out.sendData(in.readData());
+    if (!out.sendData(in.readData()))
+      break; // Empfänger hat nicht mehr gelesen. & Tschüss
     // Auch hier wieder, zuerst wird gelesen dann gesendet. Durch diesen zeitlichen Versatz liegen die nöchsten Daten garantiert wieder an.
   }
+  Serial.println("Pipe complete");
 }
 
 void DataManager::readMyClockImage()
@@ -70,19 +75,19 @@ void DataManager::readMyClockImage()
   // -- Direction (1 Bit)
   for (int i = 0; i < 8; i++)
   {
-    if (!in.hasData())
+    if (!in.waitForData())
     {
-      // Keine Daten? Blöd. Vielleicht in einer 10 µs
-      delayMicroseconds(10);
-      if (!in.hasData())
-        return; // Keine Daten? Blöd gelaufen
+      Serial.println("Clock image unvollständig.");
+      return; // Keine Daten? Blöd gelaufen
     }
     input[i] = in.readData();
   }
 
   // Motor bewegen
-  uint16_t foo = *input;
+  uint16_t foo = (input[0] << 8) + input[1];
   Serial.println("Clock image " + String(input[0]) + String(input[1]) + String(input[2]) + String(input[3]) + String(input[4]) + String(input[5]) + String(input[6]) + String(input[7]) +
                  " und target: " + String(foo));
+  motor2.reset_position();
   motor2.set_target_pos(foo);
+  Serial.println("New Clock image set.");
 }
