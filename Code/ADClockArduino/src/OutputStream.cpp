@@ -1,12 +1,14 @@
 #include "OutputStream.h"
 
-OutputStream::OutputStream(uint8_t clockPin, uint8_t dataPin, uint8_t responsePin)
-{
-  this->clockPin = clockPin;
-  this->dataPin = dataPin;
-  this->responsePin = responsePin;
+#define OUT_RESPONSE 3
+#define OUT_DATA 4
+#define OUT_CLOCK 5
 
-  digitalWrite(clockPin, LOW);
+OutputStream::OutputStream()
+{
+  pinMode(OUT_DATA, OUTPUT);
+  pinMode(OUT_CLOCK, OUTPUT);
+  digitalWrite(OUT_CLOCK, LOW);
 }
 
 bool OutputStream::sendData(byte data)
@@ -25,39 +27,41 @@ bool OutputStream::sendData(byte data)
 
 void OutputStream::sendDataBit(bool bit)
 {
-  digitalWrite(dataPin, bit);
-  digitalWrite(clockPin, HIGH);
+  FastGPIO::Pin<OUT_DATA>::setOutputValue(bit);
+  FastGPIO::Pin<OUT_CLOCK>::setOutputHigh();
 }
 
 bool OutputStream::checkDataReadingComplete()
 {
   // Warten das Response aktiviert wird. (Der Empfänger das Bit gelesen hat)
   size_t delayTimer = 0;
-  while (!digitalRead(responsePin))
+
+  while (!FastGPIO::Pin<OUT_RESPONSE>::isInputHigh())
   {
     if (delayTimer > 10000) // Innerhalb 10000 µs = 10ms keine Response
     {
-      digitalWrite(clockPin, LOW); // Clock deaktivieren
+      // digitalWrite(clockPin, LOW); // Clock deaktivieren
+      FastGPIO::Pin<OUT_CLOCK>::setOutputValueLow();
       Serial.println("Keine Response erhalten.");
       return false; // Langsam hätte die Response an sein müssen -> Der Empfänger ist mir zu langsam, mit dem Rede ich nicht mehr. Nagut.. Vielleicht gleich nochmal.
     }
     delayTimer++;
-    delayMicroseconds(1);
+    // delayMicroseconds(1);
   }
 
-  digitalWrite(clockPin, LOW);
+  FastGPIO::Pin<OUT_CLOCK>::setOutputValueLow();
 
   // Warten, dass der Empfänger die Response wieder deaktivert.
   delayTimer = 0;
-  while (digitalRead(responsePin))
+  while (FastGPIO::Pin<OUT_RESPONSE>::isInputHigh())
   {
-    if (delayTimer > 10000) // Innerhalb 10000µs = 10ms keine Response
+    if (delayTimer > 100) // Innerhalb 100µs = 0,1ms keine Response
     {
       Serial.println("Response immer noch aktiv.");
       return false; // Langsam hätte die Response wieder aus sein müssen -> Der Empfänger ist mir zu langsam, mit dem Rede ich nicht mehr. Nagut.. Vielleicht gleich nochmal.
     }
     delayTimer++;
-    delayMicroseconds(1);
+    // delayMicroseconds(1);
   }
 
   return true;

@@ -1,12 +1,13 @@
 #include "InputStream.h"
 
-InputStream::InputStream(uint8_t clockPin, uint8_t dataPin, uint8_t responsePin)
-{
-  this->clockPin = clockPin;
-  this->dataPin = dataPin;
-  this->responsePin = responsePin;
+#define IN_RESPONSE A3
+#define IN_DATA A4
+#define IN_CLOCK A5
 
-  digitalWrite(responsePin, LOW);
+InputStream::InputStream()
+{
+  pinMode(IN_RESPONSE, OUTPUT);
+  digitalWrite(IN_RESPONSE, LOW);
 }
 
 bool InputStream::hasData()
@@ -18,7 +19,7 @@ bool InputStream::hasData()
 
 bool InputStream::readClock()
 {
-  return digitalRead(clockPin);
+  return FastGPIO::Pin<IN_CLOCK>::isInputHigh();
 }
 
 byte InputStream::readData()
@@ -51,28 +52,29 @@ byte InputStream::readData()
 
 int InputStream::readDataBit()
 {
-  return digitalRead(dataPin);
+  return FastGPIO::Pin<IN_DATA>::isInputHigh();
 }
 
 // Response pin aktivieren, warten bis clock aus ist, Response pin deaktivieren
 bool InputStream::sendDataReadingComplete()
 {
-  digitalWrite(responsePin, HIGH);
+  FastGPIO::Pin<IN_RESPONSE>::setOutputValueHigh();
 
   size_t delayTimer = 0;
   while (readClock())
   {
     if (delayTimer > 10000) // Innerhalb 10000µs = 10ms keine Response
     {
-      digitalWrite(responsePin, LOW);
+      // digitalWrite(responsePin, LOW);
+      FastGPIO::Pin<IN_RESPONSE>::setOutputValueLow();
       Serial.println("sendDataReadingComplete: Clock immer noch an.");
       return false; // Langsam hätte die Clock aus sein müssen -> Der Sendet hat die Geduld verloren und nicht gelaubt, dass ich den Bit noch lese.
     }
     delayTimer++;
-    delayMicroseconds(1);
+    // delayMicroseconds(1);
   }
 
-  digitalWrite(responsePin, LOW);
+  FastGPIO::Pin<IN_RESPONSE>::setOutputValueLow();
 
   return true;
 }
@@ -89,7 +91,7 @@ bool InputStream::waitForData()
       return false; // Langsam hätte die Clock aus sein müssen -> Da kommt nichts mehr...
     }
     delayTimer++;
-    delayMicroseconds(1);
+    // delayMicroseconds(1);
   }
 
   return true;

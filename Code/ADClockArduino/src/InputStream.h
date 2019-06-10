@@ -4,11 +4,12 @@
 #define _INPUTSTREAM_H_
 
 #include "Arduino.h"
+#include <FastGPIO.h>
 
 class InputStream
 {
 public:
-  InputStream(uint8_t clockPin, uint8_t dataPin, uint8_t responsePin);
+  InputStream();
 
   // Prüft ob ein Signal an der Clockleitung anliegt.
   bool hasData();
@@ -28,9 +29,6 @@ private:
   // Verschickt die Meldung, dass Daten gelesen wurden.
   bool sendDataReadingComplete();
 
-  uint8_t clockPin;
-  uint8_t dataPin;
-  uint8_t responsePin;
   bool _hasData; // Cache der Clock-Leitung um eine wiederholte Abfrage des Pins zu verhindern.
 };
 
