@@ -11,6 +11,13 @@ InputStream::InputStream(uint8_t clockPin, uint8_t dataPin, uint8_t responsePin)
 
 bool InputStream::hasData()
 {
+  if (!_hasData)
+    _hasData = readClock();
+  return _hasData;
+}
+
+bool InputStream::readClock()
+{
   return digitalRead(clockPin);
 }
 
@@ -28,6 +35,7 @@ byte InputStream::readData()
     }
 
     value |= readDataBit() << i;
+    _hasData = false; // Daten wurden gelesen
 
     // Mitteilen, dass Bit gelesen wurde
     if (!sendDataReadingComplete())
@@ -52,7 +60,7 @@ bool InputStream::sendDataReadingComplete()
   digitalWrite(responsePin, HIGH);
 
   size_t delayTimer = 0;
-  while (hasData())
+  while (readClock())
   {
     if (delayTimer > 10000) // Innerhalb 10000µs = 10ms keine Response
     {

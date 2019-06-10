@@ -20,6 +20,9 @@ public:
   bool waitForData();
 
 private:
+  // Liest die Clockleitung aus
+  bool readClock();
+
   // Liest das Datenbit ein
   int readDataBit();
   // Verschickt die Meldung, dass Daten gelesen wurden.
@@ -28,6 +31,7 @@ private:
   uint8_t clockPin;
   uint8_t dataPin;
   uint8_t responsePin;
+  bool _hasData; // Cache der Clock-Leitung um eine wiederholte Abfrage des Pins zu verhindern.
 };
 
 #endif

@@ -10,8 +10,8 @@ void DataManager::delayAndCheck(size_t ms)
   size_t count;
   for (count = 0; count < ms; count++)
   {
-    checkForData();
-    delayMicroseconds(100);
+    checkForData(); // Einen digital Pin abfragen ~ 4 ms
+    delayMicroseconds(96);
   }
 }
 
@@ -87,6 +87,7 @@ void DataManager::readMyClockImage()
   uint16_t position_1 = (input[0] << 8) + input[1];
   uint8_t delay_1 = input[2];
   int8_t speed_1 = input[3];
+
   uint16_t position_2 = (input[0] << 8) + input[1];
   uint8_t delay_2 = input[2];
   int8_t speed_2 = input[3];
@@ -98,7 +99,6 @@ void DataManager::readMyClockImage()
   motor1.reset_position();
 
   motor1.set_target_pos(position_1);
-
   motor2.set_target_pos(position_2);
   // Serial.println("New Clock image set.");
 }
