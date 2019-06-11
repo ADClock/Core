@@ -26,8 +26,8 @@ void DataManager::checkForData()
 
 void DataManager::reciveData()
 {
-  byte command = in.readData();
   // Serial.println("Recieving data");
+  byte command = in.readData();
   switch (command)
   {
   case 0x01: // Init
@@ -48,7 +48,7 @@ void DataManager::reciveData()
     Serial.println("Unbekannter Command: " + String(command));
     break;
   }
-  Serial.println("Recieving data complete");
+  // Serial.println("Recieving data complete");
 }
 
 void DataManager::pipeIncommingData()

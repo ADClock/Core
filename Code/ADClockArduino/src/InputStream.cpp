@@ -64,7 +64,7 @@ bool InputStream::sendDataReadingComplete()
       return false; // Langsam hätte die Clock aus sein müssen -> Der Sendet hat die Geduld verloren und nicht gelaubt, dass ich den Bit noch lese.
     }
     delayTimer++;
-    delayMicroseconds(1);
+    // delayMicroseconds(1);
   }
 
   FastGPIO::Pin<IN_RESPONSE>::setOutputValueLow();
@@ -84,7 +84,7 @@ bool InputStream::waitForData()
       return false; // Langsam hätte die Clock aus sein müssen -> Da kommt nichts mehr...
     }
     delayTimer++;
-    delayMicroseconds(1);
+    // delayMicroseconds(1);
   }
 
   return true;
