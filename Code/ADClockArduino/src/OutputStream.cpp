@@ -38,7 +38,7 @@ bool OutputStream::checkDataReadingComplete()
 
   while (!FastGPIO::Pin<OUT_RESPONSE>::isInputHigh())
   {
-    if (delayTimer > 100000) // Innerhalb 100000 µs = 100ms keine Response
+    if (delayTimer > 10000) // Innerhalb 10000 µs = 10ms keine Response
     {
       FastGPIO::Pin<OUT_CLOCK>::setOutputValueLow();
       Serial.println("Keine Response erhalten.");
