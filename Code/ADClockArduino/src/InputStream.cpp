@@ -12,13 +12,6 @@ InputStream::InputStream()
 
 bool InputStream::hasData()
 {
-  if (!_hasData)
-    _hasData = readClock();
-  return _hasData;
-}
-
-bool InputStream::readClock()
-{
   return FastGPIO::Pin<IN_CLOCK>::isInputHigh();
 }
 
@@ -61,7 +54,7 @@ bool InputStream::sendDataReadingComplete()
   FastGPIO::Pin<IN_RESPONSE>::setOutputValueHigh();
 
   size_t delayTimer = 0;
-  while (readClock())
+  while (hasData())
   {
     if (delayTimer > 10000) // Innerhalb 10000µs = 10ms keine Response
     {

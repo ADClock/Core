@@ -95,8 +95,8 @@ void DataManager::readMyClockImage()
   //  " und target: " + String(position1));
 
   // Aktuell für Testzwecke um immer das gleiche Image senden zu können
-  motor2.reset_position();
   motor1.reset_position();
+  motor2.reset_position();
 
   motor1.set_target_pos(position_1);
   motor2.set_target_pos(position_2);

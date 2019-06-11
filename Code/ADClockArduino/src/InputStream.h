@@ -21,9 +21,6 @@ public:
   bool waitForData();
 
 private:
-  // Liest die Clockleitung aus
-  bool readClock();
-
   // Liest das Datenbit ein
   int readDataBit();
   // Verschickt die Meldung, dass Daten gelesen wurden.

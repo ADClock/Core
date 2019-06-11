@@ -41,15 +41,24 @@ void setup()
   //   delay(10);
   // } while (!motor1Calibrated || !motor2Calibrated);
 
+  // motor2.set_target_pos(50);
+}
+
+void loop()
+{
+  // com.checkForData();
+  // motor1.try_step();
+  // motor2.try_step();
+
   delay(10); // Es muss mindestens x ms zwischen zwei Übertragungen gewartet werden, falls es bei der letzten Übertragung einen Fehler gegeben hat.
   uint8_t image[] = {0x00, 0xA0, 0x00, 0x00, 0x00, 0x50, 0x00, 0x00};
 
+  long startSending = micros();
   if (!out.sendData(0x02))
   {
     Serial.println("Sending FAILED");
     return;
   }
-  long startSending = micros();
   for (int i = 0; i < 8; i++)
     if (!out.sendData(image[i]))
     {
@@ -59,13 +68,5 @@ void setup()
 
   long endSending = micros();
   Serial.println("Sending done in " + String(endSending - startSending) + " µs");
-
-  // motor2.set_target_pos(50);
-}
-
-void loop()
-{
-  // com.checkForData();
-  // motor1.try_step();
-  // motor2.try_step();
+  delay(1000);
 }

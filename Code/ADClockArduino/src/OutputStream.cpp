@@ -38,15 +38,14 @@ bool OutputStream::checkDataReadingComplete()
 
   while (!FastGPIO::Pin<OUT_RESPONSE>::isInputHigh())
   {
-    if (delayTimer > 10000) // Innerhalb 10000 µs = 10ms keine Response
+    if (delayTimer > 100000) // Innerhalb 100000 µs = 100ms keine Response
     {
-      // digitalWrite(clockPin, LOW); // Clock deaktivieren
       FastGPIO::Pin<OUT_CLOCK>::setOutputValueLow();
       Serial.println("Keine Response erhalten.");
       return false; // Langsam hätte die Response an sein müssen -> Der Empfänger ist mir zu langsam, mit dem Rede ich nicht mehr. Nagut.. Vielleicht gleich nochmal.
     }
     delayTimer++;
-    // delayMicroseconds(1);
+    delayMicroseconds(1);
   }
 
   FastGPIO::Pin<OUT_CLOCK>::setOutputValueLow();
