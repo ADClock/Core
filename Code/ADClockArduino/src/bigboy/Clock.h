@@ -3,7 +3,7 @@
 #define _CLOCK_H_
 #include "Arduino.h"
 
-#define SPEED_PER_STEP 4
+#define MIN_STEP_DELAY 4
 #define STEPS_FOR_CIRCLE 2050
 
 class Clock
