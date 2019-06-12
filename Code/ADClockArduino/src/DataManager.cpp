@@ -88,11 +88,11 @@ void DataManager::readMyClockImage()
   uint8_t delay_1 = input[2];
   int8_t speed_1 = input[3];
 
-  uint16_t position_2 = (input[0] << 8) + input[1];
-  uint8_t delay_2 = input[2];
-  int8_t speed_2 = input[3];
+  uint16_t position_2 = (input[4] << 8) + input[5];
+  uint8_t delay_2 = input[6];
+  int8_t speed_2 = input[7];
   // Serial.println("Clock image " + String(input[0]) + String(input[1]) + String(input[2]) + String(input[3]) + String(input[4]) + String(input[5]) + String(input[6]) + String(input[7]) +
-  //  " und target: " + String(position1));
+  //                " und target: " + String(position_1) + " " + String(position_2));
 
   // Aktuell für Testzwecke um immer das gleiche Image senden zu können
   motor1.reset_position();

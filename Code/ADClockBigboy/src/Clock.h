@@ -9,6 +9,7 @@
 class Clock
 {
 public:
+  void init();
   void setNextMinutePosition(size_t degree);
   void setNextHourPosition(size_t degree);
 

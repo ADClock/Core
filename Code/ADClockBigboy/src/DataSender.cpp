@@ -10,7 +10,7 @@ bool DataSender::sendInitCommand()
   return sendCommand(COMMAND_INIT);
 }
 
-bool DataSender::sendImage(byte arr[], size_t length)
+bool DataSender::sendImage(const byte arr[], const size_t &length)
 {
   if (!sendCommand(COMMAND_IMAGE))
     return false;
@@ -18,7 +18,7 @@ bool DataSender::sendImage(byte arr[], size_t length)
   return out.sendDataArray(arr, length);
 }
 
-bool DataSender::sendCommand(byte command)
+bool DataSender::sendCommand(const byte &command)
 {
   // Delay zwischen einzelnen Commands einhalten
   while (millis() < this->lastSend + DELAY_BETWEEN_COMMANDS)

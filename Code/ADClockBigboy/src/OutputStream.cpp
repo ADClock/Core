@@ -11,7 +11,7 @@ OutputStream::OutputStream()
   digitalWrite(OUT_CLOCK, LOW);
 }
 
-bool OutputStream::sendData(byte data)
+bool OutputStream::sendData(const byte &data)
 {
   uint8_t i;
 
@@ -25,7 +25,7 @@ bool OutputStream::sendData(byte data)
   return true;
 }
 
-bool OutputStream::sendDataArray(byte arr[], size_t length)
+bool OutputStream::sendDataArray(const byte arr[], const size_t &length)
 {
   for (size_t i = 0; i < length; i++)
   {
@@ -51,7 +51,7 @@ bool OutputStream::checkDataReadingComplete()
     if (delayTimer > 10000) // Innerhalb 100000 µs = 100ms keine Response - das kann aber nicht ganz stimmen
     {
       FastGPIO::Pin<OUT_CLOCK>::setOutputValueLow();
-      // Serial.println("Keine Response erhalten."); // TODO Eigentlich muss der raus. Der macht alles langsam.
+      Serial.println("Keine Response erhalten.");
       return false; // Langsam hätte die Response an sein müssen -> Der Empfänger ist mir zu langsam, mit dem Rede ich nicht mehr. Nagut.. Vielleicht gleich nochmal.
     }
     delayTimer++;

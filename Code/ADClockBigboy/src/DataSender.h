@@ -7,7 +7,7 @@
 #define COMMAND_INIT 0x01
 #define COMMAND_IMAGE 0x02
 
-#define DELAY_BETWEEN_COMMANDS 100
+#define DELAY_BETWEEN_COMMANDS 1 // TODO Nochmal richtigen Wert einstellen
 
 class DataSender
 {
@@ -17,10 +17,10 @@ public:
   // Delayed um entsprechende ms und prüft ob Daten anliegen
   bool sendInitCommand();
 
-  bool sendImage(byte arr[], size_t length);
+  bool sendImage(const byte arr[], const size_t &length);
 
 private:
-  bool sendCommand(byte command);
+  bool sendCommand(const byte &command);
 
   OutputStream &out;
 

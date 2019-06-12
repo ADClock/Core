@@ -13,7 +13,7 @@ class ClockMatrix
 public:
   ClockMatrix(DataSender &sender);
 
-  bool setNextPositionFor(size_t x_from, size_t y_from, size_t x_to, size_t y_to, size_t degreeMinute, size_t degreeHour);
+  bool setNextPositionFor(size_t x_from, size_t y_from, size_t x_to, size_t y_to, size_t degreeHour, size_t degreeMinute);
 
   bool setNextMinutePosition(size_t x, size_t y, size_t degree);
   bool setNextHourPosition(size_t x, size_t y, size_t degree);
@@ -24,13 +24,17 @@ public:
 
   void move();
 
+  bool isMoving();
+
+  size_t getClockPosition(size_t x, size_t y);
+
 private:
   bool isValidCoordinates(size_t x, size_t y);
 
   DataSender &sender;
 
   // Matrix der Uhren
-  Clock *matrix[CLOCKS_X][CLOCKS_Y];
+  Clock matrix[CLOCKS_X][CLOCKS_Y];
 
   // Haben die Uhren das hier genannte Image erreicht?
   unsigned long reachesPosition;
