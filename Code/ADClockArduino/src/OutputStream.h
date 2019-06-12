@@ -12,7 +12,7 @@ public:
   bool sendData(byte data);
 
   // Verschickt ein Array aus Daten. Cool oder?
-  void sendDataArray(byte *arr);
+  bool sendDataArray(byte arr[], size_t length);
 
 private:
   // Verschickt einen Bit

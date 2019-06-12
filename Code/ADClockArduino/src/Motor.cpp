@@ -122,6 +122,7 @@ void Motor::reset_position()
 
 void Motor::start_calibraton()
 {
+  this->step_delay = MIN_STEP_DELAY;
   this->calibrated = false;
 }
 

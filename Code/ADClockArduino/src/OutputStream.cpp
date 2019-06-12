@@ -25,6 +25,16 @@ bool OutputStream::sendData(byte data)
   return true;
 }
 
+bool OutputStream::sendDataArray(byte arr[], size_t length)
+{
+  for (size_t i = 0; i < length; i++)
+  {
+    if (!sendData(arr[i]))
+      return false;
+  }
+  return true;
+}
+
 void OutputStream::sendDataBit(bool bit)
 {
   FastGPIO::Pin<OUT_DATA>::setOutputValue(bit);
