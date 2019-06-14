@@ -8,7 +8,7 @@
 #define COMMAND_IMAGE 0x02
 
 // TODO Nochmal richtigen Wert einstellen
-#define DELAY_BETWEEN_COMMANDS 1
+#define DELAY_BETWEEN_COMMANDS 50
 
 class DataSender
 {

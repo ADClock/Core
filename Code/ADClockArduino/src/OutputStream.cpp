@@ -55,7 +55,7 @@ bool OutputStream::checkDataReadingComplete()
       return false; // Langsam hätte die Response an sein müssen -> Der Empfänger ist mir zu langsam, mit dem Rede ich nicht mehr. Nagut.. Vielleicht gleich nochmal.
     }
     delayTimer++;
-    delayMicroseconds(1);
+    // delayMicroseconds(1);
   }
 
   FastGPIO::Pin<OUT_CLOCK>::setOutputValueLow();

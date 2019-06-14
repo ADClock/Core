@@ -77,7 +77,7 @@ void DataManager::readMyClockImage()
   {
     if (!in.waitForData())
     {
-      // Serial.println("Clock image unvollständig.");
+      Serial.println("Clock image unvollständig.");
       return; // Keine Daten? Blöd gelaufen
     }
     input[i] = in.readData();

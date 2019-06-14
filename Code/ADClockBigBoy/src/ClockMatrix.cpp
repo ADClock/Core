@@ -1,11 +1,11 @@
 #include "ClockMatrix.h"
 #include "Debug.h"
 
-Timer timer;
+Timer timer2;
 
 ClockMatrix::ClockMatrix(DataSender &sender) : sender(sender)
 {
-  timer.start();
+  timer2.start();
 }
 
 void ClockMatrix::initMatrix()
@@ -61,7 +61,7 @@ void ClockMatrix::move()
   {
     for (size_t y = 0; y < CLOCKS_Y; y++)
     {
-      _clock_position = getClockPosition(x, y);
+      _clock_position = getClockPosition(x, y) * 8;
       // Werte der einzelnen Uhr laden
       _clock_image = matrix[x][y].nextStepAsImage();
       for (size_t i = 0; i < 8; i++)
@@ -78,7 +78,7 @@ void ClockMatrix::move()
     }
   }
 
-  if (!sender.sendImage(image, 8 /** CLOCKS_X * CLOCKS_Y*/))
+  if (!sender.sendImage(image, 16 /** CLOCKS_X * CLOCKS_Y*/))
   {
     // Image konnte nicht verschickt werden.
     Debug::println("Das Image konnte nicht verschickt werden.");
@@ -86,7 +86,8 @@ void ClockMatrix::move()
   }
 
   // Clock Image wurde erfolgreich geschickt
-  this->reachesPosition = timer.read_ms() + longestMoveTime + 10;
+  this->reachesPosition = timer2.read_ms() + longestMoveTime + 10;
+  // Debug::serial.printf("Moving until %d ", reachesPosition);
 }
 
 bool ClockMatrix::setNextHourPosition(size_t x, size_t y, size_t degree)
@@ -136,5 +137,5 @@ bool ClockMatrix::isValidCoordinates(size_t x, size_t y)
 
 bool ClockMatrix::isMoving()
 {
-  return timer.read_ms() < this->reachesPosition;
+  return timer2.read_ms() < this->reachesPosition;
 }

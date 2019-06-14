@@ -1,8 +1,8 @@
 #include "OutputStream.h"
 
-#define OUT_RESPONSE D0
-#define OUT_DATA D1
-#define OUT_CLOCK D2
+#define OUT_RESPONSE D3
+#define OUT_DATA D4
+#define OUT_CLOCK D5
 
 OutputStream::OutputStream() : pin_data(DigitalOut(OUT_DATA)), pin_clock(DigitalOut(OUT_CLOCK)), pin_response(DigitalIn(OUT_RESPONSE))
 {
@@ -27,9 +27,11 @@ bool OutputStream::sendDataArray(const uint8_t arr[], const size_t &length)
 {
   for (size_t i = 0; i < length; i++)
   {
+    // Debug::serial.printf("%d ", arr[i]);
     if (!sendData(arr[i]))
       return false;
   }
+  // Debug::println("");
   return true;
 }
 
@@ -47,7 +49,7 @@ bool OutputStream::checkDataReadingComplete()
   // TODO
   while (!pin_response.read())
   {
-    if (delayTimer > 10000) // Innerhalb 100000 µs = 100ms keine Response - das kann aber nicht ganz stimmen
+    if (delayTimer > 1000000) // Innerhalb 100000 µs = 100ms keine Response - das kann aber nicht ganz stimmen
     {
       // TODO
       pin_clock = 0;
@@ -55,7 +57,6 @@ bool OutputStream::checkDataReadingComplete()
       return false; // Langsam hätte die Response an sein müssen -> Der Empfänger ist mir zu langsam, mit dem Rede ich nicht mehr. Nagut.. Vielleicht gleich nochmal.
     }
     delayTimer++;
-    wait_us(1);
   }
 
   // TODO
@@ -72,7 +73,6 @@ bool OutputStream::checkDataReadingComplete()
       return false; // Langsam hätte die Response wieder aus sein müssen -> Der Empfänger ist mir zu langsam, mit dem Rede ich nicht mehr. Nagut.. Vielleicht gleich nochmal.
     }
     delayTimer++;
-    // delayMicroseconds(1);
   }
 
   return true;
