@@ -1,6 +1,10 @@
 #include "Arduino.h"
 
+#ifndef _MOTOR_H_
+#define _MOTOR_H_
+
 #define MAX_STEPS 2050
+#define MIN_STEP_DELAY 4
 
 class Motor
 {
@@ -26,3 +30,5 @@ private:
   size_t coil_state;
   bool calibrated;
 };
+
+#endif

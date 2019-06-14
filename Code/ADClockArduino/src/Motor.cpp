@@ -1,4 +1,39 @@
 #include "Motor.h"
+#include "FastGPIO.h"
+
+void quickWrite(uint8_t pin, bool state)
+{
+  switch (pin)
+  {
+  case 6:
+    FastGPIO::Pin<6>::setOutputValue(state);
+    break;
+  case 7:
+    FastGPIO::Pin<7>::setOutputValue(state);
+    break;
+  case 8:
+    FastGPIO::Pin<8>::setOutputValue(state);
+    break;
+  case 9:
+    FastGPIO::Pin<9>::setOutputValue(state);
+    break;
+  case 10:
+    FastGPIO::Pin<10>::setOutputValue(state);
+    break;
+  case 11:
+    FastGPIO::Pin<11>::setOutputValue(state);
+    break;
+  case 12:
+    FastGPIO::Pin<12>::setOutputValue(state);
+    break;
+  case 13:
+    FastGPIO::Pin<13>::setOutputValue(state);
+    break;
+
+  default:
+    break;
+  }
+}
 
 Motor::Motor(size_t pin1, size_t pin2, size_t pin3, size_t pin4, size_t hallPin)
 {
@@ -7,7 +42,7 @@ Motor::Motor(size_t pin1, size_t pin2, size_t pin3, size_t pin4, size_t hallPin)
   this->pin3 = pin3;
   this->pin4 = pin4;
   this->hall_pin = hallPin;
-  this->step_delay = 2;
+  this->step_delay = 4;
   this->coil_state = 1;
 
   pinMode(pin1, OUTPUT);
@@ -17,7 +52,7 @@ Motor::Motor(size_t pin1, size_t pin2, size_t pin3, size_t pin4, size_t hallPin)
 
   pinMode(hall_pin, INPUT_PULLUP);
 
-  digitalWrite(pin1, HIGH);
+  quickWrite(pin1, HIGH);
 }
 
 void Motor::set_target_pos(size_t pos)
@@ -36,20 +71,20 @@ void Motor::step()
   switch (this->coil_state)
   {
   case 1:
-    digitalWrite(pin2, HIGH);
-    digitalWrite(pin1, LOW);
+    quickWrite(pin2, HIGH);
+    quickWrite(pin1, LOW);
     break;
   case 2:
-    digitalWrite(pin3, HIGH);
-    digitalWrite(pin2, LOW);
+    quickWrite(pin3, HIGH);
+    quickWrite(pin2, LOW);
     break;
   case 3:
-    digitalWrite(pin4, HIGH);
-    digitalWrite(pin3, LOW);
+    quickWrite(pin4, HIGH);
+    quickWrite(pin3, LOW);
     break;
   case 4:
-    digitalWrite(pin1, HIGH);
-    digitalWrite(pin4, LOW);
+    quickWrite(pin1, HIGH);
+    quickWrite(pin4, LOW);
     break;
   }
 
@@ -62,7 +97,7 @@ void Motor::step()
 
 void Motor::try_step()
 {
-  if (this->current_pos < this->target_pos)
+  if (this->current_pos != this->target_pos)
   {
     auto time_since_step = millis() - this->last_step;
     if (time_since_step > this->step_delay)
@@ -73,10 +108,10 @@ void Motor::try_step()
   }
   else
   {
-    digitalWrite(pin1, LOW);
-    digitalWrite(pin2, LOW);
-    digitalWrite(pin3, LOW);
-    digitalWrite(pin4, LOW);
+    quickWrite(pin1, LOW);
+    quickWrite(pin2, LOW);
+    quickWrite(pin3, LOW);
+    quickWrite(pin4, LOW);
   }
 }
 
@@ -87,6 +122,7 @@ void Motor::reset_position()
 
 void Motor::start_calibraton()
 {
+  this->step_delay = MIN_STEP_DELAY;
   this->calibrated = false;
 }
 
@@ -97,6 +133,9 @@ bool Motor::calibrate()
 
   this->step();
   this->current_pos = 0;
+
+  Serial.println(analogRead(this->hall_pin));
+
   if (analogRead(this->hall_pin) < 100)
   {
     this->calibrated = true;
