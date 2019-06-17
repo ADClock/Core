@@ -2,49 +2,54 @@
 
 bool Clock::hasPendingMove()
 {
-  return this->hourPosition != this->next_hourPosition || this->minutePosition != this->next_minutePosition;
+  return this->hour.hasPendingMove() || this->minute.hasPendingMove();
 }
 
 void Clock::move()
 {
-  this->hourPosition = this->next_hourPosition;
-  this->minutePosition = this->next_minutePosition;
-}
-
-void Clock::setNextHourPosition(size_t degree)
-{
-  this->next_hourPosition = degree;
-}
-
-void Clock::setNextMinutePosition(size_t degree)
-{
-  this->next_minutePosition = degree;
+  this->hour.move();
+  this->minute.move();
 }
 
 u_int8_t *Clock::nextStepAsImage()
 {
   static u_int8_t image[8];
-  // Stepper 1: Hour
-  image[0] = (next_hourPosition >> 8) & 0xFF;
-  image[1] = next_hourPosition & 0xFF;
+  u_int8_t *hour = this->hour.nextStepAsImage();
 
-  // Stepper 2: Minute
-  image[4] = (next_minutePosition >> 8) & 0xFF;
-  image[5] = (next_minutePosition & 0xFF);
+  for (int i = 0; i < 4; i++)
+  {
+    // Stepper 1: Hour
+    image[i] = hour[i];
+  }
+
+  u_int8_t *minute = this->minute.nextStepAsImage();
+
+  for (int i = 0; i < 4; i++)
+  {
+    // Stepper 1: Hour
+    image[4 + i] = minute[i];
+  }
 
   return image;
 }
 
 long Clock::getCalculateMoveTime()
 {
-  return max(abs(static_cast<long>(next_hourPosition - hourPosition)) * MIN_STEP_DELAY,
-             abs(static_cast<long>(next_minutePosition - minutePosition)) * MIN_STEP_DELAY);
+  return max(this->hour.getCalculateMoveTime(), this->minute.getCalculateMoveTime());
 }
 
 void Clock::init()
 {
-  this->hourPosition = 0;
-  this->next_hourPosition = 0;
-  this->minutePosition = 0;
-  this->next_minutePosition = 0;
+  this->hour.init();
+  this->minute.init();
+}
+
+const Hand &Clock::getMinuteHand()
+{
+  return this->minute;
+}
+
+const Hand &Clock::getHourHand()
+{
+  return this->hour;
 }

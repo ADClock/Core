@@ -147,5 +147,5 @@ src/main.o: ../src/main.cpp .././mbed_config.h ../mbed/mbed.h \
  ../mbed/hal/mpu_api.h ../mbed/platform/ScopedRamExecutionLock.h \
  ../mbed/platform/mbed_stats.h ../mbed/platform/Callback.h \
  ../mbed/platform/FunctionPointer.h ../mbed/platform/ScopedLock.h \
- ../src/ClockMatrix.h ../src/Clock.h ../src/DataSender.h \
+ ../src/ClockMatrix.h ../src/Clock.h ../src/Hand.h ../src/DataSender.h \
  ../src/OutputStream.h ../src/Debug.h

@@ -2,6 +2,8 @@
 #include "ClockMatrix.h"
 #include "Debug.h"
 
+bool running;
+
 Serial Debug::serial(SERIAL_TX, SERIAL_RX, 9600);
 
 DigitalOut led_moving(LED1);
@@ -12,6 +14,8 @@ DigitalIn user_button(BUTTON1);
 OutputStream out;
 DataSender sender(out);
 ClockMatrix matrix(sender);
+
+size_t currentTestImage;
 
 void setup()
 {
@@ -28,6 +32,41 @@ void setup()
     matrix.initMatrix();
 }
 
+void setTestImage()
+{
+    switch (currentTestImage)
+    {
+    case 0:
+        matrix.initMatrix();
+        matrix.setNextPositionFor(0, 0, CLOCKS_X - 1, CLOCKS_Y - 1, 45, 45);
+        break;
+    case 1:
+        matrix.setNextPositionFor(0, 0, CLOCKS_X - 1, CLOCKS_Y - 1, 90, 180);
+        break;
+
+    case 2:
+        matrix.setMinuteRotation(false);
+        matrix.setNextPositionFor(0, 0, CLOCKS_X - 1, CLOCKS_Y - 1, 180, 90);
+        break;
+    case 3:
+        matrix.setHourRotation(false);
+        matrix.setMinuteRotation(true);
+        matrix.setNextPositionFor(0, 0, CLOCKS_X - 1, CLOCKS_Y - 1, 90, 135);
+        break;
+    case 4:
+        matrix.setHourRotation(true);
+        matrix.setNextPositionFor(0, 0, CLOCKS_X - 1, CLOCKS_Y - 1, 180, 180);
+        matrix.setAnimationStart(90, 90);
+        break;
+    default:
+        break;
+    }
+
+    currentTestImage++;
+    if (currentTestImage > 4)
+        currentTestImage = 0;
+}
+
 void loop()
 {
 
@@ -35,25 +74,26 @@ void loop()
     led_moving = matrix.isMoving();
 
     bool tryMove = user_button.read();
-
     led_buttonPressed = tryMove;
 
-    if (!matrix.setNextPositionFor(0, 0, CLOCKS_X - 1, CLOCKS_Y - 1, 180, 180))
-        Debug::println("Fehler beim Setzen aller Positionen. ");
+    // Test Image setzen, wenn Knopf gedrückt wurde
+    if (tryMove && !matrix.isMoving() && !matrix.hasPendingMove())
+    {
+        // Setting Test Image
+        setTestImage();
+    }
 
-    if (matrix.hasPendingMove() && tryMove)
+    // Uhren bewegen
+    if (matrix.hasPendingMove())
     {
         if (!matrix.isMoving())
         {
-            long startSending = us_ticker_read();
+            // long startSending = us_ticker_read();
             led_startMoving = 1;
             matrix.move();
             led_startMoving = 0;
-            long endSending = us_ticker_read();
-            Debug::serial.printf("Sending done in %d µs\n", (endSending - startSending));
-
-            // TODO Später rausnehmen
-            matrix.initMatrix();
+            // long endSending = us_ticker_read();
+            // Debug::serial.printf("Sending done in %d µs\n", (endSending - startSending));
         }
     }
 }
@@ -62,7 +102,8 @@ int main()
 {
     setup();
     Debug::println("Setup complete");
-    while (1)
+    running = true; // Soll hässliches Verhalten beim Reset lösen.
+    while (running)
     {
         loop();
         // Debug::println("looping done");

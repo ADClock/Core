@@ -1,5 +1,6 @@
 #include "ClockMatrix.h"
 #include "Debug.h"
+#include "NumberImage.h"
 
 Timer timer2;
 
@@ -67,6 +68,7 @@ void ClockMatrix::move()
       for (size_t i = 0; i < 8; i++)
       {
         image[_clock_position + i] = _clock_image[i];
+        // Debug::serial.printf("%d ", image[_clock_position + i]);
       }
 
       _clock_estimated_move_time = matrix[x][y].getCalculateMoveTime();
@@ -74,7 +76,7 @@ void ClockMatrix::move()
         longestMoveTime = _clock_estimated_move_time;
 
       // Vermerken, dass die Uhren bewegt wurden
-      matrix[x][y].move();
+      matrix[x][y].move(); // TODO Das unter das SendImage packen
     }
   }
 
@@ -86,7 +88,7 @@ void ClockMatrix::move()
   }
 
   // Clock Image wurde erfolgreich geschickt
-  this->reachesPosition = timer2.read_ms() + longestMoveTime + 10;
+  this->reachesPosition = timer2.read_ms() + longestMoveTime / 1000 + 10;
   // Debug::serial.printf("Moving until %d ", reachesPosition);
 }
 
@@ -95,7 +97,7 @@ bool ClockMatrix::setNextHourPosition(size_t x, size_t y, size_t degree)
   if (!isValidCoordinates(x, y))
     return false;
 
-  matrix[x][y].setNextHourPosition(degree);
+  matrix[x][y].hour.setNextPositionDegree(degree);
   return true;
 }
 
@@ -104,7 +106,7 @@ bool ClockMatrix::setNextMinutePosition(size_t x, size_t y, size_t degree)
   if (!isValidCoordinates(x, y))
     return false;
 
-  matrix[x][y].setNextMinutePosition(degree);
+  matrix[x][y].minute.setNextPositionDegree(degree);
   return true;
 }
 
@@ -121,8 +123,8 @@ bool ClockMatrix::setNextPositionFor(size_t x_from, size_t y_from, size_t x_to, 
   {
     for (size_t y = y_from; y <= y_to; y++)
     {
-      matrix[x][y].setNextHourPosition(degreeHour);
-      matrix[x][y].setNextMinutePosition(degreeMinute);
+      matrix[x][y].hour.setNextPositionDegree(degreeHour);
+      matrix[x][y].minute.setNextPositionDegree(degreeMinute);
     }
   }
 
@@ -138,4 +140,59 @@ bool ClockMatrix::isValidCoordinates(size_t x, size_t y)
 bool ClockMatrix::isMoving()
 {
   return timer2.read_ms() < this->reachesPosition;
+}
+
+bool ClockMatrix::printChar(uint8_t segment, char c)
+{
+  uint16_t *positions = NumberImage::getImageInDegree(c);
+  size_t currentElement;
+  for (int y = 0; y < CLOCKS_Y; y++)
+    for (int x = segment; x < (segment + 1) * 3; x++)
+    {
+      setNextHourPosition(x, y, positions[currentElement++]);
+      setNextMinutePosition(x, y, positions[currentElement++]);
+    }
+  return true;
+}
+
+bool ClockMatrix::setHourRotation(bool direction)
+{
+  for (size_t x = 0; x < CLOCKS_X; x++)
+  {
+    for (size_t y = 0; y < CLOCKS_Y; y++)
+    {
+      matrix[x][y].hour.setDirection(direction);
+    }
+  }
+  return true;
+}
+
+bool ClockMatrix::setMinuteRotation(bool direction)
+{
+  for (size_t x = 0; x < CLOCKS_X; x++)
+  {
+    for (size_t y = 0; y < CLOCKS_Y; y++)
+    {
+      matrix[x][y].minute.setDirection(direction);
+    }
+  }
+  return true;
+}
+
+bool ClockMatrix::setAnimationStart(size_t hourDeg, size_t minuteDeg)
+{
+  return setAnimationStartStep(hourDeg * STEPS_PER_DEGREE, minuteDeg * STEPS_PER_DEGREE);
+}
+
+bool ClockMatrix::setAnimationStartStep(size_t hourStart, size_t minuteStart)
+{
+  for (size_t x = 0; x < CLOCKS_X; x++)
+  {
+    for (size_t y = 0; y < CLOCKS_Y; y++)
+    {
+      matrix[x][y].hour.setSimultaneouslyMove(hourStart);
+      matrix[x][y].minute.setSimultaneouslyMove(minuteStart);
+    }
+  }
+  return true;
 }

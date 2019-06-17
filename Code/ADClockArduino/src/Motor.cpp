@@ -53,14 +53,37 @@ Motor::Motor(size_t pin1, size_t pin2, size_t pin3, size_t pin4, size_t hallPin)
   pinMode(hall_pin, INPUT_PULLUP);
 
   quickWrite(pin1, HIGH);
+
+  this->step_delay = MIN_STEP_DELAY;
+  this->direction = true; // Vorwärts drehen?
 }
 
 void Motor::set_target_pos(size_t pos)
 {
+  if (pos < 0 || pos > MAX_STEPS)
+  {
+    Serial.println("Wrong Target Pos.");
+    return;
+  }
   this->target_pos = pos;
 }
 
-void Motor::step()
+void Motor::set_wait_steps(size_t waitSteps)
+{
+  this->wait_steps = waitSteps;
+}
+
+void Motor::set_step_delay(uint8_t delay)
+{
+  this->step_delay = MIN_STEP_DELAY + delay * 100;
+}
+
+void Motor::set_direction(bool direction)
+{
+  this->direction = direction;
+}
+
+void Motor::stepForward()
 {
   this->current_pos++;
   if (this->current_pos > MAX_STEPS)
@@ -95,15 +118,70 @@ void Motor::step()
   }
 }
 
+void Motor::stepBackward()
+{
+  this->current_pos--;
+  if (this->current_pos < 0)
+  {
+    this->current_pos = MAX_STEPS;
+  }
+
+  switch (this->coil_state)
+  {
+  case 1:
+    quickWrite(pin2, HIGH);
+    quickWrite(pin1, LOW);
+    break;
+  case 2:
+    quickWrite(pin3, HIGH);
+    quickWrite(pin2, LOW);
+    break;
+  case 3:
+    quickWrite(pin4, HIGH);
+    quickWrite(pin3, LOW);
+    break;
+  case 4:
+    quickWrite(pin1, HIGH);
+    quickWrite(pin4, LOW);
+    break;
+  }
+
+  this->coil_state--;
+  if (this->coil_state < 1)
+  {
+    this->coil_state = 4;
+  }
+}
+
+void Motor::step()
+{
+  // Serial.println("Stepping.. Direction " + String(direction) + " CurrentPos " + String(current_pos) + " heading to " + String(target_pos));
+  if (direction)
+  {
+    stepForward();
+  }
+  else
+  {
+    stepBackward();
+  }
+}
+
 void Motor::try_step()
 {
   if (this->current_pos != this->target_pos)
   {
-    auto time_since_step = millis() - this->last_step;
-    if (time_since_step > this->step_delay)
+    auto time_since_step = micros() - this->last_step;
+    if (time_since_step > this->step_delay || time_since_step < 0)
     {
-      this->last_step = millis();
-      this->step();
+      this->last_step = micros();
+      if (this->wait_steps > 0)
+      {
+        this->wait_steps--;
+      }
+      else
+      {
+        this->step();
+      }
     }
   }
   else
@@ -123,6 +201,7 @@ void Motor::reset_position()
 void Motor::start_calibraton()
 {
   this->step_delay = MIN_STEP_DELAY;
+  this->direction = true; // Vorwärts drehen?
   this->calibrated = false;
 }
 

@@ -27,11 +27,8 @@ Clock Information: (64 Bit)
 
 
 Motor Information: (32 Bit)
-  -- Position  (16 Bit)
-  -- Delay     (8 Bit)
-  -- Speed     (7 Bit)
-  -- Direction (1 Bit)
+  -- Position  (12 Bit) (in Motorsteps, value between 0 and 2049)
+  -- WaitSteps (12 Bit) (in Motorsteps, value between 0 and 2049)
+  -- DelayBetween2Steps (7 Bit)  (in 100 µs) (Delay between Steps Basic Speed + x)
+  -- Direction (1 Bit)  (direction of rotation)
 
-
-Interrupt Pin LOW = Controller wartet auf Daten
-Interrupt Pin HIGH = Controller bewegt zur Position und hält den Zeiger dort in Position
