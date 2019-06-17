@@ -196,3 +196,27 @@ bool ClockMatrix::setAnimationStartStep(size_t hourStart, size_t minuteStart)
   }
   return true;
 }
+
+bool ClockMatrix::setHourSpeed(size_t speed)
+{
+  for (size_t x = 0; x < CLOCKS_X; x++)
+  {
+    for (size_t y = 0; y < CLOCKS_Y; y++)
+    {
+      matrix[x][y].hour.setNextDelayBetweenSteps(speed);
+    }
+  }
+  return true;
+}
+
+bool ClockMatrix::setMinuteSpeed(size_t speed)
+{
+  for (size_t x = 0; x < CLOCKS_X; x++)
+  {
+    for (size_t y = 0; y < CLOCKS_Y; y++)
+    {
+      matrix[x][y].minute.setNextDelayBetweenSteps(speed);
+    }
+  }
+  return true;
+}

@@ -28,6 +28,9 @@ public:
 
   bool setAnimationStart(size_t hourStartDeg, size_t minuteStartDeg);
 
+  bool setHourSpeed(size_t speed);
+  bool setMinuteSpeed(size_t speed);
+
   /**
   * Initalisierung/Tuning 
   */

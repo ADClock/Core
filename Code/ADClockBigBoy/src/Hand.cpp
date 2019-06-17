@@ -69,7 +69,7 @@ size_t Hand::getPendingSteps()
 
 long Hand::getCalculateMoveTime()
 {
-  return getPendingSteps() * (this->next_stepDelay + MIN_STEP_DELAY);
+  return getPendingSteps() * (this->next_stepDelay * 100 + MIN_STEP_DELAY);
 }
 
 void Hand::init()
@@ -115,4 +115,9 @@ void Hand::setDirection(bool direction)
 void Hand::setNextWaitSteps(size_t steps)
 {
   this->next_waitSteps = steps;
+}
+
+void Hand::setNextDelayBetweenSteps(size_t delay)
+{
+  this->next_stepDelay = delay;
 }

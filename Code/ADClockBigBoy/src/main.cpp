@@ -41,12 +41,14 @@ void setTestImage()
         matrix.setNextPositionFor(0, 0, CLOCKS_X - 1, CLOCKS_Y - 1, 45, 45);
         break;
     case 1:
-        matrix.setNextPositionFor(0, 0, CLOCKS_X - 1, CLOCKS_Y - 1, 90, 180);
+        matrix.setNextPositionFor(0, 0, CLOCKS_X - 1, CLOCKS_Y - 1, 90, 135);
+        matrix.setMinuteSpeed(100);
         break;
 
     case 2:
+        matrix.setMinuteSpeed(0);
         matrix.setMinuteRotation(false);
-        matrix.setNextPositionFor(0, 0, CLOCKS_X - 1, CLOCKS_Y - 1, 180, 90);
+        matrix.setNextPositionFor(0, 0, CLOCKS_X - 1, CLOCKS_Y - 1, 135, 90);
         break;
     case 3:
         matrix.setHourRotation(false);
