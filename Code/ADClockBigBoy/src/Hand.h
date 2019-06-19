@@ -2,6 +2,7 @@
 #ifndef _HAND_H_
 #define _HAND_H_
 #include "mbed.h"
+#include "MbedJSONValue.h"
 #include <cstdlib>
 using namespace std;
 
@@ -34,6 +35,9 @@ public:
   u_int8_t *nextStepAsImage();
 
   size_t getPendingSteps();
+
+  MbedJSONValue asJson();
+  void update(MbedJSONValue &json);
 
 private:
   size_t position;

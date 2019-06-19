@@ -53,3 +53,11 @@ const Hand &Clock::getHourHand()
 {
   return this->hour;
 }
+
+MbedJSONValue Clock::asJson()
+{
+  MbedJSONValue v;
+  v["hour"] = hour.asJson();
+  v["minute"] = minute.asJson();
+  return v;
+}

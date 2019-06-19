@@ -148,5 +148,5 @@ src/ClockMatrix.o: ../src/ClockMatrix.cpp .././mbed_config.h \
  ../mbed/hal/mpu_api.h ../mbed/platform/ScopedRamExecutionLock.h \
  ../mbed/platform/mbed_stats.h ../mbed/platform/Callback.h \
  ../mbed/platform/FunctionPointer.h ../mbed/platform/ScopedLock.h \
- ../src/Clock.h ../src/Hand.h ../src/DataSender.h ../src/OutputStream.h \
- ../src/Debug.h ../src/NumberImage.h
+ ../src/Clock.h ../src/Hand.h ../src/MbedJSONValue.h ../src/DataSender.h \
+ ../src/OutputStream.h ../src/Debug.h ../src/NumberImage.h

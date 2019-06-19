@@ -50,6 +50,7 @@ PROJECT := ADClockBigBoy
 OBJECTS += src/OutputStream.o
 OBJECTS += src/Clock.o
 OBJECTS += src/DataSender.o
+OBJECTS += src/MbedJSONValue.o
 OBJECTS += src/Hand.o
 OBJECTS += src/ClockMatrix.o
 OBJECTS += src/main.o

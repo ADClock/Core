@@ -148,4 +148,4 @@ src/Clock.o: ../src/Clock.cpp .././mbed_config.h ../src/Clock.h \
  ../mbed/hal/mpu_api.h ../mbed/platform/ScopedRamExecutionLock.h \
  ../mbed/platform/mbed_stats.h ../mbed/platform/Callback.h \
  ../mbed/platform/FunctionPointer.h ../mbed/platform/ScopedLock.h \
- ../src/Hand.h
+ ../src/Hand.h ../src/MbedJSONValue.h

@@ -32,6 +32,13 @@ public:
   bool setMinuteSpeed(size_t speed);
 
   /**
+   * Web API Kommunikation
+   */
+
+  MbedJSONValue asJson();
+  void update(MbedJSONValue &json);
+
+  /**
   * Initalisierung/Tuning 
   */
   void initMatrix();

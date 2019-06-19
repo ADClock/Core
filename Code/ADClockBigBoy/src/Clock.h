@@ -22,6 +22,9 @@ public:
 
   u_int8_t *nextStepAsImage();
 
+  MbedJSONValue asJson();
+  void update(MbedJSONValue &json);
+
   Hand minute;
   Hand hour;
 

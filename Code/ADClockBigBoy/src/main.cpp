@@ -83,6 +83,7 @@ void loop()
     {
         // Setting Test Image
         setTestImage();
+        Debug::println("Testimage set");
     }
 
     // Uhren bewegen
@@ -93,9 +94,21 @@ void loop()
             // long startSending = us_ticker_read();
             led_startMoving = 1;
             matrix.move();
+            Debug::println("Moved");
             led_startMoving = 0;
             // long endSending = us_ticker_read();
             // Debug::serial.printf("Sending done in %d µs\n", (endSending - startSending));
+
+            /* auto v = matrix.asJson();
+            Debug::println("Json Objekt erstellt.");
+
+            string str = v.serialize();
+            Debug::println("Json serializiert.");
+
+            for (size_t index = 0; index < str.length(); index++)
+            {
+                Debug::serial.printf("%c", str[index]);
+            }*/
         }
     }
 }

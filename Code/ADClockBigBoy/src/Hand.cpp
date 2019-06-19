@@ -121,3 +121,14 @@ void Hand::setNextDelayBetweenSteps(size_t delay)
 {
   this->next_stepDelay = delay;
 }
+
+MbedJSONValue Hand::asJson()
+{
+  MbedJSONValue v;
+  v["pos"] = static_cast<int>(this->position);
+  v["target_pos"] = static_cast<int>(this->next_position);
+  v["direction"] = this->next_direction;
+  v["waiting"] = static_cast<int>(this->next_waitSteps);
+  v["delay"] = static_cast<int>(this->next_stepDelay);
+  return v;
+}
