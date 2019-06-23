@@ -1,7 +1,6 @@
 #include <Arduino.h>
 #include "Motor.h"
 #include "DataManager.h"
-//#include "NewCommunication.h"
 
 #define HALL_DATA_PIN_1 A0
 #define HALL_DATA_PIN_2 A1
@@ -22,7 +21,7 @@ Motor motor2(MOTOR_2_PIN_1, MOTOR_2_PIN_2, MOTOR_2_PIN_3, MOTOR_2_PIN_4, HALL_DA
 InputStream in;
 OutputStream out;
 
-// DataManager com(in, out, motor1, motor2);
+DataManager com(in, out, motor1, motor2);
 
 void setup()
 {
@@ -37,17 +36,17 @@ void setup()
   do
   {
     motor1Calibrated = motor1.calibrate();
-    // motor2Calibrated = motor2.calibrate();
-    delay(20);
-  } while (!motor1Calibrated);
-  // } while (!motor1Calibrated || !motor2Calibrated);
+    motor2Calibrated = motor2.calibrate();
+    delay(10);
+  } while (!motor1Calibrated || !motor2Calibrated);
+  // } while (!motor1Calibrated);
 
   motor2.set_target_pos(50);
 }
 
 void loop()
 {
-  // com.checkForData();
+  com.checkForData();
   motor1.try_step();
   motor2.try_step();
 }

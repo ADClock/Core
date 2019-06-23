@@ -52,10 +52,7 @@ Motor::Motor(size_t pin1, size_t pin2, size_t pin3, size_t pin4, size_t hallPin)
 
   pinMode(hall_pin, INPUT_PULLUP);
 
-  quickWrite(pin1, LOW);
-  quickWrite(pin2, LOW);
-  quickWrite(pin3, LOW);
-  quickWrite(pin4, LOW);
+  this->allPinsOff();
 
   this->step_delay = MIN_STEP_DELAY;
   this->direction = true; // Vorwärts drehen?
@@ -176,10 +173,7 @@ void Motor::try_step()
   }
   else
   {
-    quickWrite(pin1, LOW);
-    quickWrite(pin2, LOW);
-    quickWrite(pin3, LOW);
-    quickWrite(pin4, LOW);
+    this->allPinsOff();
   }
 }
 
@@ -197,55 +191,48 @@ void Motor::start_calibraton()
   this->calibrated_steps = 0;
 }
 
+void Motor::allPinsOff()
+{
+  quickWrite(pin1, LOW);
+  quickWrite(pin2, LOW);
+  quickWrite(pin3, LOW);
+  quickWrite(pin4, LOW);
+}
+
 bool Motor::calibrate()
 {
   if (this->calibrated)
     return true;
 
-  this->stepForward();
-  this->current_pos = 0;
-
-  if (!this->calibration_read)
+  if (this->calibration_read)
   {
     if (analogRead(this->hall_pin) < 100)
-    {
-      for (size_t i = 0; i < 6; i++)
-      {
-        this->calibrated_steps++;
-        this->stepForward();
-        delay(20);
-      }
-      this->calibration_read = true;
-    }
-    else
     {
       this->stepForward();
-      delay(20);
-      return false;
-    }
-  }
-  else
-  {
-    if (analogRead(this->hall_pin) < 100)
-    {
       this->calibrated_steps++;
-      this->stepForward();
-      delay(20);
+      return false;
     }
     else
     {
       for (size_t i = 0; i < this->calibrated_steps / 2; i++)
       {
         this->stepBackward();
-        delay(20);
+        delay(10);
       }
+      this->current_pos = 0;
       this->calibrated = true;
-      quickWrite(pin1, LOW);
-      quickWrite(pin2, LOW);
-      quickWrite(pin3, LOW);
-      quickWrite(pin4, LOW);
+      this->allPinsOff();
       return true;
     }
+  }
+  else
+  {
+    this->stepForward();
+    if (analogRead(this->hall_pin) < 100)
+    {
+      this->calibration_read = true;
+    }
+    return false;
   }
   return false;
 }

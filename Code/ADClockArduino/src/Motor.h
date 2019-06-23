@@ -24,7 +24,8 @@ public:
 
 private:
   void write_step();
-  
+  void allPinsOff();
+
   size_t pin1;
   size_t pin2;
   size_t pin3;
