@@ -52,7 +52,10 @@ Motor::Motor(size_t pin1, size_t pin2, size_t pin3, size_t pin4, size_t hallPin)
 
   pinMode(hall_pin, INPUT_PULLUP);
 
-  quickWrite(pin1, HIGH);
+  quickWrite(pin1, LOW);
+  quickWrite(pin2, LOW);
+  quickWrite(pin3, LOW);
+  quickWrite(pin4, LOW);
 
   this->step_delay = MIN_STEP_DELAY;
   this->direction = true; // Vorwärts drehen?
@@ -91,25 +94,7 @@ void Motor::stepForward()
     this->current_pos = 0;
   }
 
-  switch (this->coil_state)
-  {
-  case 1:
-    quickWrite(pin2, HIGH);
-    quickWrite(pin1, LOW);
-    break;
-  case 2:
-    quickWrite(pin3, HIGH);
-    quickWrite(pin2, LOW);
-    break;
-  case 3:
-    quickWrite(pin4, HIGH);
-    quickWrite(pin3, LOW);
-    break;
-  case 4:
-    quickWrite(pin1, HIGH);
-    quickWrite(pin4, LOW);
-    break;
-  }
+  this->write_step();
 
   this->coil_state++;
   if (this->coil_state > 4)
@@ -126,6 +111,17 @@ void Motor::stepBackward()
     this->current_pos = MAX_STEPS;
   }
 
+  this->write_step();
+
+  this->coil_state--;
+  if (this->coil_state < 1)
+  {
+    this->coil_state = 4;
+  }
+}
+
+void Motor::write_step()
+{
   switch (this->coil_state)
   {
   case 1:
@@ -144,12 +140,6 @@ void Motor::stepBackward()
     quickWrite(pin1, HIGH);
     quickWrite(pin4, LOW);
     break;
-  }
-
-  this->coil_state--;
-  if (this->coil_state < 1)
-  {
-    this->coil_state = 4;
   }
 }
 
@@ -203,6 +193,8 @@ void Motor::start_calibraton()
   this->step_delay = MIN_STEP_DELAY;
   this->direction = true; // Vorwärts drehen?
   this->calibrated = false;
+  this->calibration_read = false;
+  this->calibrated_steps = 0;
 }
 
 bool Motor::calibrate()
@@ -210,15 +202,50 @@ bool Motor::calibrate()
   if (this->calibrated)
     return true;
 
-  this->step();
+  this->stepForward();
   this->current_pos = 0;
 
-  Serial.println(analogRead(this->hall_pin));
-
-  if (analogRead(this->hall_pin) < 100)
+  if (!this->calibration_read)
   {
-    this->calibrated = true;
-    return true;
+    if (analogRead(this->hall_pin) < 100)
+    {
+      for (size_t i = 0; i < 6; i++)
+      {
+        this->calibrated_steps++;
+        this->stepForward();
+        delay(20);
+      }
+      this->calibration_read = true;
+    }
+    else
+    {
+      this->stepForward();
+      delay(20);
+      return false;
+    }
+  }
+  else
+  {
+    if (analogRead(this->hall_pin) < 100)
+    {
+      this->calibrated_steps++;
+      this->stepForward();
+      delay(20);
+    }
+    else
+    {
+      for (size_t i = 0; i < this->calibrated_steps / 2; i++)
+      {
+        this->stepBackward();
+        delay(20);
+      }
+      this->calibrated = true;
+      quickWrite(pin1, LOW);
+      quickWrite(pin2, LOW);
+      quickWrite(pin3, LOW);
+      quickWrite(pin4, LOW);
+      return true;
+    }
   }
   return false;
 }

@@ -23,6 +23,8 @@ public:
   bool calibrate();
 
 private:
+  void write_step();
+  
   size_t pin1;
   size_t pin2;
   size_t pin3;
@@ -38,6 +40,8 @@ private:
   unsigned long last_step;
   size_t coil_state;
   bool calibrated;
+  bool calibration_read;
+  size_t calibrated_steps;
 };
 
 #endif
