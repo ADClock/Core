@@ -60,12 +60,15 @@ void setTestImage()
         matrix.setNextPositionFor(0, 0, CLOCKS_X - 1, CLOCKS_Y - 1, 180, 180);
         matrix.setAnimationStart(90, 90);
         break;
+    case 5:
+        matrix.setNextPositionFor(0, 0, CLOCKS_X - 1, CLOCKS_Y - 1, 270, 90);
+        break;
     default:
         break;
     }
 
     currentTestImage++;
-    if (currentTestImage > 4)
+    if (currentTestImage > 5)
         currentTestImage = 0;
 }
 
