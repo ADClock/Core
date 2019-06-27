@@ -80,7 +80,7 @@ void ClockMatrix::move()
     }
   }
 
-  if (!sender.sendImage(image, 16 /** CLOCKS_X * CLOCKS_Y*/))
+  if (!sender.sendImage(image, 8 /** CLOCKS_X * CLOCKS_Y*/))
   {
     // Image konnte nicht verschickt werden.
     Debug::println("Das Image konnte nicht verschickt werden.");
