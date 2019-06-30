@@ -41,7 +41,7 @@ void setup()
   } while (!motor1Calibrated || !motor2Calibrated);
   // } while (!motor1Calibrated);
 
-  motor2.set_target_pos(50);
+  // motor2.set_target_pos(50);
 }
 
 void loop()
