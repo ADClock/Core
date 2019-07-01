@@ -219,7 +219,7 @@ bool Motor::calibrate()
         this->stepBackward();
         delay(10);
       }
-      this->current_pos = 0;
+      this->reset_position();
       this->calibrated = true;
       this->allPinsOff();
       return true;

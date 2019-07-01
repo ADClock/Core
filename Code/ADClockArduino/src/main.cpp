@@ -50,3 +50,24 @@ void loop()
   motor1.try_step();
   motor2.try_step();
 }
+
+// Wir steppen im Kreis und zählen wie viele Schritte es von Hall High bis Hall High ist.
+void rotateUntilTomorrow()
+{
+  bool state = false; // Ist der Pin High or Low?
+  bool lastState = false;
+  bool steps = 0;
+  while (1)
+  {
+    motor1.step();
+    steps++;
+    lastState = state;
+    state = analogRead(HALL_DATA_PIN_1) < 100;
+    if (lastState && !state)
+    {
+      Serial.println("Round took " + String(steps) + " steps.");
+      steps = 0;
+    }
+    delay(4);
+  }
+}
