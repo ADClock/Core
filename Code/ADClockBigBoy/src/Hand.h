@@ -7,7 +7,7 @@
 using namespace std;
 
 #define MIN_STEP_DELAY 4000
-#define STEPS_FOR_CIRCLE 2050
+#define STEPS_FOR_CIRCLE 1705
 #define STEPS_PER_DEGREE STEPS_FOR_CIRCLE / 360.
 
 #define RIGHT true

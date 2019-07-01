@@ -3,7 +3,7 @@
 #ifndef _MOTOR_H_
 #define _MOTOR_H_
 
-#define MAX_STEPS 2050
+#define MAX_STEPS 1705
 #define MIN_STEP_DELAY 4000
 
 class Motor
