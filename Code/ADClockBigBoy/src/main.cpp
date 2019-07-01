@@ -37,30 +37,36 @@ void setTestImage()
     switch (currentTestImage)
     {
     case 0:
+        // Initalisierung der Matrix + Beide Zeiger 45 Grad
         matrix.initMatrix();
         matrix.setNextPositionFor(0, 0, CLOCKS_X - 1, CLOCKS_Y - 1, 45, 45);
         break;
     case 1:
+        // Stundenzeiger auf 90 Grad, Minutenzeiger auf 135 - aber mit geringerer Geschwindigkeit
         matrix.setNextPositionFor(0, 0, CLOCKS_X - 1, CLOCKS_Y - 1, 90, 135);
         matrix.setMinuteSpeed(100);
         break;
 
     case 2:
+        // Stundenzeiger vorwärts zu 135 Grad, Minutenzeiger Rückwärts zu 90 Grad
         matrix.setMinuteSpeed(0);
         matrix.setMinuteRotation(false);
         matrix.setNextPositionFor(0, 0, CLOCKS_X - 1, CLOCKS_Y - 1, 135, 90);
         break;
     case 3:
+        // Stundenzeiger rückwärts zu 90 Grad, Stundenzeiger vor zu 135 Grad
         matrix.setHourRotation(false);
         matrix.setMinuteRotation(true);
         matrix.setNextPositionFor(0, 0, CLOCKS_X - 1, CLOCKS_Y - 1, 90, 135);
         break;
     case 4:
+        // Beide Zeiger zu 180 Grad, dabei sammelt der Stundenzeiger den Minutenzeiger unterwegs ein. (So der Plan)
         matrix.setHourRotation(true);
         matrix.setNextPositionFor(0, 0, CLOCKS_X - 1, CLOCKS_Y - 1, 180, 180);
         matrix.setAnimationStart(90, 90);
         break;
     case 5:
+        // Stundenzeiger auf 270 Grad stellen, Minutenzeiger 3/4 rumdrehen zu 90 Grad
         matrix.setNextPositionFor(0, 0, CLOCKS_X - 1, CLOCKS_Y - 1, 270, 90);
         break;
     default:
