@@ -34,6 +34,14 @@ void DataManager::reciveData()
     out.sendData(command);
     motor1.start_calibraton();
     motor2.start_calibraton();
+    bool motor1Calibrated = false;
+    bool motor2Calibrated = false;
+    do
+    {
+      motor1Calibrated = motor1.calibrate();
+      motor2Calibrated = motor2.calibrate();
+      delay(10);
+    } while (!motor1Calibrated || !motor2Calibrated);
     break;
 
   case 0x02: // Image
