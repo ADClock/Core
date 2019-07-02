@@ -20,6 +20,8 @@ void ClockMatrix::initMatrix()
       matrix[x][y].init();
     }
   }
+
+  this->reachesPosition = timer2.read_ms() + 5000;
 }
 
 bool ClockMatrix::hasPendingMove()
