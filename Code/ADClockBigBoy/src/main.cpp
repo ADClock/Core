@@ -15,7 +15,7 @@ OutputStream out;
 DataSender sender(out);
 ClockMatrix matrix(sender);
 
-size_t currentTestImage;
+size_t currentTestImage = 0;
 
 void setup()
 {

@@ -11,7 +11,7 @@
       "request": "launch",
       "type": "cortex-debug",
       "servertype": "stutil",
-      "armToolchainPath": "C:/Program Files (x86)/GNU Tools Arm Embedded/7 2018-q2-update/bin",
+      "armToolchainPath": "F:/dev/gcc-arm/7 2018-q2-update/bin",
       "device": "STM32F446ZE",
       "svdFile": "./STM32F446x.svd",
       "interface": "swd",

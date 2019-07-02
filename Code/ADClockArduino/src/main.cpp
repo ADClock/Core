@@ -23,6 +23,27 @@ OutputStream out;
 
 DataManager com(in, out, motor1, motor2);
 
+// Wir steppen im Kreis und zählen wie viele Schritte es von Hall High bis Hall High ist.
+void rotateUntilTomorrow()
+{
+  bool state = false; // Ist der Pin High or Low?
+  bool lastState = false;
+  size_t steps = 0;
+  while (1)
+  {
+    motor2.step();
+    steps++;
+    lastState = state;
+    state = analogRead(HALL_DATA_PIN_2) < 100;
+    if (lastState && !state)
+    {
+      Serial.println("Round took " + String(steps) + " steps.");
+      steps = 0;
+    }
+    delay(4);
+  }
+}
+
 void setup()
 {
   Serial.begin(9600);
@@ -42,6 +63,8 @@ void setup()
   // } while (!motor1Calibrated);
 
   // motor2.set_target_pos(50);
+
+  // rotateUntilTomorrow();
 }
 
 void loop()
@@ -49,25 +72,4 @@ void loop()
   com.checkForData();
   motor1.try_step();
   motor2.try_step();
-}
-
-// Wir steppen im Kreis und zählen wie viele Schritte es von Hall High bis Hall High ist.
-void rotateUntilTomorrow()
-{
-  bool state = false; // Ist der Pin High or Low?
-  bool lastState = false;
-  bool steps = 0;
-  while (1)
-  {
-    motor1.step();
-    steps++;
-    lastState = state;
-    state = analogRead(HALL_DATA_PIN_1) < 100;
-    if (lastState && !state)
-    {
-      Serial.println("Round took " + String(steps) + " steps.");
-      steps = 0;
-    }
-    delay(4);
-  }
 }
