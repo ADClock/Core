@@ -40,9 +40,10 @@ private:
 
   unsigned long last_step;
   size_t coil_state;
-  bool calibrated;
-  bool calibration_read;
-  size_t calibrated_steps;
+  bool calibrated;              // Ist der Motor kalibriert?
+  bool calibration_read;        // Ist der Magnet im Magnetfeld? (wird für Zentrierung benötigt.)
+  bool calibration_was_outside; // Der Magnet muss mindestens einmal aus dem Bereich raus sein, damit er danach sauber reinlaufen kann
+  size_t calibrated_steps;      // Anzahl der Schritte, die der Magnet im Magnetfeld ist.
 };
 
 #endif

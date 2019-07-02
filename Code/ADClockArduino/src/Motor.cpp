@@ -189,6 +189,7 @@ void Motor::start_calibraton()
   this->calibrated = false;
   this->calibration_read = false;
   this->calibrated_steps = 0;
+  this->calibration_was_outside = analogRead(hall_pin) >= 100;
 }
 
 void Motor::allPinsOff()
@@ -227,10 +228,20 @@ bool Motor::calibrate()
   }
   else
   {
-    this->stepForward();
-    if (analogRead(this->hall_pin) < 100)
+    if (this->calibration_was_outside)
     {
-      this->calibration_read = true;
+      this->stepForward();
+      if (analogRead(this->hall_pin) < 100)
+      {
+        this->calibration_read = true;
+      }
+    }
+    else
+    {
+      if (analogRead(this->hall_pin) >= 100)
+      {
+        this->calibration_was_outside = true;
+      }
     }
     return false;
   }
