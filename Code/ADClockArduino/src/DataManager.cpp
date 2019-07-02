@@ -1,6 +1,6 @@
 #include "DataManager.h"
 
-DataManager::DataManager(InputStream &in, OutputStream &out, Motor &motor1, Motor &motor2) : in(in), out(out), motor1(motor1), motor2(motor2)
+DataManager::DataManager(InputStream &in, OutputStream &out, Motor &motor1, Motor &motor2, Calibration &calibration1, Calibration &calibration2) : in(in), out(out), motor1(motor1), motor2(motor2), calibration1(calibration1), calibration2(calibration2)
 {
 }
 
@@ -32,18 +32,7 @@ void DataManager::reciveData()
   {
   case 0x01: // Init
     out.sendData(command);
-    motor1.start_calibraton();
-    motor2.start_calibraton();
-    {
-      bool motor1Calibrated = false;
-      bool motor2Calibrated = false;
-      do
-      {
-        motor1Calibrated = motor1.calibrate();
-        motor2Calibrated = motor2.calibrate();
-        delay(10);
-      } while (!motor1Calibrated || !motor2Calibrated);
-    }
+    calibrate();
     break;
 
   case 0x02: // Image
@@ -120,4 +109,18 @@ void DataManager::readMyClockImage()
   motor2.set_wait_steps(waitSteps_2);
   motor2.set_direction(direction_2);
   // Serial.println("New Clock image set.");
+}
+
+void DataManager::calibrate()
+{
+  calibration1.start_calibration();
+  calibration2.start_calibration();
+  bool motor1Calibrated = false;
+  bool motor2Calibrated = false;
+  do
+  {
+    motor1Calibrated = calibration1.calibrate();
+    motor2Calibrated = calibration2.calibrate();
+    delay(10);
+  } while (!motor1Calibrated || !motor2Calibrated);
 }

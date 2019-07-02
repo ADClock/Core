@@ -35,13 +35,12 @@ void quickWrite(uint8_t pin, bool state)
   }
 }
 
-Motor::Motor(size_t pin1, size_t pin2, size_t pin3, size_t pin4, size_t hallPin)
+Motor::Motor(size_t pin1, size_t pin2, size_t pin3, size_t pin4)
 {
   this->pin1 = pin1;
   this->pin2 = pin2;
   this->pin3 = pin3;
   this->pin4 = pin4;
-  this->hall_pin = hallPin;
   this->step_delay = 4;
   this->coil_state = 1;
 
@@ -49,8 +48,6 @@ Motor::Motor(size_t pin1, size_t pin2, size_t pin3, size_t pin4, size_t hallPin)
   pinMode(pin2, OUTPUT);
   pinMode(pin3, OUTPUT);
   pinMode(pin4, OUTPUT);
-
-  pinMode(hall_pin, INPUT_PULLUP);
 
   this->allPinsOff();
 
@@ -182,68 +179,10 @@ void Motor::reset_position()
   this->current_pos = 0;
 }
 
-void Motor::start_calibraton()
-{
-  this->step_delay = MIN_STEP_DELAY;
-  this->direction = true; // Vorwärts drehen?
-  this->calibrated = false;
-  this->calibration_read = false;
-  this->calibrated_steps = 0;
-  this->calibration_was_outside = analogRead(hall_pin) >= 100;
-}
-
 void Motor::allPinsOff()
 {
   quickWrite(pin1, LOW);
   quickWrite(pin2, LOW);
   quickWrite(pin3, LOW);
   quickWrite(pin4, LOW);
-}
-
-bool Motor::calibrate()
-{
-  if (this->calibrated)
-    return true;
-
-  if (this->calibration_read)
-  {
-    if (analogRead(this->hall_pin) < 100)
-    {
-      this->stepForward();
-      this->calibrated_steps++;
-      return false;
-    }
-    else
-    {
-      for (size_t i = 0; i < this->calibrated_steps / 2; i++)
-      {
-        this->stepBackward();
-        delay(10);
-      }
-      this->reset_position();
-      this->calibrated = true;
-      this->allPinsOff();
-      return true;
-    }
-  }
-  else
-  {
-    if (this->calibration_was_outside)
-    {
-      this->stepForward();
-      if (analogRead(this->hall_pin) < 100)
-      {
-        this->calibration_read = true;
-      }
-    }
-    else
-    {
-      if (analogRead(this->hall_pin) >= 100)
-      {
-        this->calibration_was_outside = true;
-      }
-    }
-    return false;
-  }
-  return false;
 }
