@@ -562,7 +562,9 @@ char *HttpServer::get_field(const char *buffer, int which)
   return field;
 }
 
-String HttpServer::get_body()
+char *HttpServer::get_body()
 {
-  return client_.readString();
+  char *buffer;
+  client_.readBytes(buffer, 32000);
+  return buffer;
 }

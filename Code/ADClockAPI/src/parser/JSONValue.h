@@ -291,7 +291,7 @@ public:
     * @param name Identifier
     * @return true if the object is of type TypeObject AND contains a member named "name", false otherwise
     */
-  bool hasMember(char *name);
+  bool hasMember(const char *name);
 
   /**
     * Convert an JSONValue in a JSON frame

@@ -31,7 +31,7 @@ void JSONValue::clean()
   _type = TypeNull;
 }
 
-bool JSONValue::hasMember(char *name)
+bool JSONValue::hasMember(const char *name)
 {
   for (int i = 0; i < index_token; i++)
     if (!strcmp(name, (*(token_name[i])).c_str()))

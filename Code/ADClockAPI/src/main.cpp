@@ -1,9 +1,11 @@
 #include <WiFi.h>
 #include "web/RequestHandler.h"
+#include "api/ClockApi.h"
+#include "data/ClockMatrix.h"
 
 // WLAN Verbindung zu einem Netzwerk herstellen
 const char *ssid = "Home_Net";
-const char *password = "xxxx";
+const char *password = "@xxxx";
 
 HttpServer server(RequestHandler::handlers, NULL);
 

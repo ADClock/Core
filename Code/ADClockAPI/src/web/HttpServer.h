@@ -70,7 +70,7 @@ public:
   WiFiClient &get_client() { return client_; }
 
   // Returns the Body of the Clients Request
-  String get_body();
+  char *get_body();
 
   // Processes the HTTP headers and assigns values to the requested
   // ones in headers_. Returns true when successful, false in case of
