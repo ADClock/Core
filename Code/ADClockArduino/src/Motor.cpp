@@ -99,11 +99,11 @@ void Motor::stepForward()
 
 void Motor::stepBackward()
 {
-  this->current_pos--;
-  if (this->current_pos < 0)
+  if (this->current_pos = 0)
   {
     this->current_pos = MAX_STEPS;
   }
+  this->current_pos--;
 
   this->write_step();
 
