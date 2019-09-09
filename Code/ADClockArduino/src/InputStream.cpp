@@ -1,8 +1,8 @@
 #include "InputStream.h"
 
-#define IN_RESPONSE A3
-#define IN_DATA A4
-#define IN_CLOCK A5
+#define IN_RESPONSE A2
+#define IN_DATA A3
+#define IN_CLOCK A4
 
 InputStream::InputStream()
 {
