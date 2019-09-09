@@ -43,6 +43,13 @@ void DataManager::reciveData()
     }
     break;
 
+  case 0x03: // Speedtest
+    while (in.hasData())
+    {
+      in.readData();
+    }
+    break;
+
   default:
     Serial.println("Unbekannter Command: " + String(command));
     break;
@@ -92,8 +99,8 @@ void DataManager::readMyClockImage()
   uint16_t waitSteps_2 = ((input[5] & 0x0F) << 8) + input[6];
   int8_t delay_2 = input[7] & 0xFE;
   bool direction_2 = input[7] & 0x01;
-  // Serial.println("Clock image " + String(input[0]) + " " + String(input[1]) + " " + String(input[2]) + " " + String(input[3]) + " " + String(input[4]) + " " + String(input[5]) + " " + String(input[6]) + " " + String(input[7]) +
-  //                " und target: " + String(position_1) + " " + String(position_2) + " waitSteps: " + String(waitSteps_1) + " " + String(waitSteps_2) + " stepDelay: " + String(delay_1) + " " + String(delay_2) + " direction: " + String(direction_1) + " " + String(direction_2));
+  Serial.println("Clock image " + String(input[0]) + " " + String(input[1]) + " " + String(input[2]) + " " + String(input[3]) + " " + String(input[4]) + " " + String(input[5]) + " " + String(input[6]) + " " + String(input[7]) +
+                 " und target: " + String(position_1) + " " + String(position_2) + " waitSteps: " + String(waitSteps_1) + " " + String(waitSteps_2) + " stepDelay: " + String(delay_1) + " " + String(delay_2) + " direction: " + String(direction_1) + " " + String(direction_2));
 
   // // Aktuell für Testzwecke um immer das gleiche Image senden zu können
   // motor1.reset_position();

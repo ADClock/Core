@@ -18,7 +18,10 @@ bool OutputStream::sendData(const uint8_t &data)
     sendDataBit(!!(data & (1 << i)));
 
     if (!checkDataReadingComplete())
+    {
+      Debug::serial.printf("Bit %d konnte nicht gesendet werden", i);
       return false; // Bit wurde nicht gelesen -> Übertragung fehlerhaft
+    }
   }
   return true;
 }

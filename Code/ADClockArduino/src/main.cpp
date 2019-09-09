@@ -47,6 +47,19 @@ void rotateUntilTomorrow()
   }
 }
 
+void testDataTransferSpeed()
+{
+  long startTime = millis();
+  out.sendData(0x03); // Command Speedtest
+  for (int i = 0; i < 100.000; i++)
+  {
+    out.sendData(0x42);
+  }
+  long end = millis();
+  Serial.println("100.000 Bytes took " + String(end - startTime) + "ms to send.");
+  delay(1000);
+}
+
 void setup()
 {
   Serial.begin(9600);
@@ -63,4 +76,6 @@ void loop()
   com.checkForData();
   motor1.try_step();
   motor2.try_step();
+
+  // testDataTransferSpeed();
 }

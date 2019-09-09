@@ -17,6 +17,8 @@ void Calibration::start_calibration()
 
 bool Calibration::calibrate()
 {
+  return true;
+
   if (this->calibrated)
     return true;
 
