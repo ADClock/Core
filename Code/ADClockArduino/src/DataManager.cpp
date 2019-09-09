@@ -41,6 +41,10 @@ void DataManager::reciveData()
     {
       pipeIncommingData();
     }
+    else
+    {
+      Serial.println("no arduino listening");
+    }
     break;
 
   case 0x03: // Speedtest
