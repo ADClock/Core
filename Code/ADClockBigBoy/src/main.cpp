@@ -43,7 +43,7 @@ void setTestImage()
         break;
     case 1:
         // Stundenzeiger auf 90 Grad, Minutenzeiger auf 135 - aber mit geringerer Geschwindigkeit
-        matrix.setNextPositionFor(0, 0, CLOCKS_X - 1, CLOCKS_Y - 1, 90, 135);
+        matrix.setNextPositionFor(0, 0, 0, 0, 90, 135);
         matrix.setMinuteSpeed(100);
         break;
 

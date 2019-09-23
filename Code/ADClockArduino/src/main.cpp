@@ -10,10 +10,10 @@
 #define MOTOR_1_PIN_3 12
 #define MOTOR_1_PIN_4 13
 
-#define MOTOR_2_PIN_1 6
-#define MOTOR_2_PIN_2 7
-#define MOTOR_2_PIN_3 8
-#define MOTOR_2_PIN_4 9
+#define MOTOR_2_PIN_1 9
+#define MOTOR_2_PIN_2 8
+#define MOTOR_2_PIN_3 7
+#define MOTOR_2_PIN_4 6
 
 Motor motor1(MOTOR_1_PIN_1, MOTOR_1_PIN_2, MOTOR_1_PIN_3, MOTOR_1_PIN_4);
 Motor motor2(MOTOR_2_PIN_1, MOTOR_2_PIN_2, MOTOR_2_PIN_3, MOTOR_2_PIN_4);
