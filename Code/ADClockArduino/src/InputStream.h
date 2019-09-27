@@ -4,6 +4,7 @@
 #define _INPUTSTREAM_H_
 
 #include "Arduino.h"
+#include "Config.h"
 #include <FastGPIO.h>
 
 class InputStream

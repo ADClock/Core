@@ -1,8 +1,11 @@
 
 #ifndef _OUTPUTSTREAM_H_
 #define _OUTPUTSTREAM_H_
+
 #include "Arduino.h"
+#include "Config.h"
 #include "FastGPIO.h"
+
 class OutputStream
 {
 public:

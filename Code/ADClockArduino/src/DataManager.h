@@ -4,20 +4,17 @@
 #include "Arduino.h"
 #include "InputStream.h"
 #include "OutputStream.h"
-#include "Motor.h"
-#include "Calibration.h"
+#include "MotorManager.h"
 
 class DataManager
 {
 public:
-  DataManager(InputStream &in, OutputStream &out, Motor &motor1, Motor &motor2, Calibration &calibration1, Calibration &calibration2);
+  DataManager(InputStream &in, OutputStream &out, MotorManager &moma);
 
   // Delayed um entsprechende ms und prüft ob Daten anliegen
   void delayAndCheck(size_t ms);
 
   void checkForData();
-
-  void calibrate();
 
 private:
   // Liest die Daten ein. Anhand des ersten Bits wird entschieden was gemacht werden soll.
@@ -29,11 +26,10 @@ private:
   // Versendet alle folgenden Daten an den nächsten Controller
   void pipeIncommingData();
 
+  DataStruct deserialze(uint8_t stream[4]);
+
   InputStream &in;
   OutputStream &out;
-  Motor &motor1;
-  Motor &motor2;
-  Calibration &calibration1;
-  Calibration &calibration2;
+  MotorManager &moma;
 };
 #endif

@@ -1,4 +1,5 @@
 #include "Arduino.h"
+#include "Config.h"
 
 #ifndef _MOTOR_H_
 #define _MOTOR_H_
