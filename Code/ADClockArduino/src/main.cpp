@@ -1,3 +1,9 @@
+
+// Kalibierung überspringen, wenn z.B. kein Magnet verbaut ist
+#define SKIPCALIBRATION
+// Debug Nachrichten +ber Serial senden?
+#define DEBUG
+
 #include <Arduino.h>
 #include "Calibration.h"
 #include "DataManager.h"

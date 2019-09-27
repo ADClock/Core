@@ -99,7 +99,7 @@ void Motor::stepForward()
 
 void Motor::stepBackward()
 {
-  if (this->current_pos = 0)
+  if (this->current_pos == 0)
   {
     this->current_pos = MAX_STEPS;
   }
@@ -142,7 +142,9 @@ void Motor::write_step()
 
 void Motor::step()
 {
-  // Serial.println("Stepping.. Direction " + String(direction) + " CurrentPos " + String(current_pos) + " heading to " + String(target_pos));
+#ifdef DEBUG
+  Serial.println("Stepping.. Direction " + String(direction) + " CurrentPos " + String(current_pos) + " heading to " + String(target_pos));
+#endif
   if (direction)
   {
     stepForward();

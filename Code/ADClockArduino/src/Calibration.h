@@ -6,6 +6,15 @@
 
 #define MIN_STEPS_OUTSIDE_FIELD 20
 
+enum CalibrationState
+{
+  LEAVEMAGNET,
+  FINDMAGNET,
+  INAPPEAL,
+  CENTERING,
+  CALIBRATED
+};
+
 class Calibration
 {
 public:
@@ -20,12 +29,8 @@ private:
   Motor motor;
   size_t hall_pin;
 
-  bool calibrated;         // Ist der Motor kalibriert?
-  bool field_read;         // Wurde das gesamte Magnetfeld durchquert?
-  bool should_go_outside;  // Ist der Idiot schon im Magnetfeld und will trotzdem kalibrieren?
-  bool was_in_field;       // War der Motor nun bereits mindestens einmal im Feld?
-  size_t ouside_steps;     // Anzahl der Schritte außerhalb des Magnetfelds
-  size_t calibrated_steps; // Anzahl der Schritte, die für das Durchqueren des Feldes benötigt wird.
+  CalibrationState state;
+  size_t steps; // Anzahl der Schritte. Wird je nach State anders verwendet.
 };
 
 #endif

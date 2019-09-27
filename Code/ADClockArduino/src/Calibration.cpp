@@ -7,78 +7,91 @@ Calibration::Calibration(Motor &m, size_t hall_pin) : motor(m), hall_pin(hall_pi
 
 void Calibration::start_calibration()
 {
-  this->calibrated = false;
-  this->field_read = false;
-  this->should_go_outside = false;
-  this->was_in_field = false;
-  this->ouside_steps = 0;
-  this->calibrated_steps = 0;
+  this->steps = 0;
+  this->state = FINDMAGNET;
 }
 
+// Funktionsweise der Kalibierung:
+// 0. Der Motor muss das Magnetfeld finden (FINDMAGNET) und zählt die Steps
+// 1. Der Motor muss sich mindestens MIN_STEPS_OUTSIDE_FIELD Steps außerhalb des Magnetfelds drehen, damit die initalisierung richtig funktioniert. (LEAVEMAGNET)
+// 2. Der Motor muss das Magnetfeld finden (FINDMAGNET) und zählt die Steps
+// 3. Der Motor durchwandert das Magnetfeld (INAPPEAL) und zählt die Steps
+// 4. Der Motor verlässt das Magnetfeld nimmt die Stepps von INAPPEAL/2 und läuft diese zurück (CENTERING)
+// 5. Der Motor ist kalibiert (CALIBRATED)
 bool Calibration::calibrate()
 {
-  // return true;
 
-  if (this->calibrated)
+#ifdef SKIPCALIBRATION
+#ifdef DEBUG
+  Serial.println("Die Kalibierung wurde aufgrund von 'SKIPCALIBRATION' übersprungen.");
+#endif
+  return true;
+#endif
+
+  if (this->state == CALIBRATED)
     return true;
 
   bool in_field = isInField();
 
-  // Schon im Feld, aber weniger als 20 Schritte draußen unterwegs?
-  if (in_field && this->ouside_steps <= MIN_STEPS_OUTSIDE_FIELD)
+  switch (this->state)
   {
-    this->should_go_outside = true;
-    this->ouside_steps = 0;
-  }
+  case FINDMAGNET:
+    if (in_field && this->steps <= MIN_STEPS_OUTSIDE_FIELD)
+    {
+      this->steps = MIN_STEPS_OUTSIDE_FIELD + 1;
+      this->state = LEAVEMAGNET;
+    }
+    else if (in_field && this->steps > MIN_STEPS_OUTSIDE_FIELD)
+    {
+      this->steps = 0;
+      this->state = INAPPEAL;
+    }
+    else
+    {
+      this->motor.stepForward();
+      this->steps++;
+    }
+    break;
 
-  // Motor rückwärts drehen, damit er mindestens einmal draußen war
-  if (this->should_go_outside && this->ouside_steps < MIN_STEPS_OUTSIDE_FIELD)
-  {
-    this->motor.stepBackward();
-    this->ouside_steps++;
-    return false;
-  }
+  case LEAVEMAGNET:
+    if (this->steps == 0)
+    {
+      this->state = FINDMAGNET;
+    }
+    else
+    {
+      this->motor.stepBackward();
+      this->steps--;
+    }
+    break;
 
-  // Motor befindet sich im Magnetfeld & das Feld wurde bisher nicht vollständig gelesen
-  if (in_field && !this->field_read)
-  {
-    this->motor.stepForward();
-    this->was_in_field = true;
-    this->calibrated_steps++;
-    return false;
-  }
+  case INAPPEAL:
+    if (!in_field)
+    {
+      this->state = CENTERING;
+      this->steps = this->steps / 2;
+    }
+    else
+    {
+      this->motor.stepForward();
+      this->steps++;
+    }
+    break;
 
-  // Das Feld wurde wieder verlassen, nachdem es komplett durchlaufen wurde
-  if (!in_field && this->was_in_field && !this->field_read)
-  {
-    this->field_read = true;
-    this->calibrated_steps = this->calibrated_steps / 2;
-    Serial.println("Steps needed backward " + String(this->calibrated_steps));
-  }
+  case CENTERING:
+    if (this->steps == 0)
+    {
+      this->state = CALIBRATED;
+    }
+    else
+    {
+      this->steps--;
+      this->motor.stepBackward();
+    }
+    break;
 
-  // Wir waren noch nicht im Feld & sind es auch nicht -> Solange vorwärts laufen bis es gefunden ist.
-  if (!in_field && !this->field_read)
-  {
-    this->motor.stepForward();
-    this->ouside_steps++;
-    return false;
-  }
-
-  // Wir waren nun im Feld & zentrieren noch den Zeiger
-  if (this->calibrated_steps > 0 && this->field_read)
-  {
-    Serial.println("going backwards");
-    this->motor.stepBackward();
-    this->calibrated_steps--;
-    return false;
-  }
-
-  // Wir waren im Feld, wir haben das komplette Feld gelesen und die Steps zur Kalibrierung sind vollende -> Wir sind done!
-  if (this->field_read && this->calibrated_steps == 0)
-  {
-    Serial.println("done");
-    this->calibrated = true;
-    return true;
+  default:
+    break;
   }
 
   return false;
