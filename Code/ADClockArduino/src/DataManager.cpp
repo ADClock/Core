@@ -107,5 +107,8 @@ DataStruct DataManager::deserialze(uint8_t *stream)
   data.waitSteps = ((stream[1] & 0x0F) << 8) + stream[2];
   data.delay = stream[3] & 0xFE;
   data.direction = stream[3] & 0x01;
+#ifdef DEBUG
+  Serial.println("DataManager >> Serialisierung: Pos = " + String(data.position) + " waitSteps = " + String(data.waitSteps) + " delay = " + String(data.delay) + " direction = " + String(data.direction));
+#endif
   return data;
 }
