@@ -35,4 +35,8 @@ void MotorManager::setMotorData(DataStruct data[2])
   motor2.set_step_delay(data[1].delay);
   motor2.set_wait_steps(data[1].waitSteps);
   motor2.set_direction(data[1].direction);
+
+#ifdef DEBUG
+  Serial.println("MotorManager >> Motorendaten neu gesetzt.");
+#endif
 }
