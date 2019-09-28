@@ -93,6 +93,10 @@ void DataManager::readMyClockImage()
     input[i] = in.readData();
   }
 
+#ifdef DEBUG
+  Serial.println("DataManager >> Reading bits for my image done.");
+#endif
+
   DataStruct motordata[2];
   motordata[0] = deserialze(&input[0]);
   motordata[1] = deserialze(&input[4]);
