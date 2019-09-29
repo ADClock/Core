@@ -42,17 +42,7 @@ void DataManager::reciveData()
     break;
 
   case 0x02: // Image
-    readMyClockImage();
-    if (out.sendData(command))
-    {
-      pipeIncommingData();
-    }
-    else
-    {
-#ifdef DEBUG
-      Serial.println("Com >> no arduino listening");
-#endif
-    }
+    processImage();
 #ifdef DEBUG
     Serial.println("Com >> Image command recived");
 #endif
@@ -84,12 +74,14 @@ void DataManager::pipeIncommingData()
       break; // Empfänger hat nicht mehr gelesen. & Tschüss
     // Auch hier wieder, zuerst wird gelesen dann gesendet. Durch diesen zeitlichen Versatz liegen die nöchsten Daten garantiert wieder an.
   }
-  Serial.println("Pipe complete");
+#ifdef DEBUG
+  Serial.println("Com >> Pipe complete");
+#endif
 }
 
-void DataManager::readMyClockImage()
+void DataManager::processImage()
 {
-  uint8_t input[8];
+  static uint8_t input[8];
   // 8 Byte lesen (4 je Motor)
   // -- Position  (16 Bit)
   // -- Delay     (8 Bit)
@@ -107,8 +99,20 @@ void DataManager::readMyClockImage()
     input[i] = in.readData();
   }
 
+  // Piping data
+  if (out.sendData(0x02))
+  {
+    pipeIncommingData();
+  }
+  else
+  {
 #ifdef DEBUG
-  // Serial.println("DataManager >> Reading bits for my image done.");
+    Serial.println("Com >> no arduino listening");
+#endif
+  }
+
+#ifdef DEBUG
+  // Serial.println("DataManager >> Loading new image..");
 #endif
 
   DataStruct motordata[2];

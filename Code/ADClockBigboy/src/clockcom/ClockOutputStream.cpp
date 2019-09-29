@@ -1,11 +1,11 @@
 #include "ClockOutputStream.h"
 
-ClockOutputStream::ClockOutputStream() : pin_data(DigitalOut(OUT_DATA)), pin_clock(DigitalOut(OUT_CLOCK)), pin_response(DigitalIn(OUT_RESPONSE))
+ClockOutputStream::ClockOutputStream()
 {
   pin_clock = 0;
 }
 
-bool ClockOutputStream::sendByte(const uint8_t data)
+bool ClockOutputStream::sendByte(const uint8_t &data)
 {
   uint8_t i;
 

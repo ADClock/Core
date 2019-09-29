@@ -16,13 +16,15 @@ public:
 
   bool sendPlan(ClockWall &wall);
 
+#ifdef DEBUG
+  void performSpeedtest();
+#endif
+
 private:
-  bool sendCommand(const u_int8_t command);
+  bool sendCommand(const u_int8_t &command);
 
-  size_t getClockX(size_t position);
-  size_t getClockY(size_t position);
-
-  u_int8_t *serialize(Clock &clock);
+  size_t getClockX(size_t &position);
+  size_t getClockY(size_t &position);
 
   ClockOutputStream &out;
 

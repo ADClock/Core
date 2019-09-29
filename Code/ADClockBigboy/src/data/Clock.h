@@ -11,8 +11,6 @@ class Clock
 public:
   void init();
 
-  u_int8_t *serialize();
-
   MbedJSONValue asJson();
   void update(MbedJSONValue &json);
   void update(Clock &clock);

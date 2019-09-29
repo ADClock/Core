@@ -38,24 +38,43 @@ void rotateUntilTomorrow()
 
 void testDataTransferSpeed()
 {
-  long startTime = millis();
+  unsigned long startTime = micros();
   out.sendData(0x03); // Command Speedtest
   for (int i = 0; i < 100.000; i++)
   {
     out.sendData(0x42);
   }
-  long end = millis();
-  Serial.println("100.000 Bytes took " + String(end - startTime) + "ms to send.");
+  unsigned long end = micros();
+  Serial.println("100.000 Bytes took " + String(end - startTime) + " µs to send.");
   delay(1000);
+}
+
+void testPinSpeed()
+{
+  unsigned long startTime = micros();
+  for (int i = 0; i < 100.000; i++)
+  {
+    FastGPIO::Pin<4>::setOutputValue(1);
+    FastGPIO::Pin<4>::setOutputValue(0);
+  }
+  unsigned long end = micros();
+  Serial.println("100.000 x Pin on off took " + String(end - startTime) + " µs.");
 }
 
 void setup()
 {
-  Serial.begin(9600);
 
-#ifdef DEBUG
+  // #ifdef DEBUG
+  Serial.begin(9600);
+  // #endif
+
+  // #ifdef DEBUG
   Serial.print("Setup...");
-#endif
+
+  testPinSpeed();
+
+  testDataTransferSpeed();
+  // #endif
 
   moma.calibrate();
   // rotateUntilTomorrow();

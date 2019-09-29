@@ -20,8 +20,8 @@ private:
   // Liest die Daten ein. Anhand des ersten Bits wird entschieden was gemacht werden soll.
   void reciveData();
 
-  // List das eigene Clockimage ein
-  void readMyClockImage();
+  // Verarbeitet den Image Command
+  void processImage();
 
   // Versendet alle folgenden Daten an den nächsten Controller
   void pipeIncommingData();

@@ -34,13 +34,13 @@ void Manager::executePlan()
     // Motordaten entsprechend aktualisieren (z.B. waitSteps übernehmen)
     this->current.update(this->aiming);
 #ifdef DEBUG
-    Debug::println("Manager >> Sending done. Executing plan...");
+    // Debug::println("Manager >> Sending done. Executing plan...");
 #endif
   }
   else
   {
 #ifdef DEBUG
-    Debug::println("Manager >> Failed to send plan.");
+    // Debug::println("Manager >> Failed to send plan.");
 #endif
   }
 }

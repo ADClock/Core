@@ -1,27 +1,5 @@
 #include "Clock.h"
 
-u_int8_t *Clock::serialize()
-{
-  static u_int8_t image[8];
-  u_int8_t *hour = this->hour.serialize();
-
-  for (int i = 0; i < 4; i++)
-  {
-    // Stepper 1: Hour
-    image[i] = hour[i];
-  }
-
-  u_int8_t *minute = this->minute.serialize();
-
-  for (int i = 0; i < 4; i++)
-  {
-    // Stepper 2: Minute
-    image[4 + i] = minute[i];
-  }
-
-  return image;
-}
-
 void Clock::init()
 {
   this->hour.init();

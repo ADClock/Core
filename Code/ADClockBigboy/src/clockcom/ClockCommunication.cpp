@@ -4,7 +4,7 @@ Timer timer;
 ClockCommunication::ClockCommunication(ClockOutputStream &out) : out(out)
 {
   timer.start();
-  this->lastSend = timer.read_ms() + DELAY_BETWEEN_COMMANDS * 3;
+  this->lastSend = timer.read_ms();
 }
 
 bool ClockCommunication::sendInitCommand()
@@ -12,15 +12,15 @@ bool ClockCommunication::sendInitCommand()
 #ifdef DEBUG
   Debug::println("ClockCom >> Sending init command");
 #endif
-  return sendCommand(0x01);
+  return sendCommand(COMMAND_INIT);
 }
 
 bool ClockCommunication::sendPlan(ClockWall &plan)
 {
 #ifdef DEBUG
-  Debug::println("ClockCom >> Sending plan...");
+  // Debug::println("ClockCom >> Sending plan...");
 #endif
-  if (!sendCommand(0x02))
+  if (!sendCommand(COMMAND_IMAGE))
     return false;
 
   for (size_t i = 0; i < WALL_SIZE_Y * WALL_SIZE_X; i++)
@@ -31,17 +31,18 @@ bool ClockCommunication::sendPlan(ClockWall &plan)
       return true;
     }
 #endif
+    auto &clock = plan.getClock(getClockX(i), getClockY(i));
+    if (!this->out.sendByteArray(clock.hour.serialize(), 4))
+      return false;
 
-    Clock &clock = plan.getClock(getClockX(i), getClockY(i));
-    u_int8_t *data = serialize(clock);
-    if (!this->out.sendByteArray(data, 8))
+    if (!this->out.sendByteArray(clock.minute.serialize(), 4))
       return false;
   }
 
   return true;
 }
 
-bool ClockCommunication::sendCommand(const uint8_t command)
+bool ClockCommunication::sendCommand(const uint8_t &command)
 {
   // Delay zwischen einzelnen Commands einhalten
   while (timer.read_ms() < this->lastSend + DELAY_BETWEEN_COMMANDS)
@@ -56,12 +57,12 @@ bool ClockCommunication::sendCommand(const uint8_t command)
 }
 
 // Liefert zu der Position in der Verkabelungskette die richtige Position in der Matrix
-size_t ClockCommunication::getClockX(size_t pos)
+size_t ClockCommunication::getClockX(size_t &pos)
 {
   return pos / WALL_SIZE_Y;
 }
 
-size_t ClockCommunication::getClockY(size_t pos)
+size_t ClockCommunication::getClockY(size_t &pos)
 {
   if ((pos / WALL_SIZE_Y) % 2 == 0)
   {
@@ -73,7 +74,22 @@ size_t ClockCommunication::getClockY(size_t pos)
   }
 }
 
-u_int8_t *ClockCommunication::serialize(Clock &clock)
+#ifdef DEBUG
+void ClockCommunication::performSpeedtest()
 {
-  return clock.serialize();
+  size_t dataLength = 100000;
+  int start = 0;
+  int end = 0;
+
+  u_int8_t data[dataLength];
+
+  for (int i = 0; i < 3; i++)
+  {
+    start = timer.read_us();
+    sendCommand(0x03);
+    out.sendByteArray(data, dataLength);
+    end = timer.read_us();
+    Debug::printf("ClockCom >> Speedtest finished in %d µs\n", (int)(end - start));
+  }
 }
+#endif
