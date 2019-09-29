@@ -26,7 +26,7 @@ private:
   bool isInField();
   bool centerInField();
 
-  Motor motor;
+  Motor &motor;
   size_t hall_pin;
 
   CalibrationState state;

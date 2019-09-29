@@ -35,13 +35,8 @@ void quickWrite(uint8_t pin, bool state)
   }
 }
 
-Motor::Motor(size_t pin1, size_t pin2, size_t pin3, size_t pin4)
+Motor::Motor(uint8_t _pin1, uint8_t _pin2, uint8_t _pin3, uint8_t _pin4) : pin1(_pin1), pin2(_pin2), pin3(_pin3), pin4(_pin4)
 {
-  this->pin1 = pin1;
-  this->pin2 = pin2;
-  this->pin3 = pin3;
-  this->pin4 = pin4;
-  this->step_delay = 4;
   this->coil_state = 1;
 
   pinMode(pin1, OUTPUT);
@@ -51,15 +46,16 @@ Motor::Motor(size_t pin1, size_t pin2, size_t pin3, size_t pin4)
 
   this->allPinsOff();
 
-  this->step_delay = MIN_STEP_DELAY;
-  this->direction = true; // Vorwärts drehen?
+  this->reset();
 }
 
 void Motor::set_target_pos(size_t pos)
 {
   if (pos < 0 || pos > MAX_STEPS)
   {
+#ifdef DEBUG
     Serial.println("Wrong Target Pos.");
+#endif
     return;
   }
   this->target_pos = pos;
@@ -159,7 +155,7 @@ void Motor::try_step()
 {
   if (this->current_pos != this->target_pos)
   {
-    auto time_since_step = micros() - this->last_step;
+    long time_since_step = micros() - this->last_step;
     if (time_since_step > this->step_delay || time_since_step < 0)
     {
       this->last_step = micros();
@@ -179,9 +175,13 @@ void Motor::try_step()
   }
 }
 
-void Motor::reset_position()
+void Motor::reset()
 {
   this->current_pos = 0;
+  this->direction = true;
+  this->last_step = 0;
+  this->step_delay = MIN_STEP_DELAY;
+  this->target_pos = 0;
 }
 
 void Motor::allPinsOff()

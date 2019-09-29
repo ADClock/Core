@@ -6,6 +6,12 @@
 // Debug Nachrichten +ber Serial senden?
 // #define DEBUG
 
+// Motor
+#define MAX_STEPS 1705
+// in micros
+#define MIN_STEP_DELAY 4000
+
+// Pins
 #define HALL_DATA_PIN_1 A0
 #define HALL_DATA_PIN_2 A1
 

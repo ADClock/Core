@@ -1,7 +1,9 @@
-#ifndef _OUTPUTSTREAM_H_
-#define _OUTPUTSTREAM_H_
+#ifndef _OutputStream_H_
+#define _OutputStream_H_
 #include "mbed.h"
-#include "Debug.h"
+#include "../Debug.h"
+#include "../Config.h"
+
 class OutputStream
 {
 public:

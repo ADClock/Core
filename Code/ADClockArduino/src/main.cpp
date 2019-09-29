@@ -54,12 +54,15 @@ void setup()
   Serial.begin(9600);
 
 #ifdef DEBUG
-  Serial.println("Setup done");
+  Serial.print("Setup...");
 #endif
 
   moma.calibrate();
-
   // rotateUntilTomorrow();
+
+#ifdef DEBUG
+  Serial.println("Done!");
+#endif
 }
 
 void loop()

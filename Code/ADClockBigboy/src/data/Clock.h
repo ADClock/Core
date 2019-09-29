@@ -11,19 +11,13 @@ class Clock
 public:
   void init();
 
-  const Hand &getMinuteHand();
-  const Hand &getHourHand();
-
-  void move();
-
-  bool hasPendingMove();
-
-  long getCalculateMoveTime();
-
-  u_int8_t *nextStepAsImage();
+  u_int8_t *serialize();
 
   MbedJSONValue asJson();
   void update(MbedJSONValue &json);
+  void update(Clock &clock);
+
+  bool equals(Clock &clock);
 
   Hand minute;
   Hand hour;

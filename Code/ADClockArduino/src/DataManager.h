@@ -29,7 +29,7 @@ private:
   DataStruct deserialze(uint8_t stream[4]);
 
   InputStream &in;
-  OutputStream &out;
+  const OutputStream &out;
   MotorManager &moma;
 };
 #endif

@@ -11,7 +11,7 @@ OutputStream::OutputStream()
   digitalWrite(OUT_CLOCK, LOW);
 }
 
-bool OutputStream::sendData(byte data)
+bool OutputStream::sendData(byte data) const
 {
   uint8_t i;
 
@@ -25,7 +25,7 @@ bool OutputStream::sendData(byte data)
   return true;
 }
 
-bool OutputStream::sendDataArray(byte arr[], size_t length)
+bool OutputStream::sendDataArray(byte arr[], size_t length) const
 {
   for (size_t i = 0; i < length; i++)
   {
@@ -35,13 +35,13 @@ bool OutputStream::sendDataArray(byte arr[], size_t length)
   return true;
 }
 
-void OutputStream::sendDataBit(bool bit)
+void OutputStream::sendDataBit(bool bit) const
 {
   FastGPIO::Pin<OUT_DATA>::setOutputValue(bit);
   FastGPIO::Pin<OUT_CLOCK>::setOutputHigh();
 }
 
-bool OutputStream::checkDataReadingComplete()
+bool OutputStream::checkDataReadingComplete() const
 {
   // Warten das Response aktiviert wird. (Der Empfänger das Bit gelesen hat)
   size_t delayTimer = 0;
@@ -51,7 +51,6 @@ bool OutputStream::checkDataReadingComplete()
     if (delayTimer > 10000) // Innerhalb 100000 µs = 100ms keine Response - das kann aber nicht ganz stimmen
     {
       FastGPIO::Pin<OUT_CLOCK>::setOutputValueLow();
-      // Serial.println("Keine Response erhalten."); // TODO Eigentlich muss der raus. Der macht alles langsam.
       return false; // Langsam hätte die Response an sein müssen -> Der Empfänger ist mir zu langsam, mit dem Rede ich nicht mehr. Nagut.. Vielleicht gleich nochmal.
     }
     delayTimer++;
@@ -66,7 +65,9 @@ bool OutputStream::checkDataReadingComplete()
   {
     if (delayTimer > 100) // Innerhalb 100µs = 0,1ms keine Response
     {
+#ifdef DEBUG
       Serial.println("Response immer noch aktiv.");
+#endif
       return false; // Langsam hätte die Response wieder aus sein müssen -> Der Empfänger ist mir zu langsam, mit dem Rede ich nicht mehr. Nagut.. Vielleicht gleich nochmal.
     }
     delayTimer++;

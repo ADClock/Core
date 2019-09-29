@@ -24,7 +24,10 @@ byte InputStream::readData()
   {
     if (!hasData() && !waitForData())
     { // Falls Bit unvollständig gesendet
-      Serial.println("readData: Byte unvollständig.");
+
+#ifdef DEBUG
+      Serial.println("readData: Byte unvollständig. Fehler bei Bit " + String(i));
+#endif
       return 0x00;
     }
 
@@ -34,7 +37,9 @@ byte InputStream::readData()
     // Mitteilen, dass Bit gelesen wurde
     if (!sendDataReadingComplete())
     {
-      Serial.println("readData: Clock nicht zurückgesetzt.");
+#ifdef DEBUG
+      Serial.println("readData: Clock nicht zurückgesetzt. Fehler bei Bit " + String(i));
+#endif
       // Der Sender hat die Clock nicht ausgeschaltet.
       return 0x00;
     }
@@ -56,11 +61,13 @@ bool InputStream::sendDataReadingComplete()
   size_t delayTimer = 0;
   while (hasData())
   {
-    if (delayTimer > 10000) // Innerhalb 10000µs = 10ms keine Response
+    if (delayTimer > 60000) // Innerhalb 10000µs = 10ms keine Response
     {
       // digitalWrite(responsePin, LOW);
       FastGPIO::Pin<IN_RESPONSE>::setOutputValueLow();
+#ifdef DEBUG
       Serial.println("sendDataReadingComplete: Clock immer noch an.");
+#endif
       return false; // Langsam hätte die Clock aus sein müssen -> Der Sendet hat die Geduld verloren und nicht gelaubt, dass ich den Bit noch lese.
     }
     delayTimer++;
@@ -78,9 +85,11 @@ bool InputStream::waitForData()
   size_t delayTimer = 0;
   while (!hasData())
   {
-    if (delayTimer > 10000) // Innerhalb 10000µs = 10ms keine Response
+    if (delayTimer > 60000) // Innerhalb 10000µs = 10ms keine Response
     {
+#ifdef DEBUG
       Serial.println("waitForData: Keine Daten gekommen.");
+#endif
       return false; // Langsam hätte die Clock aus sein müssen -> Da kommt nichts mehr...
     }
     delayTimer++;

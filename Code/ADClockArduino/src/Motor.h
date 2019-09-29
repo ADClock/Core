@@ -4,13 +4,10 @@
 #ifndef _MOTOR_H_
 #define _MOTOR_H_
 
-#define MAX_STEPS 1705
-#define MIN_STEP_DELAY 4000
-
 class Motor
 {
 public:
-  Motor(size_t pin1, size_t pin2, size_t pin3, size_t pin4);
+  Motor(uint8_t pin1, uint8_t pin2, uint8_t pin3, uint8_t pin4);
   void step();
   void stepForward();
   void stepBackward();
@@ -19,16 +16,16 @@ public:
   void set_wait_steps(size_t waitSteps);
   void set_direction(bool direction);
   void try_step();
-  void reset_position();
+  void reset();
 
 private:
   void write_step();
   void allPinsOff();
 
-  size_t pin1;
-  size_t pin2;
-  size_t pin3;
-  size_t pin4;
+  const uint8_t pin1;
+  const uint8_t pin2;
+  const uint8_t pin3;
+  const uint8_t pin4;
 
   size_t current_pos;
   size_t target_pos;

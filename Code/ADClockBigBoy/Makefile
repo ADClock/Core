@@ -47,12 +47,16 @@ PROJECT := ADClockBigBoy
 # Objects and Paths
 
 
-OBJECTS += src/OutputStream.o
-OBJECTS += src/Clock.o
-OBJECTS += src/DataSender.o
+OBJECTS += src/api/OutputStream.o
+OBJECTS += src/api/ApiCommunication.o
+OBJECTS += src/data/Clock.o
+OBJECTS += src/data/Hand.o
+OBJECTS += src/data/ClockWall.o
+OBJECTS += src/data/ClockPositions.o
+OBJECTS += src/clockcom/ClockCommunication.o
+OBJECTS += src/clockcom/ClockOutputStream.o
 OBJECTS += src/MbedJSONValue.o
-OBJECTS += src/Hand.o
-OBJECTS += src/ClockMatrix.o
+OBJECTS += src/Manager.o
 OBJECTS += src/main.o
 
  SYS_OBJECTS += mbed/TARGET_NUCLEO_F446ZE/TOOLCHAIN_GCC_ARM/PeripheralPins.o

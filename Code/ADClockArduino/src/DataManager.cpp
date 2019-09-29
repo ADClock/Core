@@ -1,6 +1,6 @@
 #include "DataManager.h"
 
-DataManager::DataManager(InputStream &in, OutputStream &out, MotorManager &motormanager) : in(in), out(out), moma(moma)
+DataManager::DataManager(InputStream &in, OutputStream &out, MotorManager &moma) : in(in), out(out), moma(moma)
 {
 }
 
@@ -20,18 +20,24 @@ void DataManager::checkForData()
   if (in.hasData())
   {
     reciveData();
-    // Serial.println("Data reading complete");
   }
 }
 
 void DataManager::reciveData()
 {
-  // Serial.println("Recieving data");
   byte command = in.readData();
   switch (command)
   {
   case 0x01: // Init
-    out.sendData(command);
+    if (!out.sendData(command))
+    {
+#ifdef DEBUG
+      Serial.println("Com >> Init Command wurde nicht weiter geschickt.");
+#endif
+    }
+#ifdef DEBUG
+    Serial.println("Com >> Init command recived");
+#endif
     this->moma.calibrate();
     break;
 
@@ -43,8 +49,13 @@ void DataManager::reciveData()
     }
     else
     {
-      Serial.println("no arduino listening");
+#ifdef DEBUG
+      Serial.println("Com >> no arduino listening");
+#endif
     }
+#ifdef DEBUG
+    Serial.println("Com >> Image command recived");
+#endif
     break;
 
   case 0x03: // Speedtest
@@ -55,10 +66,11 @@ void DataManager::reciveData()
     break;
 
   default:
-    Serial.println("Unbekannter Command: " + String(command));
+#ifdef DEBUG
+    Serial.println("Com >> unknown command: " + String(command));
+#endif
     break;
   }
-  // Serial.println("Recieving data complete");
 }
 
 void DataManager::pipeIncommingData()
@@ -66,13 +78,13 @@ void DataManager::pipeIncommingData()
   // Kleinen Trick angewandt: Durch das Senden des Commands ist beim Pipe bereits genug Zeit vergangen.
   // Eigentlich müsste man zu Beginn ggf. noch auf die Daten warten.
 
-  while (in.hasData())
+  while (in.waitForData())
   {
     if (!out.sendData(in.readData()))
       break; // Empfänger hat nicht mehr gelesen. & Tschüss
     // Auch hier wieder, zuerst wird gelesen dann gesendet. Durch diesen zeitlichen Versatz liegen die nöchsten Daten garantiert wieder an.
   }
-  // Serial.println("Pipe complete");
+  Serial.println("Pipe complete");
 }
 
 void DataManager::readMyClockImage()
@@ -87,14 +99,16 @@ void DataManager::readMyClockImage()
   {
     if (!in.waitForData())
     {
-      Serial.println("Clock image unvollständig.");
+#ifdef DEBUG
+      Serial.println("Com >> Clock image unvollständig.");
+#endif
       return; // Keine Daten? Blöd gelaufen
     }
     input[i] = in.readData();
   }
 
 #ifdef DEBUG
-  Serial.println("DataManager >> Reading bits for my image done.");
+  // Serial.println("DataManager >> Reading bits for my image done.");
 #endif
 
   DataStruct motordata[2];
@@ -107,12 +121,12 @@ void DataManager::readMyClockImage()
 DataStruct DataManager::deserialze(uint8_t *stream)
 {
   DataStruct data;
-  data.position = ((stream[0] << 4) + ((stream[1] >> 4) & 0x0F));
-  data.waitSteps = ((stream[1] & 0x0F) << 8) + stream[2];
-  data.delay = stream[3] & 0xFE;
-  data.direction = stream[3] & 0x01;
+  data.position = ((stream[0] << 4u) + ((stream[1] >> 4u) & 0x0Fu));
+  data.waitSteps = ((stream[1] & 0x0Fu) << 8u) + stream[2];
+  data.delay = (stream[3] >> 1u);
+  data.direction = stream[3] & 0x01u;
 #ifdef DEBUG
-  Serial.println("DataManager >> Serialisierung: Pos = " + String(data.position) + " waitSteps = " + String(data.waitSteps) + " delay = " + String(data.delay) + " direction = " + String(data.direction));
+  // Serial.println("DataManager >> Serialisierung: Pos = " + String(data.position) + " waitSteps = " + String(data.waitSteps) + " delay = " + String(data.delay) + " direction = " + String(data.direction));
 #endif
   return data;
 }

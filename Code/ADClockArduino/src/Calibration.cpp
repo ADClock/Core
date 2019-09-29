@@ -9,6 +9,9 @@ void Calibration::start_calibration()
 {
   this->steps = 0;
   this->state = FINDMAGNET;
+#ifdef DEBUG
+  Serial.println("Starte Kalibierung");
+#endif
 }
 
 // Funktionsweise der Kalibierung:
@@ -20,7 +23,6 @@ void Calibration::start_calibration()
 // 5. Der Motor ist kalibiert (CALIBRATED)
 bool Calibration::calibrate()
 {
-
 #ifdef SKIPCALIBRATION
 #ifdef DEBUG
   Serial.println("Calibration >> Die Kalibierung wurde aufgrund von 'SKIPCALIBRATION' übersprungen.");
@@ -94,6 +96,7 @@ bool Calibration::calibrate()
     if (this->steps == 0)
     {
       this->state = CALIBRATED;
+      this->motor.reset();
 
 #ifdef DEBUG
       Serial.println("Calibration >> Zeiger zentriert. Kalibierung abgeschlossen");

@@ -1,19 +1,13 @@
 
-#ifndef _DATASENDER_H
-#define _DATASENDER_H
+#ifndef _APICOMM_H_
+#define _APICOMM_H_
 #include "mbed.h"
 #include "OutputStream.h"
 
-#define COMMAND_INIT 0x01
-#define COMMAND_IMAGE 0x02
-
-// TODO Nochmal richtigen Wert einstellen
-#define DELAY_BETWEEN_COMMANDS 50
-
-class DataSender
+class ApiCommunication
 {
 public:
-  DataSender(OutputStream &out);
+  ApiCommunication(OutputStream &out);
 
   // Delayed um entsprechende ms und prüft ob Daten anliegen
   bool sendInitCommand();

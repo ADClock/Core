@@ -17,11 +17,11 @@ class MotorManager
 public:
   MotorManager(Motor &motor1, Motor &motor2, Calibration &calibration1, Calibration &calibration2);
 
-  void calibrate();
+  void calibrate() const;
 
-  void try_step();
+  void try_step() const;
 
-  void setMotorData(DataStruct data[2]);
+  void setMotorData(DataStruct data[2]) const;
 
 private:
   Motor &motor1;

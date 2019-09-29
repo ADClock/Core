@@ -1,108 +1,101 @@
 #include "mbed.h"
-#include "ClockMatrix.h"
+#include "Manager.h"
 #include "Debug.h"
 
 bool running;
 
 Serial Debug::serial(SERIAL_TX, SERIAL_RX, 9600);
 
+Timer btnTimer;
+
 DigitalOut led_moving(LED1);
 DigitalOut led_buttonPressed(LED2);
 DigitalOut led_startMoving(LED3);
 DigitalIn user_button(BUTTON1);
 
+// Kommunikation Uhren
+ClockOutputStream clockout;
+ClockCommunication clockcom(clockout);
+
+// Kommunikation API
 OutputStream out;
-DataSender sender(out);
-ClockMatrix matrix(sender);
+ApiCommunication apicom(out);
+
+// Daten Uhren
+ClockPositions current;
+ClockWall aiming;
+ClockWall planned;
+
+// Manager
+Manager manager(clockcom, apicom, current, aiming, planned);
 
 size_t currentTestImage = 0;
 
 void setup()
 {
-    for (size_t y = 0; y < CLOCKS_Y; y++)
-    {
-        for (size_t x = 0; x < CLOCKS_X; x++)
-        {
-            Debug::print(" " + matrix.getClockPosition(x, y));
-        }
-        Debug::println("");
-    }
+    // Anzeigen, dass nun initalisiert wird
+    led_startMoving = 1;
+    led_buttonPressed = 1;
+    wait_ms(1000);
+    btnTimer.start();
 
     // Initalisierung
-    matrix.initMatrix();
-}
+    manager.init();
+    manager.preventSendingPlan();
 
-void setTestImage()
-{
-    switch (currentTestImage)
-    {
-    case 0:
-        // Initalisierung der Matrix + Beide Zeiger 45 Grad
-        matrix.initMatrix();
-        matrix.setNextPositionFor(0, 0, CLOCKS_X - 1, CLOCKS_Y - 1, 45, 45);
-        break;
-    case 1:
-        // Stundenzeiger auf 90 Grad, Minutenzeiger auf 135 - aber mit geringerer Geschwindigkeit
-        matrix.setNextPositionFor(0, 0, 0, 0, 90, 135);
-        matrix.setMinuteSpeed(100);
-        break;
+    // Wieso reicht das nicht? Plan wird nicht gesendet
+    planned.setMutiplePositions(0, 0, WALL_SIZE_X - 1, WALL_SIZE_Y - 1, 180, 90);
 
-    case 2:
-        // Stundenzeiger vorwärts zu 135 Grad, Minutenzeiger Rückwärts zu 90 Grad
-        matrix.setMinuteSpeed(0);
-        matrix.setMinuteRotation(false);
-        matrix.setNextPositionFor(0, 0, CLOCKS_X - 1, CLOCKS_Y - 1, 135, 90);
-        break;
-    case 3:
-        // Stundenzeiger rückwärts zu 90 Grad, Stundenzeiger vor zu 135 Grad
-        matrix.setHourRotation(false);
-        matrix.setMinuteRotation(true);
-        matrix.setNextPositionFor(0, 0, CLOCKS_X - 1, CLOCKS_Y - 1, 90, 135);
-        break;
-    case 4:
-        // Beide Zeiger zu 180 Grad, dabei sammelt der Stundenzeiger den Minutenzeiger unterwegs ein. (So der Plan)
-        matrix.setHourRotation(true);
-        matrix.setNextPositionFor(0, 0, CLOCKS_X - 1, CLOCKS_Y - 1, 180, 180);
-        matrix.setAnimationStart(90, 90);
-        break;
-    case 5:
-        // Stundenzeiger auf 270 Grad stellen, Minutenzeiger 3/4 rumdrehen zu 90 Grad
-        matrix.setNextPositionFor(0, 0, CLOCKS_X - 1, CLOCKS_Y - 1, 270, 90);
-        break;
-    default:
-        break;
-    }
-
-    currentTestImage++;
-    if (currentTestImage > 5)
-        currentTestImage = 0;
+    led_moving = 1;
+    wait_ms(50);
+    led_moving = 0;
+    led_buttonPressed = 0;
+    led_startMoving = 0;
+    wait_ms(25);
 }
 
 void loop()
 {
+    manager.try_step();
 
     // Status LEDs aktualisieren
-    led_moving = matrix.isMoving();
+    led_moving = manager.hasPendingMoves();
 
-    bool tryMove = user_button.read();
-    led_buttonPressed = tryMove;
-
-    // Test Image setzen, wenn Knopf gedrückt wurde
-    if (tryMove && !matrix.isMoving() && !matrix.hasPendingMove())
+    if (user_button.read())
     {
-        // Setting Test Image
-        setTestImage();
-        Debug::println("Testimage set");
+        auto press_start = btnTimer.read_ms();
+        while (user_button.read())
+        {
+            led_buttonPressed = btnTimer.read_ms() - press_start < 1000;
+        }
+
+        if (btnTimer.read_ms() - press_start < 1000)
+        {
+            auto cclock = planned.getClock(0, 0);
+            auto hourDeg = cclock.hour.getPosition() % 360 + 10;
+            auto minuteDeg = cclock.minute.getPosition() % 360 + 20;
+            planned.setAnimationStart(0, 0);
+            planned.setMutiplePositions(0, 0, WALL_SIZE_X - 1, WALL_SIZE_Y - 1, hourDeg, minuteDeg);
+            manager.allowSendingPlan();
+            Debug::println("Button pressed > short: testimage");
+        }
+        else
+        {
+            manager.init();
+            manager.preventSendingPlan();
+            Debug::println("Button pressed > long: init");
+        }
+
+        led_buttonPressed = 0;
     }
 
-    // Uhren bewegen
-    if (matrix.hasPendingMove())
+    if (manager.hasPendingPlan())
     {
-        if (!matrix.isMoving())
+        if (!manager.hasPendingMoves())
         {
             // long startSending = us_ticker_read();
             led_startMoving = 1;
-            matrix.move();
+            manager.executePlan();
             Debug::println("Moved");
             led_startMoving = 0;
             // long endSending = us_ticker_read();
