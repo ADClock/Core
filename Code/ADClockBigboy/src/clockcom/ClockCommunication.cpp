@@ -1,4 +1,11 @@
 #include "ClockCommunication.h"
+#include "../SpeedCheck.h"
+
+SpeedCheck findClock{">>> find Clock: "};
+SpeedCheck serialize{">>> serialize: "};
+SpeedCheck theplan{">> send plan: "};
+SpeedCheck snddta{">>> send Data: "};
+SpeedCheck sndcmd{">>> send Image Command: "};
 
 Timer timer;
 ClockCommunication::ClockCommunication(ClockOutputStream &out) : out(out)
@@ -17,26 +24,52 @@ bool ClockCommunication::sendInitCommand()
 
 bool ClockCommunication::sendPlan(ClockWall &plan)
 {
+  theplan.start();
 #ifdef DEBUG
   // Debug::println("ClockCom >> Sending plan...");
 #endif
+
+  sndcmd.start();
   if (!sendCommand(COMMAND_IMAGE))
     return false;
+  sndcmd.stop();
 
-  for (size_t i = 0; i < WALL_SIZE_Y * WALL_SIZE_X; i++)
+  for (size_t i = 0; i < WALL_CLOCKS; i++)
   {
 #ifdef SEND_ONLY_CLOCKS
     if (i == SEND_ONLY_CLOCKS)
     {
+      theplan.stop();
       return true;
     }
 #endif
-    auto &clock = plan.getClock(getClockX(i), getClockY(i));
-    if (!this->out.sendByteArray(clock.hour.serialize(), 4))
-      return false;
 
-    if (!this->out.sendByteArray(clock.minute.serialize(), 4))
+    findClock.start();
+    auto &clock = plan.getClock(getClockX(i), getClockY(i));
+    findClock.stop();
+    findClock.pushback();
+
+    serialize.start();
+    auto *hour = clock.hour.serialize();
+    serialize.stop();
+    serialize.pushback();
+
+    snddta.start();
+    if (!this->out.sendSerializedHand(hour))
       return false;
+    snddta.stop();
+    snddta.pushback();
+
+    serialize.start();
+    auto *minute = clock.minute.serialize();
+    serialize.stop();
+    serialize.pushback();
+
+    snddta.start();
+    if (!this->out.sendSerializedHand(minute))
+      return false;
+    snddta.stop();
+    snddta.pushback();
   }
 
   return true;
@@ -45,11 +78,11 @@ bool ClockCommunication::sendPlan(ClockWall &plan)
 bool ClockCommunication::sendCommand(const uint8_t &command)
 {
   // Delay zwischen einzelnen Commands einhalten
-  while (timer.read_ms() < this->lastSend + DELAY_BETWEEN_COMMANDS)
+  while (us_ticker_read() < this->lastSend + DELAY_BETWEEN_COMMANDS && us_ticker_read() > this->lastSend)
   {
     wait_ms(1);
   }
-  this->lastSend = timer.read_ms();
+  this->lastSend = us_ticker_read();
 
   if (!out.sendByte(command))
     return false;
@@ -77,19 +110,34 @@ size_t ClockCommunication::getClockY(size_t &pos)
 #ifdef DEBUG
 void ClockCommunication::performSpeedtest()
 {
-  size_t dataLength = 100000;
-  int start = 0;
-  int end = 0;
-
+  size_t dataLength = 10;
   u_int8_t data[dataLength];
+
+  Debug::serial.printf("sizeof uint32_t %u\n", sizeof(uint32_t));
 
   for (int i = 0; i < 3; i++)
   {
-    start = timer.read_us();
+    wait(2);
     sendCommand(0x03);
+    int start = us_ticker_read();
     out.sendByteArray(data, dataLength);
-    end = timer.read_us();
-    Debug::printf("ClockCom >> Speedtest finished in %d µs\n", (int)(end - start));
+    int end = us_ticker_read();
+    int duration = (end - start);
+    Debug::serial.printf("ClockCom >> Speedtest finished in %d µs\n", duration);
   }
 }
+
+void ClockCommunication::printResult()
+{
+  theplan.printResult();
+
+  sndcmd.printResult();
+
+  findClock.printResult();
+
+  serialize.printResult();
+
+  snddta.printResult();
+}
+
 #endif

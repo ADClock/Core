@@ -6,7 +6,7 @@
 bool running;
 
 // #ifdef DEBUG
-Serial Debug::serial(SERIAL_TX, SERIAL_RX, 9600);
+Serial Debug::serial(SERIAL_TX, SERIAL_RX, 115200);
 // #endif
 
 Timer btnTimer;
@@ -44,19 +44,18 @@ void setup()
 
 #ifdef DEBUG
     // Testing the Speed
-    //clockcom.performSpeedtest();
+    // clockcom.performSpeedtest();
     int start = 0;
     int end = 0;
-    DigitalOut pout(D8);
+    FastIn<D15> pout;
     start = btnTimer.read_us();
-    for (int i = 0; i < 100000; i++)
+    for (int i = 0; i < 1000; i++)
     {
-        pout = 0;
-        pout = 1;
+        pout.read();
     }
     end = btnTimer.read_us();
 
-    Debug::printf("Main >> Speedtest finished in %d µs\n", (int)(end - start));
+    Debug::serial.printf("Main >> 1000 Pin on off took %d µs\n", (int)(end - start));
 
 #endif
 
@@ -123,7 +122,10 @@ void loop()
             manager.executePlan();
             led_sendPlan = 0;
             long endSending = us_ticker_read();
-            Debug::serial.printf("Sending done in %d µs\n", (int)(endSending - startSending));
+            // Debug::serial.printf("Sending done in %d µs\n", (int)(endSending - startSending));
+
+            clockcom.printResult();
+            clockout.printResult();
 
             /* auto v = matrix.asJson();
             Debug::println("Json Objekt erstellt.");

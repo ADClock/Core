@@ -1,8 +1,11 @@
 #include "InputStream.h"
+#include "SpeedCheck.h"
 
 #define IN_RESPONSE A2
 #define IN_DATA A3
 #define IN_CLOCK A4
+
+SpeedCheck sndresponse{"> sendresponse: "};
 
 InputStream::InputStream()
 {
@@ -32,7 +35,6 @@ byte InputStream::readData()
     }
 
     value |= readDataBit() << i;
-    _hasData = false; // Daten wurden gelesen
 
     // Mitteilen, dass Bit gelesen wurde
     if (!sendDataReadingComplete())
@@ -59,6 +61,7 @@ bool InputStream::sendDataReadingComplete()
   FastGPIO::Pin<IN_RESPONSE>::setOutputValueHigh();
 
   size_t delayTimer = 0;
+  sndresponse.start();
   while (hasData())
   {
     if (delayTimer > 60000) // Innerhalb 10000µs = 10ms keine Response
@@ -74,6 +77,8 @@ bool InputStream::sendDataReadingComplete()
     // delayMicroseconds(1);
   }
 
+  sndresponse.stop();
+  sndresponse.pushback();
   FastGPIO::Pin<IN_RESPONSE>::setOutputValueLow();
 
   return true;

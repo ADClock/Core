@@ -13,7 +13,11 @@ public:
   bool sendByte(const uint8_t &data);
 
   // Verschickt ein Array aus Bytes. Cool oder?
-  bool sendByteArray(const uint8_t arr[], const size_t &length);
+  bool sendByteArray(uint8_t arr[], size_t &length);
+
+  bool sendSerializedHand(uint8_t arr[]);
+
+  void printResult();
 
 private:
   // Verschickt einen Bit

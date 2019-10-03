@@ -14,7 +14,9 @@ public:
   // Delayed um entsprechende ms und prüft ob Daten anliegen
   bool sendInitCommand();
 
-  bool sendPlan(ClockWall &wall);
+  bool sendPlan(ClockWall &plan);
+
+    void printResult();
 
 #ifdef DEBUG
   void performSpeedtest();

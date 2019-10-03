@@ -13,7 +13,7 @@ OutputStream::OutputStream()
 
 bool OutputStream::sendData(byte data) const
 {
-  uint8_t i;
+  static uint8_t i;
 
   for (i = 0; i < 8; i++)
   {

@@ -52,6 +52,7 @@ OBJECTS += src/api/ApiCommunication.o
 OBJECTS += src/data/Clock.o
 OBJECTS += src/data/Hand.o
 OBJECTS += src/data/ClockWall.o
+OBJECTS += src/SpeedCheck.o
 OBJECTS += src/data/ClockPositions.o
 OBJECTS += src/clockcom/ClockCommunication.o
 OBJECTS += src/clockcom/ClockOutputStream.o

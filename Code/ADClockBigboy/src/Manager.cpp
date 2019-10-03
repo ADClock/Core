@@ -1,4 +1,6 @@
 #include "Manager.h"
+#include "SpeedCheck.h"
+SpeedCheck execu{"> execute plan: "};
 
 Manager::Manager(ClockCommunication &clockcom, ApiCommunication &apicom, ClockPositions &current, ClockWall &aiming, ClockWall &planned) : clockcom(clockcom), apicom(apicom), current(current), aiming(aiming), planned(planned)
 {
@@ -19,7 +21,16 @@ void Manager::init()
     }
   }
 
-  clockcom.sendInitCommand();
+  if (!clockcom.sendInitCommand())
+  {
+#ifdef DEBUG
+    Debug::println("Manager >> Init Command nicht verschickt");
+#endif
+  }
+  else
+  {
+    Debug::println("Manager >> Init Command verschickt");
+  }
 }
 
 // Führt den Plan aus.
@@ -27,6 +38,7 @@ void Manager::init()
 // - Setzt Aiming entsprechend
 void Manager::executePlan()
 {
+  execu.start();
   if (this->clockcom.sendPlan(this->planned))
   {
     // Den Plan als Goal setzen
@@ -43,6 +55,9 @@ void Manager::executePlan()
     // Debug::println("Manager >> Failed to send plan.");
 #endif
   }
+
+  execu.stop();
+  execu.printResult();
 }
 
 bool Manager::hasPendingMoves()
