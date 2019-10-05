@@ -20,7 +20,13 @@ enum class SenderState
 class DataSender
 {
 public:
-  DataSender(BitBuffer &buffer) : buffer(buffer) { last_action = micros(); };
+  DataSender(BitBuffer &buffer) : buffer(buffer)
+  {
+    last_action = micros();
+    pinMode(OUT_DATA, OUTPUT);
+    pinMode(OUT_CLOCK, OUTPUT);
+    digitalWrite(OUT_CLOCK, LOW);
+  };
 
   void tick();
 

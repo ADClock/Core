@@ -22,6 +22,8 @@ public:
 
   void tick();
 
+  void finish_transmission(); // Ends the transmission (finish sending and receiving)
+
   void sendCommand(uint8_t command);
   void sendByte(uint8_t byte);
 

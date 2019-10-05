@@ -16,6 +16,20 @@ void DataManager::tick()
     {
       this->state = CommandState::READING_COMMAND;
     }
+    else
+    {
+      // Wenn kein Command ankommt können wir ja auch alles senden
+      if (!this->out.is_empty())
+      {
+        this->sender.tick();
+
+        while (this->sender.sending() && !this->sender.failed())
+          this->sender.tick();
+
+        if (this->sender.failed())
+          this->sender.reset();
+      }
+    }
     break;
 
   case CommandState::READING_COMMAND:
@@ -28,8 +42,8 @@ void DataManager::tick()
   case CommandState::READING_IMAGE:
     if (this->in.size() >= 8 * 8)
     {
-      processImage();
       this->state = CommandState::PIPEING;
+      processImage();
     }
     break;
 
@@ -47,13 +61,18 @@ void DataManager::tick()
   {
     this->state = CommandState::IDLE;
     this->receiver.reset();
+    Serial.println("receiving complete");
   }
 
   if (this->receiver.failed())
   {
     this->state = CommandState::IDLE;
     this->receiver.reset();
-    delay(100); // TODO Delay anpassen bei fehlgeschlagenem Command
+
+    while (this->receiver.time_waiting() < DELAY_BETWEEN_COMMANDS)
+    {
+      this->sender.tick();
+    }
   }
 }
 
@@ -62,14 +81,13 @@ void DataManager::set_current_command()
   auto command = read_byte();
   this->receiver.confirm();
 
-  // Serial.println("Processing command.. cmd = " + String(command));
+  Serial.println("Processing command.. cmd = " + String(command));
   switch (command)
   {
   case 0x01:
     sendCommand(0x01);
+    finish_transmission();
     moma.calibrate();
-    this->receiver.reset();
-    this->state = CommandState::IDLE;
     break;
 
   case 0x02:
@@ -95,6 +113,9 @@ void DataManager::sendCommand(uint8_t command)
 
 void DataManager::sendByte(uint8_t byte)
 {
+#ifdef IS_LAST_CLOCK
+  return;
+#endif
   for (uint8_t i = 0; i < 8; i++)
     this->out.enqueue(!!(byte & (1 << i)));
 }
@@ -107,9 +128,14 @@ uint8_t DataManager::read_byte()
   return byte;
 }
 
+void DataManager::finish_transmission()
+{
+  while (this->state != CommandState::IDLE || !this->out.is_empty())
+    this->tick();
+}
+
 void DataManager::processImage()
 {
-  this->receiver.confirm();
 
   static uint8_t input[8];
   // 8 Byte lesen (4 je Motor)
@@ -122,6 +148,7 @@ void DataManager::processImage()
     input[i] = read_byte();
   }
 
+  finish_transmission();
 #ifdef DEBUG
   // Serial.println("DataManager >> Loading new image..");
 #endif

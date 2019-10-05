@@ -1,0 +1,3 @@
+Paul:
+4.10.	- 5 Stunden Kommunikation auf Buffer umgestellt (not working)
+5.10. - 3 Stunden Kommunikation zwischen den Arduions gefixt

@@ -12,24 +12,26 @@ void DataSender::tick()
     break;
 
   case SenderState::WAIT_FOR_RESPONSE_ON:
-    if (FastGPIO::Pin<OUT_CLOCK>::isInputHigh())
+    if (FastGPIO::Pin<OUT_RESPONSE>::isInputHigh())
     {
       this->recive_response_on();
     }
     else if (this->time_waiting() > SENDER_TIMEOUT_RESPONSE_ON)
     {
       timeout();
+      Serial.println("WAIT_FOR_RESPONSE_ON");
     }
     break;
 
   case SenderState::WAIT_FOR_RESPONSE_OFF:
-    if (!FastGPIO::Pin<OUT_CLOCK>::isInputHigh())
+    if (!FastGPIO::Pin<OUT_RESPONSE>::isInputHigh())
     {
       this->recive_response_off();
     }
     else if (this->time_waiting() > SENDER_TIMEOUT_RESPONSE_OFF)
     {
       timeout();
+      Serial.println("WAIT_FOR_RESPONSE_OFF");
     }
     break;
 
@@ -52,6 +54,7 @@ void DataSender::reset()
 {
   FastGPIO::Pin<OUT_CLOCK>::setOutputValueLow();
   this->state = SenderState::IDLE;
+  Serial.println("Resetting sender remaining bits = " + String(buffer.size()));
   this->buffer.clear();
   this->last_action = micros();
 }

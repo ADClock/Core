@@ -18,6 +18,7 @@ void DataReceiver::tick()
     }
     else if (this->time_waiting() > RECEIVER_TIMEOUT_CLOCK_OFF)
     {
+      Serial.println("Clock stil on after " + String(this->time_waiting()));
       timeout();
     }
     break;

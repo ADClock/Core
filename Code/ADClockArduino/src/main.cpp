@@ -76,7 +76,7 @@ void setup()
 
   // testPinSpeed();
 
-  testDataTransferSpeed();
+  //testDataTransferSpeed();
   // #endif
 
   moma.calibrate();
