@@ -1,92 +1,66 @@
 #include "ClockCommunication.h"
-#include "../SpeedCheck.h"
 
-SpeedCheck findClock{">>> find Clock: "};
-SpeedCheck serialize{">>> serialize: "};
-SpeedCheck theplan{">> send plan: "};
-SpeedCheck snddta{">>> send Data: "};
-SpeedCheck sndcmd{">>> send Image Command: "};
-
-Timer timer;
-ClockCommunication::ClockCommunication(ClockOutputStream &out) : out(out)
+ClockCommunication::ClockCommunication(BitBuffer &buffer, DataSender &sender) : buffer(buffer), sender(sender)
 {
-  timer.start();
-  this->lastSend = timer.read_ms();
 }
 
-bool ClockCommunication::sendInitCommand()
+void ClockCommunication::sendInitCommand()
 {
 #ifdef DEBUG
   Debug::println("ClockCom >> Sending init command");
 #endif
-  return sendCommand(COMMAND_INIT);
+  sendCommand(COMMAND_INIT);
 }
 
-bool ClockCommunication::sendPlan(ClockWall &plan)
+void ClockCommunication::sendPlan(ClockWall &plan)
 {
-  theplan.start();
 #ifdef DEBUG
   // Debug::println("ClockCom >> Sending plan...");
 #endif
 
-  sndcmd.start();
-  if (!sendCommand(COMMAND_IMAGE))
-    return false;
-  sndcmd.stop();
+  sendCommand(COMMAND_IMAGE);
 
   for (size_t i = 0; i < WALL_CLOCKS; i++)
   {
 #ifdef SEND_ONLY_CLOCKS
     if (i == SEND_ONLY_CLOCKS)
     {
-      theplan.stop();
-      return true;
+      return;
     }
 #endif
 
-    findClock.start();
     auto &clock = plan.getClock(getClockX(i), getClockY(i));
-    findClock.stop();
-    findClock.pushback();
 
-    serialize.start();
     auto *hour = clock.hour.serialize();
-    serialize.stop();
-    serialize.pushback();
-
-    snddta.start();
-    if (!this->out.sendSerializedHand(hour))
-      return false;
-    snddta.stop();
-    snddta.pushback();
-
-    serialize.start();
+    sendData(hour, 4);
     auto *minute = clock.minute.serialize();
-    serialize.stop();
-    serialize.pushback();
-
-    snddta.start();
-    if (!this->out.sendSerializedHand(minute))
-      return false;
-    snddta.stop();
-    snddta.pushback();
+    sendData(minute, 4);
   }
 
-  return true;
+  return;
 }
 
-bool ClockCommunication::sendCommand(const uint8_t &command)
+void ClockCommunication::sendCommand(uint8_t command)
 {
-  // Delay zwischen einzelnen Commands einhalten
-  while (us_ticker_read() < this->lastSend + DELAY_BETWEEN_COMMANDS && us_ticker_read() > this->lastSend)
+  while (sender.sending() || sender.time_waiting() < DELAY_BETWEEN_COMMANDS)
   {
+    if (sender.failed())
+      sender.reset();
     wait_ms(1);
   }
-  this->lastSend = us_ticker_read();
+  sendByte(command);
+}
 
-  if (!out.sendByte(command))
-    return false;
-  return true;
+void ClockCommunication::sendData(u_int8_t *data, size_t length)
+{
+  for (size_t i = 0; i < length; i++)
+    sendByte(data[i]);
+}
+
+void ClockCommunication::sendByte(uint8_t byte)
+{
+  for (uint8_t i = 0; i < 8; i++)
+    this->buffer.enqueue(!!(byte & (1 << i)));
 }
 
 // Liefert zu der Position in der Verkabelungskette die richtige Position in der Matrix
@@ -107,37 +81,21 @@ size_t ClockCommunication::getClockY(size_t &pos)
   }
 }
 
-#ifdef DEBUG
-void ClockCommunication::performSpeedtest()
+bool ClockCommunication::tramsmit()
 {
-  size_t dataLength = 10;
-  u_int8_t data[dataLength];
+  this->sender.tick();
+  while (is_transmitting())
+    this->sender.tick();
 
-  Debug::serial.printf("sizeof uint32_t %u\n", sizeof(uint32_t));
-
-  for (int i = 0; i < 3; i++)
-  {
-    wait(2);
-    sendCommand(0x03);
-    int start = us_ticker_read();
-    out.sendByteArray(data, dataLength);
-    int end = us_ticker_read();
-    int duration = (end - start);
-    Debug::serial.printf("ClockCom >> Speedtest finished in %d µs\n", duration);
-  }
+  return was_successful();
 }
 
-void ClockCommunication::printResult()
+bool ClockCommunication::is_transmitting()
 {
-  theplan.printResult();
-
-  sndcmd.printResult();
-
-  findClock.printResult();
-
-  serialize.printResult();
-
-  snddta.printResult();
+  return this->sender.sending() && !this->sender.failed();
 }
 
-#endif
+bool ClockCommunication::was_successful()
+{
+  return !this->sender.failed();
+}

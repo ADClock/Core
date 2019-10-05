@@ -6,6 +6,15 @@
 // Debug Nachrichten +ber Serial senden?
 // #define DEBUG
 
+// TODO Nochmal richtigen Wert einstellen in us
+#define DELAY_BETWEEN_COMMANDS 100000
+// Clock DataSender params
+#define SENDER_TIMEOUT_RESPONSE_ON 20000
+#define SENDER_TIMEOUT_RESPONSE_OFF 20000
+
+#define RECEIVER_TIMEOUT_CLOCK_OFF 60000
+#define RECEIVER_TIMEOUT_NEXT_DATA 20000
+
 // Motor
 #define MAX_STEPS 1705
 // in micros
@@ -24,5 +33,15 @@
 #define MOTOR_2_PIN_2 8
 #define MOTOR_2_PIN_3 7
 #define MOTOR_2_PIN_4 6
+
+// Pins for DataSender
+#define OUT_RESPONSE 3
+#define OUT_DATA 4
+#define OUT_CLOCK 5
+
+// Pins for DataReceiver
+#define IN_RESPONSE A2
+#define IN_DATA A3
+#define IN_CLOCK A4
 
 #endif

@@ -23,8 +23,8 @@
 #define COMMAND_INIT 0x01
 #define COMMAND_IMAGE 0x02
 
-// TODO Nochmal richtigen Wert einstellen in ms
-#define DELAY_BETWEEN_COMMANDS 1000
+// TODO Nochmal richtigen Wert einstellen in us
+#define DELAY_BETWEEN_COMMANDS 100000
 // =================================================
 
 // =================================================
@@ -33,9 +33,18 @@
 #define DEBUG
 // =================================================
 
+// =================================================
+// Clock DataSender params
+#define SENDER_TIMEOUT_RESPONSE_ON 60000
+#define SENDER_TIMEOUT_RESPONSE_OFF 60000
+
+// =================================================
+
+// =================================================
 // Pins
-#define OUT_RESPONSE D3
-#define OUT_DATA D4
-#define OUT_CLOCK D5
+#define SENDER_RESPONSE D3
+#define SENDER_DATA D4
+#define SENDER_CLOCK D5
+// =================================================
 
 #endif

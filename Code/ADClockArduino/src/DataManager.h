@@ -2,34 +2,47 @@
 #ifndef _DATAMANAGER_H_
 #define _DATAMANAGER_H_
 #include "Arduino.h"
-#include "InputStream.h"
-#include "OutputStream.h"
+#include "BitBuffer.h"
+#include "DataSender.h"
+#include "DataReceiver.h"
 #include "MotorManager.h"
+
+enum class CommandState
+{
+  IDLE,
+  READING_COMMAND,
+  READING_IMAGE,
+  PIPEING
+};
 
 class DataManager
 {
 public:
-  DataManager(InputStream &in, OutputStream &out, MotorManager &moma);
+  DataManager(DataSender &sender, BitBuffer &out, DataReceiver &receiver, BitBuffer &in, MotorManager &moma);
 
-  // Delayed um entsprechende ms und prüft ob Daten anliegen
-  void delayAndCheck(size_t ms);
+  void tick();
 
-  void checkForData();
+  void sendCommand(uint8_t command);
+  void sendByte(uint8_t byte);
 
 private:
-  // Liest die Daten ein. Anhand des ersten Bits wird entschieden was gemacht werden soll.
-  void reciveData();
+  // Handle reading
+  uint8_t read_byte();        // reads one byte from input buffer
+  void set_current_command(); // Sets the current command based on input data
 
   // Verarbeitet den Image Command
   void processImage();
 
-  // Versendet alle folgenden Daten an den nächsten Controller
-  void pipeIncommingData();
-
   DataStruct deserialze(uint8_t stream[4]);
 
-  InputStream &in;
-  const OutputStream &out;
+  DataSender &sender;
+  BitBuffer &out;
+  DataReceiver &receiver;
+  BitBuffer &in;
+
   MotorManager &moma;
+
+  CommandState state = CommandState::IDLE;
+  uint8_t current_command;
 };
 #endif

@@ -26,8 +26,9 @@ ClockWall planned;
 ClockPositions current;
 
 // Kommunikation Uhren
-ClockOutputStream clockout;
-ClockCommunication clockcom(clockout);
+BitBuffer bufferout;
+DataSender clockout(bufferout);
+ClockCommunication clockcom(bufferout, clockout);
 
 // Manager
 Manager manager(clockcom, apicom, current, aiming, planned);
@@ -67,7 +68,7 @@ void setup()
     planned.setMutiplePositions(0, 0, WALL_SIZE_X - 1, WALL_SIZE_Y - 1, 180, 90);
 
     led_moving = 1;
-    wait_ms(50);
+    wait_ms(200);
     led_moving = 0;
     led_buttonPressed = 0;
     led_sendPlan = 0;
@@ -80,6 +81,8 @@ void loop()
 
     // Status LEDs aktualisieren
     led_moving = manager.hasPendingMoves();
+
+    led_sendPlan = clockout.sending();
 
     if (user_button.read())
     {
@@ -117,15 +120,12 @@ void loop()
     {
         if (!manager.hasPendingMoves())
         {
-            long startSending = us_ticker_read();
+            uint32_t startSending = us_ticker_read();
             led_sendPlan = 1;
             manager.executePlan();
             led_sendPlan = 0;
-            long endSending = us_ticker_read();
-            // Debug::serial.printf("Sending done in %d µs\n", (int)(endSending - startSending));
-
-            clockcom.printResult();
-            clockout.printResult();
+            uint32_t endSending = us_ticker_read();
+            Debug::serial.printf("Sending done in %u µs\n", (int)(endSending - startSending));
 
             /* auto v = matrix.asJson();
             Debug::println("Json Objekt erstellt.");

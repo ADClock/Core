@@ -10,10 +10,12 @@ Calibration calibration2(motor2, HALL_DATA_PIN_2);
 
 MotorManager moma(motor1, motor2, calibration1, calibration2);
 
-InputStream in;
-OutputStream out;
+BitBuffer outbuffer;
+BitBuffer inbuffer;
+DataSender sender(outbuffer);
+DataReceiver receiver(inbuffer);
 
-DataManager com(in, out, moma);
+DataManager com(sender, outbuffer, receiver, inbuffer, moma);
 
 // Wir steppen im Kreis und zählen wie viele Schritte es von Hall High bis Hall High ist.
 void rotateUntilTomorrow()
@@ -39,16 +41,17 @@ void rotateUntilTomorrow()
 void testDataTransferSpeed()
 {
   unsigned long startTime = micros();
-  out.sendData(0x03); // Command Speedtest
+  com.sendCommand(0x03); // Command Speedtest
   for (int i = 0; i < 1000; i++)
   {
-    out.sendData(0x42);
+    com.tick();
+    com.sendByte(0x42);
   }
   unsigned long end = micros();
   Serial.println("1000 Bytes took " + String(end - startTime) + " µs to send.");
   delay(1000);
 }
-
+/*
 void testPinSpeed()
 {
   unsigned long startTime = micros();
@@ -59,7 +62,7 @@ void testPinSpeed()
   }
   unsigned long end = micros();
   Serial.println("1000 x Pin on off took " + String(end - startTime) + " µs.");
-}
+}*/
 
 void setup()
 {
@@ -71,7 +74,7 @@ void setup()
   // #ifdef DEBUG
   Serial.print("Setup...");
 
-  testPinSpeed();
+  // testPinSpeed();
 
   testDataTransferSpeed();
   // #endif
@@ -86,7 +89,7 @@ void setup()
 
 void loop()
 {
-  com.checkForData();
+  com.tick();
   moma.try_step();
 
   // testDataTransferSpeed();

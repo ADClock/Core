@@ -1,86 +1,116 @@
 #include "DataManager.h"
 
-DataManager::DataManager(InputStream &in, OutputStream &out, MotorManager &moma) : in(in), out(out), moma(moma)
+DataManager::DataManager(DataSender &sender, BitBuffer &out, DataReceiver &receiver, BitBuffer &in, MotorManager &moma) : sender(sender), out(out), receiver(receiver), in(in), moma(moma)
 {
 }
 
-void DataManager::delayAndCheck(size_t ms)
+void DataManager::tick()
 {
-  ms *= 10;
-  size_t count;
-  for (count = 0; count < ms; count++)
+  this->receiver.tick();
+  this->sender.tick();
+
+  switch (state)
   {
-    checkForData(); // Einen digital Pin abfragen ~ 4 ms
-    delayMicroseconds(96);
+  case CommandState::IDLE:
+    if (!this->in.is_empty())
+    {
+      this->state = CommandState::READING_COMMAND;
+    }
+    break;
+
+  case CommandState::READING_COMMAND:
+    if (this->in.size() >= 8)
+    {
+      set_current_command();
+    }
+    break;
+
+  case CommandState::READING_IMAGE:
+    if (this->in.size() >= 8 * 8)
+    {
+      processImage();
+      this->state = CommandState::PIPEING;
+    }
+    break;
+
+  case CommandState::PIPEING:
+    while (!this->in.is_empty())
+    {
+      this->out.enqueue(this->in.dequeue());
+    }
+
+  default:
+    break;
+  }
+
+  if (this->receiver.complete())
+  {
+    this->state = CommandState::IDLE;
+    this->receiver.reset();
+  }
+
+  if (this->receiver.failed())
+  {
+    this->state = CommandState::IDLE;
+    this->receiver.reset();
+    delay(100); // TODO Delay anpassen bei fehlgeschlagenem Command
   }
 }
 
-void DataManager::checkForData()
+void DataManager::set_current_command()
 {
-  if (in.hasData())
-  {
-    reciveData();
-  }
-}
+  auto command = read_byte();
+  this->receiver.confirm();
 
-void DataManager::reciveData()
-{
-  byte command = in.readData();
+  // Serial.println("Processing command.. cmd = " + String(command));
   switch (command)
   {
-  case 0x01: // Init
-    if (!out.sendData(command))
-    {
-#ifdef DEBUG
-      Serial.println("Com >> Init Command wurde nicht weiter geschickt.");
-#endif
-    }
-#ifdef DEBUG
-    Serial.println("Com >> Init command recived");
-#endif
-    this->moma.calibrate();
+  case 0x01:
+    sendCommand(0x01);
+    moma.calibrate();
+    this->receiver.reset();
+    this->state = CommandState::IDLE;
     break;
 
-  case 0x02: // Image
-    processImage();
-#ifdef DEBUG
-    Serial.println("Com >> Image command recived");
-#endif
-    break;
-
-  case 0x03: // Speedtest
-    while (in.hasData())
-    {
-      in.readData();
-    }
+  case 0x02:
+    sendCommand(0x02);
+    this->state = CommandState::READING_IMAGE;
     break;
 
   default:
-#ifdef DEBUG
-    Serial.println("Com >> unknown command: " + String(command));
-#endif
     break;
   }
 }
 
-void DataManager::pipeIncommingData()
+void DataManager::sendCommand(uint8_t command)
 {
-  // Kleinen Trick angewandt: Durch das Senden des Commands ist beim Pipe bereits genug Zeit vergangen.
-  // Eigentlich müsste man zu Beginn ggf. noch auf die Daten warten.
-
-  while (in.waitForData())
+  while (sender.sending() || sender.time_waiting() < DELAY_BETWEEN_COMMANDS)
   {
-    if (!out.sendData(in.readData()))
-      break; // Empfänger hat nicht mehr gelesen. & Tschüss
-    // Auch hier wieder, zuerst wird gelesen dann gesendet. Durch diesen zeitlichen Versatz liegen die nöchsten Daten garantiert wieder an.
+    if (sender.failed())
+      sender.reset();
+    this->receiver.tick();
   }
-#ifdef DEBUG
-  Serial.println("Com >> Pipe complete");
-#endif
+  sendByte(command);
+}
+
+void DataManager::sendByte(uint8_t byte)
+{
+  for (uint8_t i = 0; i < 8; i++)
+    this->out.enqueue(!!(byte & (1 << i)));
+}
+
+uint8_t DataManager::read_byte()
+{
+  uint8_t byte = 0;
+  for (uint8_t i = 0; i < 8; ++i)
+    byte |= this->in.dequeue() << i;
+  return byte;
 }
 
 void DataManager::processImage()
 {
+  this->receiver.confirm();
+
   static uint8_t input[8];
   // 8 Byte lesen (4 je Motor)
   // -- Position  (16 Bit)
@@ -89,26 +119,7 @@ void DataManager::processImage()
   // -- Speed     (7 Bit)
   for (int i = 0; i < 8; i++)
   {
-    if (!in.waitForData())
-    {
-#ifdef DEBUG
-      Serial.println("Com >> Clock image unvollständig.");
-#endif
-      return; // Keine Daten? Blöd gelaufen
-    }
-    input[i] = in.readData();
-  }
-
-  // Piping data
-  if (out.sendData(0x02))
-  {
-    pipeIncommingData();
-  }
-  else
-  {
-#ifdef DEBUG
-    Serial.println("Com >> no arduino listening");
-#endif
+    input[i] = read_byte();
   }
 
 #ifdef DEBUG

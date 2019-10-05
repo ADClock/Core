@@ -1,6 +1,4 @@
 #include "Manager.h"
-#include "SpeedCheck.h"
-SpeedCheck execu{"> execute plan: "};
 
 Manager::Manager(ClockCommunication &clockcom, ApiCommunication &apicom, ClockPositions &current, ClockWall &aiming, ClockWall &planned) : clockcom(clockcom), apicom(apicom), current(current), aiming(aiming), planned(planned)
 {
@@ -21,16 +19,17 @@ void Manager::init()
     }
   }
 
-  if (!clockcom.sendInitCommand())
-  {
+  clockcom.sendInitCommand();
 #ifdef DEBUG
-    Debug::println("Manager >> Init Command nicht verschickt");
-#endif
+  if (clockcom.tramsmit())
+  {
+    Debug::println("Manager init >> transmitted init command");
   }
   else
   {
-    Debug::println("Manager >> Init Command verschickt");
+    Debug::println("Manager init >> transmission of init command failed");
   }
+#endif
 }
 
 // Führt den Plan aus.
@@ -38,26 +37,23 @@ void Manager::init()
 // - Setzt Aiming entsprechend
 void Manager::executePlan()
 {
-  execu.start();
-  if (this->clockcom.sendPlan(this->planned))
+  this->clockcom.sendPlan(this->planned);
+  if (clockcom.tramsmit())
   {
     // Den Plan als Goal setzen
     this->aiming.update(this->planned);
     // Motordaten entsprechend aktualisieren (z.B. waitSteps übernehmen)
     this->current.update(this->aiming);
 #ifdef DEBUG
-    // Debug::println("Manager >> Sending done. Executing plan...");
+    Debug::println("Manager exec >> Sending done. Executing plan...");
 #endif
   }
   else
   {
 #ifdef DEBUG
-    // Debug::println("Manager >> Failed to send plan.");
+    Debug::println("Manager exec >> Failed to send plan.");
 #endif
   }
-
-  execu.stop();
-  execu.printResult();
 }
 
 bool Manager::hasPendingMoves()
