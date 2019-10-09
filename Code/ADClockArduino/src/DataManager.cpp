@@ -61,7 +61,7 @@ void DataManager::tick()
   {
     this->state = CommandState::IDLE;
     this->receiver.reset();
-    Serial.println("receiving complete");
+    // Serial.println("receiving complete");
   }
 
   if (this->receiver.failed())
@@ -81,7 +81,7 @@ void DataManager::set_current_command()
   auto command = read_byte();
   this->receiver.confirm();
 
-  Serial.println("Processing command.. cmd = " + String(command));
+  // Serial.println("Processing command.. cmd = " + String(command));
   switch (command)
   {
   case 0x01:

@@ -64,7 +64,7 @@ void DataSender::send_next_bit()
   this->clock = 1;
   this->state = SenderState::WAIT_FOR_RESPONSE_ON;
   this->last_action = us_ticker_read();
-  Debug::println("Sending bit..");
+  // Debug::println("Sending bit..");
 }
 
 void DataSender::recive_response_on()
