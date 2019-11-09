@@ -88,6 +88,16 @@ boolean clock_get(HttpServer &server)
   return true;
 };
 
+// GET /clocks
+boolean clocks_get(HttpServer &server)
+{
+  server.send_error_code(200);
+  server.send_content_type("application/json");
+  server.end_headers();
+  server.print(ClockApi::instance().data.asJson().serialize().c_str());
+  return true;
+};
+
 HttpServer::PathHandler handlers[] = {
     {"/", HttpServer::GET, &index},
     {"/clock"
@@ -96,6 +106,8 @@ HttpServer::PathHandler handlers[] = {
     {"/clock"
      "*",
      HttpServer::GET, &clock_get},
+    {"/all",
+     HttpServer::GET, &clocks_get},
     {NULL}}; // Terminate Array with NULL!
 
 } // namespace RequestHandler

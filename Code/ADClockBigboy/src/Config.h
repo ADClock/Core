@@ -45,6 +45,14 @@
 #define SENDER_RESPONSE D3
 #define SENDER_DATA D4
 #define SENDER_CLOCK D5
+
+#define API_SENDER_RESPONSE D3
+#define API_SENDER_DATA D4
+#define API_SENDER_CLOCK D5
+
+#define API_RECEIVER_RESPONSE D3
+#define API_RECEIVER_DATA D4
+#define API_RECEIVER_CLOCK D5
 // =================================================
 
 #endif

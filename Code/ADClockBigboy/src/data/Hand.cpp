@@ -80,7 +80,6 @@ MbedJSONValue Hand::asJson()
 {
   MbedJSONValue v;
   v["pos"] = static_cast<int>(this->position);
-  v["target_pos"] = static_cast<int>(this->position);
   v["direction"] = this->direction;
   v["waiting"] = static_cast<int>(this->waitSteps);
   v["delay"] = static_cast<int>(this->stepDelay);

@@ -47,16 +47,17 @@ PROJECT := ADClockBigBoy
 # Objects and Paths
 
 
-OBJECTS += src/api/OutputStream.o
-OBJECTS += src/api/ApiCommunication.o
+OBJECTS += src/com/esp/ApiSender.o
+OBJECTS += src/com/esp/ApiReceiver.o
+OBJECTS += src/com/esp/ApiCommunication.o
 OBJECTS += src/data/Clock.o
 OBJECTS += src/data/Hand.o
 OBJECTS += src/data/ClockWall.o
 # OBJECTS += src/SpeedCheck.o
 OBJECTS += src/data/ClockPositions.o
-OBJECTS += src/clockcom/ClockCommunication.o
-OBJECTS += src/clockcom/BitBuffer.o
-OBJECTS += src/clockcom/DataSender.o
+OBJECTS += src/com/BitBuffer.o
+OBJECTS += src/com/clock/ClockCommunication.o
+OBJECTS += src/com/clock/DataSender.o
 OBJECTS += src/MbedJSONValue.o
 OBJECTS += src/Manager.o
 OBJECTS += src/main.o

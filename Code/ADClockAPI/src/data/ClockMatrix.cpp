@@ -29,12 +29,15 @@ JSONValue ClockMatrix::asJson()
   v["clocks-x"] = CLOCKS_X;
   v["clocks-y"] = CLOCKS_Y;
   // TODO Running out of Memory
-  for (size_t index = 0; index < CLOCKS_X; index++)
+  for (size_t x = 0; x < CLOCKS_X; x++)
   {
-    v["matrix"][index] = matrix[0][0].asJson();
-    // v["matrix"][getClockPosition(x, y)] = matrix[x][y].asJson();
-    // v["matrix"][getClockPosition(x, y)]["x"] = static_cast<int>(x);
-    // v["matrix"][getClockPosition(x, y)]["y"] = static_cast<int>(y);
+    for (size_t y = 0; y < CLOCKS_Y; y++)
+    {
+      // v["matrix"][index] = matrix[0][0].asJson();
+      v["matrix"][getClockPosition(x, y)] = matrix[x][y].asJson();
+      v["matrix"][getClockPosition(x, y)]["x"] = static_cast<int>(x);
+      v["matrix"][getClockPosition(x, y)]["y"] = static_cast<int>(y);
+    }
   }
 
   return v;

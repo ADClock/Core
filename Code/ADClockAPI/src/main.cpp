@@ -3,6 +3,9 @@
 #include "api/ClockApi.h"
 #include "data/ClockMatrix.h"
 
+// TODO: Data In + Out aufnehmen...
+// TODO: /compare/[number] erstellen.. Wenn number = 8 gibt der stm true zurück
+
 // WLAN Verbindung zu einem Netzwerk herstellen
 const char *ssid = "Home_Net";
 const char *password = "@xxxx";

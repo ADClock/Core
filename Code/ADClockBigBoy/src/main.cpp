@@ -17,8 +17,11 @@ FastOut<LED3> led_sendPlan;
 FastIn<BUTTON1> user_button;
 
 // Kommunikation API
-OutputStream out;
-ApiCommunication apicom(out);
+BitBuffer apiBin;
+ApiReceiver in(apiBin);
+BitBuffer apiBout;
+ApiSender out(apiBout);
+ApiCommunication apicom(out, in, apiBout, apiBin);
 
 // Daten Uhren
 ClockWall aiming;
@@ -94,11 +97,15 @@ void loop()
 
         if (btnTimer.read_ms() - press_start < 1000)
         {
-            auto cclock = planned.getClock(0, 0);
+            auto cclock = planned.getClock(0, 5);
             auto hourDeg = cclock.hour.getPosition() % 360 + 10;
             auto minuteDeg = cclock.minute.getPosition() % 360 + 20;
             planned.setAnimationStart(0, 0);
-            planned.setMutiplePositions(0, 0, WALL_SIZE_X - 1, WALL_SIZE_Y - 1, hourDeg, minuteDeg);
+            // planned.setMutiplePositions(0, 0, WALL_SIZE_X - 1, WALL_SIZE_Y - 1, hourDeg, minuteDeg);
+            planned.setHourPosition(0, 5, hourDeg);
+            planned.setMinutePosition(0, 5, minuteDeg);
+            planned.setHourPosition(0, 4, hourDeg + 30);
+            planned.setMinutePosition(0, 4, minuteDeg + 35);
             manager.allowSendingPlan();
 #ifdef DEBUG
             Debug::println("Button pressed > short: testimage");

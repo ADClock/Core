@@ -2,10 +2,10 @@
 #ifndef _MANAGER_H_
 #define _MANAGER_H_
 #include "mbed.h"
-#include "clockcom/ClockCommunication.h"
+#include "com/clock/ClockCommunication.h"
 #include "data/ClockWall.h"
 #include "data/ClockPositions.h"
-#include "api/ApiCommunication.h"
+#include "com/esp/ApiCommunication.h"
 
 class Manager
 {
