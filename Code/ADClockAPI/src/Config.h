@@ -23,4 +23,20 @@
 #define IN_DATA 35
 #define IN_CLOCK 34
 
+// =================================================
+// Wall Layout
+#define WALL_SIZE_X 12
+#define WALL_SIZE_Y 6
+#define WALL_CLOCKS WALL_SIZE_X *WALL_SIZE_Y
+// =================================================
+
+// =================================================
+// Motor Information
+#define MIN_STEP_DELAY 4000
+#define STEPS_FOR_CIRCLE 1705
+#define STEPS_PER_DEGREE STEPS_FOR_CIRCLE / 360.
+
+#define RIGHT true
+#define LEFT false
+
 #endif

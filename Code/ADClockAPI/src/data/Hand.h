@@ -3,40 +3,45 @@
 #define _HAND_H_
 #include "Arduino.h"
 #include "../parser/JSONValue.h"
+#include "../Config.h"
 #include <cstdlib>
 using namespace std;
-
-#define MIN_STEP_DELAY 4000
-#define STEPS_FOR_CIRCLE 1705
-#define STEPS_PER_DEGREE STEPS_FOR_CIRCLE / 360.
-
-#define RIGHT true
-#define LEFT false
 
 class Hand
 {
 public:
+  Hand() { init(); }
+
   void init();
 
-  void setNextPositionSteps(size_t steps);
-  void setNextPositionDegree(size_t degree);
-  void setNextDelayBetweenSteps(size_t delay);
-  void setNextWaitSteps(size_t steps);
+  void setPositionSteps(size_t steps);
+  void setPositionDegree(size_t degree);
+  void setDelayBetweenSteps(size_t delay);
+  void setWaitSteps(size_t steps);
   void setDirection(bool direction);
 
   void setSimultaneouslyMove(size_t steps);
 
+  uint8_t *serialize();
+
+  size_t getPosition();
+  size_t getWaitSteps();
+  size_t getStepDelay();
+  bool getDirection();
+
   JSONValue asJson();
+  void update(JSONValue &json);
+  void update(Hand &hand);
+
+  bool equals(Hand &hand);
 
 private:
   size_t position;
 
-  size_t next_position;
+  size_t waitSteps;
 
-  size_t next_waitSteps;
+  size_t stepDelay;
 
-  size_t next_stepDelay;
-
-  bool next_direction;
+  bool direction;
 };
 #endif

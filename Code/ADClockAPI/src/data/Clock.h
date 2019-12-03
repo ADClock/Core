@@ -3,6 +3,7 @@
 #define _CLOCK_H_
 #include "Arduino.h"
 #include "Hand.h"
+#include "../parser/JSONValue.h"
 #include <cstdlib>
 using namespace std;
 
@@ -11,11 +12,11 @@ class Clock
 public:
   void init();
 
-  const Hand &getMinuteHand();
-  const Hand &getHourHand();
-
   JSONValue asJson();
   void update(JSONValue &json);
+  void update(Clock &clock);
+
+  bool equals(Clock &clock);
 
   Hand minute;
   Hand hour;

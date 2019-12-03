@@ -1,72 +1,123 @@
 #include "Hand.h"
 
-void Hand::setNextPositionSteps(size_t steps)
+void Hand::setPositionSteps(size_t steps)
 {
-  this->next_position = steps;
+  this->position = steps;
 }
 
-void Hand::setNextPositionDegree(size_t degree)
+void Hand::setPositionDegree(size_t degree)
 {
-  this->next_position = degree * STEPS_PER_DEGREE;
+  this->position = degree * STEPS_PER_DEGREE;
+}
+
+// TODO In Clockcom packen
+uint8_t *Hand::serialize()
+{
+  static uint8_t image[4];
+  // Stepper 1: Hour
+  image[0] = (position >> 4) & 0xFF;
+  image[1] = ((position & 0x0F) << 4);
+
+  image[1] += ((waitSteps >> 8) & 0x0F);
+  image[2] = (waitSteps & 0xFF);
+
+  image[3] = ((stepDelay << 1u) & 0xFE);
+  image[3] += (direction & 0x01);
+
+  return image;
 }
 
 void Hand::init()
 {
   this->position = 0;
-  this->next_position = 0;
-  this->next_direction = RIGHT;
-  this->next_waitSteps = 0;
-  this->next_stepDelay = 0;
+  this->direction = RIGHT;
+  this->waitSteps = 0;
+  this->stepDelay = 0;
 }
 
 void Hand::setSimultaneouslyMove(size_t fromStep)
 {
-  if (this->next_direction)
+  if (this->direction)
   {
     if (fromStep <= this->position)
     {
-      setNextWaitSteps(this->position - fromStep);
+      setWaitSteps(this->position - fromStep);
     }
     else
     {
-      setNextWaitSteps(STEPS_FOR_CIRCLE - fromStep + this->position);
+      setWaitSteps(STEPS_FOR_CIRCLE - fromStep + this->position);
     }
   }
   else
   {
     if (fromStep >= this->position)
     {
-      setNextWaitSteps(fromStep - this->position);
+      setWaitSteps(fromStep - this->position);
     }
     else
     {
-      setNextWaitSteps(STEPS_FOR_CIRCLE - this->position + fromStep);
+      setWaitSteps(STEPS_FOR_CIRCLE - this->position + fromStep);
     }
   }
 }
 
 void Hand::setDirection(bool direction)
 {
-  this->next_direction = direction;
+  this->direction = direction;
 }
 
-void Hand::setNextWaitSteps(size_t steps)
+void Hand::setWaitSteps(size_t steps)
 {
-  this->next_waitSteps = steps;
+  this->waitSteps = steps;
 }
 
-void Hand::setNextDelayBetweenSteps(size_t delay)
+void Hand::setDelayBetweenSteps(size_t delay)
 {
-  this->next_stepDelay = delay;
+  this->stepDelay = delay;
 }
 
 JSONValue Hand::asJson()
 {
   JSONValue v;
   v["pos"] = static_cast<int>(this->position);
-  v["target_pos"] = static_cast<int>(this->next_position);
-  v["direction"] = this->next_direction;
-  v["waiting"] = static_cast<int>(this->next_waitSteps);
-  v["delay"] = static_cast<int>(this->next_stepDelay);
+  v["direction"] = this->direction;
+  v["waiting"] = static_cast<int>(this->waitSteps);
+  v["delay"] = static_cast<int>(this->stepDelay);
   return v;
+}
+
+void Hand::update(Hand &hand)
+{
+  this->position = hand.position;
+  this->waitSteps = hand.waitSteps;
+  this->stepDelay = hand.stepDelay;
+  this->direction = hand.direction;
+}
+
+bool Hand::equals(Hand &hand)
+{
+  return this->position == hand.position &&
+         this->waitSteps == hand.waitSteps &&
+         this->stepDelay == hand.stepDelay &&
+         this->direction == hand.direction;
+}
+
+size_t Hand::getPosition()
+{
+  return this->position;
+}
+
+size_t Hand::getWaitSteps()
+{
+  return this->waitSteps;
+}
+
+size_t Hand::getStepDelay()
+{
+  return this->stepDelay;
+}
+
+bool Hand::getDirection()
+{
+  return this->direction;
 }
