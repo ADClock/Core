@@ -1,9 +1,7 @@
 #include "ClockPositions.h"
 
-Timer clockTimer;
 ClockPositions::ClockPositions()
 {
-  clockTimer.start();
 }
 
 void ClockPositions::initClockPosition(size_t x, size_t y)
@@ -28,10 +26,10 @@ void ClockPositions::try_step(MotorData &data, Hand &hand)
   if (data.current_pos == hand.getPosition())
     return;
 
-  long time_since_step = clockTimer.read_us() - data.last_step;
+  long time_since_step = micros() - data.last_step;
   if (time_since_step > (long)(MIN_STEP_DELAY + (hand.getStepDelay() * 100)) || time_since_step < 0)
   {
-    data.last_step = clockTimer.read_us();
+    data.last_step = micros();
     if (data.wait_steps > 0)
     {
       data.wait_steps--;

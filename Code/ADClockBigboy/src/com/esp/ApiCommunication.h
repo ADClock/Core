@@ -5,6 +5,8 @@
 #include "ApiSender.h"
 #include "ApiReceiver.h"
 #include "../../MbedJSONValue.h"
+#include "../../data/ClockPositions.h"
+#include "../../data/ClockWall.h"
 
 class ApiCommunication
 {
@@ -15,9 +17,9 @@ public:
 
   void handle_requests();
 
-private:
-  bool respond(const MbedJSONValue &json);
+  void send_data(ClockPositions &current, ClockWall &aiming); // sends the current data
 
+private:
   BitBuffer &bufferout;
   ApiSender &out;
 

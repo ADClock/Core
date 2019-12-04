@@ -1,0 +1,17 @@
+{
+  "terminal.integrated.env.windows": {
+    "PATH": "C:\\Users\\Paul\\.platformio\\penv\\Scripts;C:\\Users\\Paul\\.platformio\\penv;C:\\ProgramData\\Oracle\\Java\\javapath;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Program Files\\doxygen\\bin;C:\\Program Files\\Git\\cmd;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\;C:\\Program Files\\Microsoft SQL Server\\130\\Tools\\Binn\\;C:\\Program Files\\nodejs\\;C:\\WINDOWS\\System32\\OpenSSH\\;C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common;C:\\Program Files\\dotnet\\;C:\\Program Files (x86)\\Yarn\\bin\\;C:\\dev\\8 2018-q4-major\\bin;C:\\dev\\GnuWin32\\bin;C:\\Program Files\\NVIDIA Corporation\\NVIDIA NvDLISR;C:\\Program Files\\Java\\jdk-12.0.1\\bin;C:\\Users\\Paul\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Users\\Paul\\AppData\\Roaming\\npm;C:\\Users\\Paul\\.dotnet\\tools;C:\\Users\\Paul\\AppData\\Local\\Programs\\Microsoft VS Code\\bin;C:\\Users\\Paul\\AppData\\Local\\Yarn\\bin;C:\\Program Files\\JetBrains\\IntelliJ IDEA 2019.1.2\\bin;;C:\\Users\\Paul\\AppData\\Roaming\\Dashlane\\6.1907.0.17833\\bin\\Firefox_Extension\\{442718d9-475e-452a-b3e1-fb1ee16b8e9f}\\components;C:\\Users\\Paul\\AppData\\Roaming\\Dashlane\\6.1907.0.17833\\ucrt;C:\\Users\\Paul\\AppData\\Roaming\\Dashlane\\6.1907.0.17833\\bin\\Qt;C:\\Users\\Paul\\AppData\\Roaming\\Dashlane\\6.1907.0.17833\\bin\\Ssl;C:\\Program Files\\JetBrains\\WebStorm 2019.1.2\\bin;;C:\\ProgramData\\Oracle\\Java\\javapath;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Program Files\\doxygen\\bin;C:\\Program Files\\Git\\cmd;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\;C:\\Program Files\\Microsoft SQL Server\\130\\Tools\\Binn\\;C:\\Program Files\\nodejs\\;C:\\WINDOWS\\System32\\OpenSSH\\;C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common;C:\\Program Files\\dotnet\\;C:\\Program Files (x86)\\Yarn\\bin\\;C:\\dev\\8 2018-q4-major\\bin;C:\\dev\\GnuWin32\\bin;C:\\Program Files\\NVIDIA Corporation\\NVIDIA NvDLISR;C:\\Program Files\\Java\\jdk-12.0.1\\bin;C:\\Users\\Paul\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Users\\Paul\\AppData\\Roaming\\npm;C:\\Users\\Paul\\.dotnet\\tools;C:\\Users\\Paul\\AppData\\Local\\Programs\\Microsoft VS Code\\bin;C:\\Users\\Paul\\AppData\\Local\\Yarn\\bin;C:\\Program Files\\JetBrains\\IntelliJ IDEA 2019.1.2\\bin;;C:\\Users\\Paul\\AppData\\Roaming\\Dashlane\\6.1907.0.17833\\bin\\Firefox_Extension\\{442718d9-475e-452a-b3e1-fb1ee16b8e9f}\\components;C:\\Users\\Paul\\AppData\\Roaming\\Dashlane\\6.1907.0.17833\\ucrt;C:\\Users\\Paul\\AppData\\Roaming\\Dashlane\\6.1907.0.17833\\bin\\Qt;C:\\Users\\Paul\\AppData\\Roaming\\Dashlane\\6.1907.0.17833\\bin\\Ssl;C:\\Program Files\\JetBrains\\WebStorm 2019.1.2\\bin;",
+    "PLATFORMIO_CALLER": "vscode"
+  },
+  "files.associations": {
+    "array": "cpp",
+    "*.tcc": "cpp",
+    "functional": "cpp",
+    "istream": "cpp",
+    "tuple": "cpp",
+    "utility": "cpp",
+    "system_error": "cpp",
+    "type_traits": "cpp",
+    "cstdlib": "cpp"
+  }
+}

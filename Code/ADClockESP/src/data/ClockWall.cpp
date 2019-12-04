@@ -1,11 +1,7 @@
 #include "ClockWall.h"
-#include "../NumberImage.h"
-
-Timer timer2;
 
 ClockWall::ClockWall()
 {
-  timer2.start();
 }
 
 size_t ClockWall::getClockPosition(size_t x, size_t y)
@@ -69,7 +65,8 @@ bool ClockWall::isValidCoordinates(size_t x, size_t y)
 
 bool ClockWall::printChar(uint8_t segment, char c)
 {
-  uint16_t *positions = NumberImage::getImageInDegree(c);
+  // TODO Fixen
+  uint16_t *positions;
   size_t currentElement;
   for (int y = 0; y < WALL_SIZE_Y; y++)
     for (int x = segment; x < (segment + 1) * 3; x++)
@@ -146,20 +143,19 @@ bool ClockWall::setMinuteSpeed(size_t speed)
   return true;
 }
 
-MbedJSONValue ClockWall::asJson()
+JSONValue ClockWall::asJson()
 {
-  MbedJSONValue v;
+  JSONValue v;
 
   v["clocks-x"] = WALL_SIZE_X;
   v["clocks-y"] = WALL_SIZE_Y;
-  // TODO Running out of Memory
-  // for (size_t index = 0; index < CLOCKS_X; index++)
-  // {
-  //   v["matrix"][index] = matrix[0][0].asJson();
-  //   // v["matrix"][getClockPosition(x, y)] = matrix[x][y].asJson();
-  //   // v["matrix"][getClockPosition(x, y)]["x"] = static_cast<int>(x);
-  //   // v["matrix"][getClockPosition(x, y)]["y"] = static_cast<int>(y);
-  // }
+  for (size_t index = 0; index < WALL_SIZE_X; index++)
+  {
+    v["matrix"][index] = matrix[index][0].asJson();
+    // v["matrix"][getClockPosition(x, y)] = matrix[x][y].asJson();
+    // v["matrix"][getClockPosition(x, y)]["x"] = static_cast<int>(x);
+    // v["matrix"][getClockPosition(x, y)]["y"] = static_cast<int>(y);
+  }
 
   return v;
 }
