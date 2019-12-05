@@ -33,6 +33,10 @@ public:
 
   void updateHandRotation(ApiResponse &response, uint8_t x, uint8_t y, uint8_t hand, bool rotation);
 
+  void updateHandStepDelay(ApiResponse &response, uint8_t x, uint8_t y, uint8_t hand, size_t step_delay);
+
+  void updateHandWaitStep(ApiResponse &response, uint8_t x, uint8_t y, uint8_t hand, size_t wait_steps);
+
   void initClocks();
 
   // Manager undsooo

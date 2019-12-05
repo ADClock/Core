@@ -4,8 +4,7 @@ void ClockApi::updateClock(ApiResponse &response, uint8_t x, uint8_t y, JSONValu
 {
   if (!isValidCoordinates(x, y))
   {
-    // TODO X + Y wären cool
-    response.error("Clock position is invalid. Clock not processed.");
+    response.error("Clock position (" + String(x) + "/" + String(y) + ") is invalid. Clock not processed.");
     return;
   }
 
@@ -27,8 +26,7 @@ void ClockApi::updateHand(ApiResponse &response, uint8_t x, uint8_t y, uint8_t h
 {
   if (!isValidCoordinates(x, y))
   {
-    // TODO X + Y wären cool
-    response.error("Clock position is invalid. Hand not processed.");
+    response.error("Clock position (" + String(x) + "/" + String(y) + ") is invalid. Hand not processed.");
     return;
   }
   // Neue Position updaten
@@ -51,14 +49,13 @@ void ClockApi::updateHandPosition(ApiResponse &response, uint8_t x, uint8_t y, u
   if (!isValidCoordinates(x, y))
   {
     // TODO X + Y wären cool
-    response.error("Clock position is invalid. Hand position not processed.");
+    response.error("Clock position (" + String(x) + "/" + String(y) + ") is invalid. Hand position not processed.");
     return;
   }
 
   if (!isValidPosition(degree))
   {
-    // TODO degree wären cool
-    response.error("Degree is invalid. Hand position not processed.");
+    response.error("Degree (" + String(degree) + ") is invalid. Hand position not processed.");
     return;
   }
 
@@ -73,7 +70,6 @@ void ClockApi::updateHandPosition(ApiResponse &response, uint8_t x, uint8_t y, u
     response.inform("Position of minute hand was updated");
   }
 
-  Serial.println("Hand updated targetPos to " + String(degree));
   return;
 }
 
@@ -81,8 +77,7 @@ void ClockApi::updateHandRotation(ApiResponse &response, uint8_t x, uint8_t y, u
 {
   if (!isValidCoordinates(x, y))
   {
-    // TODO X + Y wären cool
-    response.error("Clock position is invalid. Hand rotation not processed.");
+    response.error("Clock position (" + String(x) + "/" + String(y) + ") is invalid. Hand rotation not processed.");
     return;
   }
 

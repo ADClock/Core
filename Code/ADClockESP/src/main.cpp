@@ -21,6 +21,32 @@ const char *password = "@zwerge99";
 
 HttpServer server(RequestHandler::handlers, NULL);
 
+void setup_wifi_connection()
+{
+  Serial.print("Establish WiFi connection");
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(ssid, password);
+
+  size_t attempts = 0;
+  while (WiFi.waitForConnectResult() != WL_CONNECTED)
+  {
+    if (attempts > 10)
+    {
+      Serial.println("Failed! Restarting...");
+      ESP.restart();
+      return;
+    }
+    Serial.print(".");
+    delay(100);
+    attempts++;
+  }
+
+  Serial.print("\nConnected to: ");
+  Serial.println(ssid);
+  Serial.println("IP Address: ");
+  Serial.println(WiFi.localIP());
+}
+
 void setup()
 {
   Serial.begin(9600);
@@ -45,18 +71,7 @@ void setup()
   // Serial.println("Pintest complete");
   // +++++++++++++++++++++++++
 
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(ssid, password);
-
-  while (WiFi.waitForConnectResult() != WL_CONNECTED)
-  {
-    Serial.println("Connection Failed! Rebooting...");
-    delay(5000);
-    ESP.restart();
-  }
-
-  Serial.print("IP address: ");
-  Serial.println(WiFi.localIP());
+  setup_wifi_connection();
 
   server.begin();
 

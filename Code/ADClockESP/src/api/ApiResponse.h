@@ -17,17 +17,17 @@ public:
     maxValence = 0;
   }
 
-  void inform(const char *message)
+  void inform(String message)
   {
     addMessage(message, 1);
   }
 
-  void warn(const char *message)
+  void warn(String message)
   {
     addMessage(message, 15);
   }
 
-  void error(const char *message)
+  void error(String message)
   {
     addMessage(message, 30);
   }
@@ -49,7 +49,7 @@ public:
   }
 
 private:
-  void addMessage(const char *message, uint8_t valence)
+  void addMessage(String &message, uint8_t valence)
   {
     Serial.println(String(valence) + ": " + message);
     json["messages"][counter]["message"] = message;
