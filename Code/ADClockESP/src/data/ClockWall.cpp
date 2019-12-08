@@ -27,6 +27,24 @@ bool ClockWall::setHourPosition(size_t x, size_t y, size_t degree)
   return true;
 }
 
+bool ClockWall::setMinuteDirection(size_t x, size_t y, bool direction)
+{
+  if (!isValidCoordinates(x, y))
+    return false;
+
+  matrix[x][y].minute.setDirection(direction);
+  return true;
+}
+
+bool ClockWall::setHourDirection(size_t x, size_t y, bool direction)
+{
+  if (!isValidCoordinates(x, y))
+    return false;
+
+  matrix[x][y].hour.setPositionDegree(direction);
+  return true;
+}
+
 bool ClockWall::setMinutePosition(size_t x, size_t y, size_t degree)
 {
   if (!isValidCoordinates(x, y))

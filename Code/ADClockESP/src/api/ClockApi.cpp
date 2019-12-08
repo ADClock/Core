@@ -32,13 +32,27 @@ void ClockApi::updateHand(ApiResponse &response, uint8_t x, uint8_t y, uint8_t h
   // Neue Position updaten
   if (value.hasMember("target_pos"))
   {
-    updateHandPosition(response, x, y, handId, value["target_pos"].get<int>());
+    if (value["target_pos"].getType() == JSONValue::Type::TypeBoolean)
+    {
+      updateHandPosition(response, x, y, handId, value["target_pos"].get<int>());
+    }
+    else
+    {
+      response.error("Invalid data-type for 'target_pos'");
+    }
   }
 
   // Neue Richtung setzen
   if (value.hasMember("direction"))
   {
-    updateHandRotation(response, x, y, handId, value["direction"].get<boolean>());
+    if (value["direction"].getType() == JSONValue::Type::TypeBoolean)
+    {
+      updateHandRotation(response, x, y, handId, value["direction"].get<boolean>());
+    }
+    else
+    {
+      response.error("Invalid data-type for 'direction'");
+    }
   }
 
   return;
@@ -83,16 +97,15 @@ void ClockApi::updateHandRotation(ApiResponse &response, uint8_t x, uint8_t y, u
 
   if (handId == HOUR_HANDLE)
   {
-    // this->datamanager().planned.setDirection(rotation);
+    this->datamanager().planned.setHourDirection(x, y, rotation);
     response.inform("Rotation of hour hand was updated");
   }
   else
   {
-    // this->data.matrix[x][y].minute.setDirection(rotation);
+    this->datamanager().planned.setMinuteDirection(x, y, rotation);
     response.inform("Rotation of minute hand was updated");
   }
 
-  Serial.println("Hand updated direction to " + String(rotation));
   return;
 }
 

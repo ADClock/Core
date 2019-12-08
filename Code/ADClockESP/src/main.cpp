@@ -30,20 +30,21 @@ void setup_wifi_connection()
   size_t attempts = 0;
   while (WiFi.waitForConnectResult() != WL_CONNECTED)
   {
-    if (attempts > 10)
+    if (attempts > 3)
     {
       Serial.println("Failed! Restarting...");
       ESP.restart();
       return;
     }
     Serial.print(".");
-    delay(100);
+    delay(1000);
+    WiFi.reconnect();
     attempts++;
   }
 
   Serial.print("\nConnected to: ");
   Serial.println(ssid);
-  Serial.println("IP Address: ");
+  Serial.print("IP Address: ");
   Serial.println(WiFi.localIP());
 }
 
@@ -101,6 +102,8 @@ void loop()
 
   // Sending data
   clockout.tick();
+  if (!bufferout.is_empty())
+    Serial.println("Buffer remaining bits " + String(bufferout.size()));
 
   if (manager.hasPendingPlan())
   {

@@ -18,6 +18,9 @@ public:
   bool setHourPosition(size_t x, size_t y, size_t degree);
   bool setMinutePosition(size_t x, size_t y, size_t degree);
 
+  bool setHourDirection(size_t x, size_t y, bool direction);
+  bool setMinuteDirection(size_t x, size_t y, bool direction);
+
   bool printChar(uint8_t segment, char c);
 
   bool setHourRotation(bool direction);

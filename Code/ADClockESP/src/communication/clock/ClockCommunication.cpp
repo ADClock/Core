@@ -48,12 +48,15 @@ void ClockCommunication::sendPlan(ClockWall &plan)
 
 void ClockCommunication::sendCommand(uint8_t command)
 {
+  Serial.println("CockCom: try Command..");
   while (sender.sending() || sender.time_waiting() < DELAY_BETWEEN_COMMANDS)
   {
+    sender.tick(); // Push out previous command
     if (sender.failed())
       sender.reset();
-    delay(1);
+    delay(1); // wait vor last command to finish
   }
+  Serial.println("CockCom: Send Command..");
   sendByte(command);
 }
 

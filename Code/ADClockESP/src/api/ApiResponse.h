@@ -52,7 +52,7 @@ private:
   void addMessage(String &message, uint8_t valence)
   {
     Serial.println(String(valence) + ": " + message);
-    json["messages"][counter]["message"] = message;
+    json["messages"][counter]["message"] = message.c_str();
     json["messages"][counter]["valence"] = valence;
     counter++;
 
