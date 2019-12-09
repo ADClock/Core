@@ -100,8 +100,8 @@ boolean clock_get(HttpServer &server)
   return true;
 };
 
-// GET /clocks
-boolean clocks_get(HttpServer &server)
+// GET /aiming/all
+boolean aiming_all_get(HttpServer &server)
 {
   server.send_error_code(200);
   server.send_content_type("application/json");
@@ -110,17 +110,41 @@ boolean clocks_get(HttpServer &server)
   return true;
 };
 
+// GET /planned/all
+boolean planned_all_get(HttpServer &server)
+{
+  server.send_error_code(200);
+  server.send_content_type("application/json");
+  server.end_headers();
+  server.print(ClockApi::instance().datamanager().planned.asJson().serialize().c_str());
+  return true;
+};
+
+// GET /current/all
+boolean current_all_get(HttpServer &server)
+{
+  server.send_error_code(200);
+  server.send_content_type("application/json");
+  server.end_headers();
+  server.print(ClockApi::instance().datamanager().current.asJson().serialize().c_str());
+  return true;
+};
+
 HttpServer::PathHandler handlers[] = {
     {"/", HttpServer::GET, &index},
     {"/init", HttpServer::GET, &init_get},
+    {"/planned",
+     HttpServer::GET, &planned_all_get},
+    {"/aiming",
+     HttpServer::GET, &aiming_all_get},
+    {"/current",
+     HttpServer::GET, &current_all_get},
     {"/clock"
      "*",
      HttpServer::POST, &clock_post},
     {"/clock"
      "*",
      HttpServer::GET, &clock_get},
-    {"/all",
-     HttpServer::GET, &clocks_get},
     {NULL}}; // Terminate Array with NULL!
 
 } // namespace RequestHandler

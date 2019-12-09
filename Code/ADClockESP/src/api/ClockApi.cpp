@@ -55,6 +55,32 @@ void ClockApi::updateHand(ApiResponse &response, uint8_t x, uint8_t y, uint8_t h
     }
   }
 
+  // Step delay updaten
+  if (value.hasMember("step_delay"))
+  {
+    if (value["step_delay"].getType() == JSONValue::Type::TypeBoolean)
+    {
+      updateHandStepDelay(response, x, y, handId, value["step_delay"].get<int>());
+    }
+    else
+    {
+      response.error("Invalid data-type for 'step_delay'");
+    }
+  }
+
+  // Wait steps updaten
+  if (value.hasMember("wait_steps"))
+  {
+    if (value["wait_steps"].getType() == JSONValue::Type::TypeBoolean)
+    {
+      updateHandStepDelay(response, x, y, handId, value["wait_steps"].get<int>());
+    }
+    else
+    {
+      response.error("Invalid data-type for 'wait_steps'");
+    }
+  }
+
   return;
 }
 
@@ -104,6 +130,50 @@ void ClockApi::updateHandRotation(ApiResponse &response, uint8_t x, uint8_t y, u
   {
     this->datamanager().planned.setMinuteDirection(x, y, rotation);
     response.inform("Rotation of minute hand was updated");
+  }
+
+  return;
+}
+
+void ClockApi::updateHandStepDelay(ApiResponse &response, uint8_t x, uint8_t y, uint8_t handId, size_t step_delay)
+{
+  if (!isValidCoordinates(x, y))
+  {
+    response.error("Clock position (" + String(x) + "/" + String(y) + ") is invalid. Hand step delay not processed.");
+    return;
+  }
+
+  if (handId == HOUR_HANDLE)
+  {
+    this->datamanager().planned.setHourStepDelay(x, y, step_delay);
+    response.inform("Step delay of hour hand was updated");
+  }
+  else
+  {
+    this->datamanager().planned.setMinuteStepDelay(x, y, step_delay);
+    response.inform("Step delay of minute hand was updated");
+  }
+
+  return;
+}
+
+void ClockApi::updateHandWaitStep(ApiResponse &response, uint8_t x, uint8_t y, uint8_t handId, size_t wait_steps)
+{
+  if (!isValidCoordinates(x, y))
+  {
+    response.error("Clock position (" + String(x) + "/" + String(y) + ") is invalid. Hand wait steps not processed.");
+    return;
+  }
+
+  if (handId == HOUR_HANDLE)
+  {
+    this->datamanager().planned.setHourWaitSteps(x, y, wait_steps);
+    response.inform("Wait steps of hour hand was updated");
+  }
+  else
+  {
+    this->datamanager().planned.setMinuteWaitSteps(x, y, wait_steps);
+    response.inform("Wait steps of minute hand was updated");
   }
 
   return;

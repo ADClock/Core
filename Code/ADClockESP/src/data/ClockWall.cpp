@@ -27,6 +27,15 @@ bool ClockWall::setHourPosition(size_t x, size_t y, size_t degree)
   return true;
 }
 
+bool ClockWall::setMinutePosition(size_t x, size_t y, size_t degree)
+{
+  if (!isValidCoordinates(x, y))
+    return false;
+
+  matrix[x][y].minute.setPositionDegree(degree);
+  return true;
+}
+
 bool ClockWall::setMinuteDirection(size_t x, size_t y, bool direction)
 {
   if (!isValidCoordinates(x, y))
@@ -45,12 +54,39 @@ bool ClockWall::setHourDirection(size_t x, size_t y, bool direction)
   return true;
 }
 
-bool ClockWall::setMinutePosition(size_t x, size_t y, size_t degree)
+bool ClockWall::setMinuteStepDelay(size_t x, size_t y, size_t step_delay)
 {
   if (!isValidCoordinates(x, y))
     return false;
 
-  matrix[x][y].minute.setPositionDegree(degree);
+  matrix[x][y].minute.setDelayBetweenSteps(step_delay);
+  return true;
+}
+
+bool ClockWall::setHourStepDelay(size_t x, size_t y, size_t step_delay)
+{
+  if (!isValidCoordinates(x, y))
+    return false;
+
+  matrix[x][y].hour.setDelayBetweenSteps(step_delay);
+  return true;
+}
+
+bool ClockWall::setMinuteWaitSteps(size_t x, size_t y, size_t wait_steps)
+{
+  if (!isValidCoordinates(x, y))
+    return false;
+
+  matrix[x][y].minute.setWaitSteps(wait_steps);
+  return true;
+}
+
+bool ClockWall::setHourWaitSteps(size_t x, size_t y, size_t wait_steps)
+{
+  if (!isValidCoordinates(x, y))
+    return false;
+
+  matrix[x][y].hour.setWaitSteps(wait_steps);
   return true;
 }
 
@@ -167,12 +203,15 @@ JSONValue ClockWall::asJson()
 
   v["clocks-x"] = WALL_SIZE_X;
   v["clocks-y"] = WALL_SIZE_Y;
-  for (size_t index = 0; index < WALL_SIZE_X; index++)
+  for (size_t x = 0; x < WALL_SIZE_X; x++)
   {
-    v["matrix"][index] = matrix[index][0].asJson();
-    // v["matrix"][getClockPosition(x, y)] = matrix[x][y].asJson();
-    // v["matrix"][getClockPosition(x, y)]["x"] = static_cast<int>(x);
-    // v["matrix"][getClockPosition(x, y)]["y"] = static_cast<int>(y);
+    for (size_t y = 0; y < WALL_SIZE_Y; y++)
+    {
+      //v["matrix"][index] = matrix[index][0].asJson();
+      v["matrix"][getClockPosition(x, y)] = matrix[x][y].asJson();
+      v["matrix"][getClockPosition(x, y)]["x"] = static_cast<int>(x);
+      v["matrix"][getClockPosition(x, y)]["y"] = static_cast<int>(y);
+    }
   }
 
   return v;

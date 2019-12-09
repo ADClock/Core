@@ -33,6 +33,12 @@ public:
 
   void update(ClockWall &wall);
 
+  JSONValue asJson();
+  /**
+  * Hilfsfunktionen für Positionen
+  */
+  size_t getClockPosition(size_t x, size_t y);
+
 private:
   void setWaitSteps(size_t x, size_t y, size_t wait_steps_hour, size_t wait_steps_minute);
 

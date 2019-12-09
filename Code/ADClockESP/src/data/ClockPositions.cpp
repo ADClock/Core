@@ -80,3 +80,38 @@ void ClockPositions::update(ClockWall &wall)
     }
   }
 }
+
+JSONValue ClockPositions::asJson()
+{
+  JSONValue v;
+
+  v["clocks-x"] = WALL_SIZE_X;
+  v["clocks-y"] = WALL_SIZE_Y;
+  for (size_t x = 0; x < WALL_SIZE_X; x++)
+  {
+    for (size_t y = 0; y < WALL_SIZE_Y; y++)
+    {
+      //v["matrix"][index] = matrix[index][0].asJson();
+      v["matrix"][x][y]["current_position"] = static_cast<int>(current[x][y].hour.current_pos);
+      v["matrix"][x][y]["wait_steps"] = static_cast<int>(current[x][y].hour.wait_steps);
+      v["matrix"][x][y]["x"] = static_cast<int>(x);
+      v["matrix"][x][y]["y"] = static_cast<int>(y);
+    }
+  }
+
+  return v;
+}
+
+size_t ClockPositions::getClockPosition(size_t x, size_t y)
+{
+  size_t clockPos = x * WALL_SIZE_Y + y;
+  // if (x % 2 == 0)
+  // {
+  //   clockPos += WALL_SIZE_Y - y - 1;
+  // }
+  // else
+  // {
+  //   clockPos += y;
+  // }
+  return clockPos;
+}

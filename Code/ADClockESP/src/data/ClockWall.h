@@ -21,6 +21,12 @@ public:
   bool setHourDirection(size_t x, size_t y, bool direction);
   bool setMinuteDirection(size_t x, size_t y, bool direction);
 
+  bool setHourStepDelay(size_t x, size_t y, size_t step_delay);
+  bool setMinuteStepDelay(size_t x, size_t y, size_t step_delay);
+
+  bool setHourWaitSteps(size_t x, size_t y, size_t wait_steps);
+  bool setMinuteWaitSteps(size_t x, size_t y, size_t wait_steps);
+
   bool printChar(uint8_t segment, char c);
 
   bool setHourRotation(bool direction);
