@@ -19,7 +19,7 @@ void DataSender::tick()
     else if (this->time_waiting() > SENDER_TIMEOUT_RESPONSE_ON)
     {
       timeout();
-      Serial.println("WAIT_FOR_RESPONSE_ON");
+      // Serial.println("WAIT_FOR_RESPONSE_ON");
     }
     break;
 
@@ -32,7 +32,7 @@ void DataSender::tick()
     else if (this->time_waiting() > SENDER_TIMEOUT_RESPONSE_OFF)
     {
       timeout();
-      Serial.println("WAIT_FOR_RESPONSE_OFF");
+      //  Serial.println("WAIT_FOR_RESPONSE_OFF");
     }
     break;
 
@@ -55,7 +55,7 @@ void DataSender::reset()
 {
   digitalWrite(OUT_CLOCK, 0);
   this->state = SenderState::IDLE;
-  Serial.println("Resetting sender remaining bits = " + String(buffer.size()));
+  // Serial.println("Resetting sender remaining bits = " + String(buffer.size()));
   this->buffer.clear();
   this->last_action = micros();
 }
@@ -91,7 +91,7 @@ void DataSender::recive_response_off()
 void DataSender::timeout()
 {
   this->state = SenderState::FAILED;
-  Serial.println("Failed sending.");
+  //  Serial.println("Failed sending.");
 }
 
 unsigned long DataSender::time_waiting()

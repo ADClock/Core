@@ -48,6 +48,38 @@ void setup_wifi_connection()
   Serial.println(WiFi.localIP());
 }
 
+void test_communication_speed()
+{
+  long start = 0;
+  long end = 0;
+  double total_bits = 0;
+  double total_time = 0;
+  Serial.println("Speedtesting...");
+  for (size_t i = 0; i < 10; i++)
+  {
+    // Preparing
+    clockcom.cleanup_communication();
+    clockcom.sendCommand(0x03); // 8 bit command
+    // Maximum: 1000 sonst Buffer größer stellen
+    for (size_t i = 0; i < 576; i++)
+    {
+      clockcom.sendByte(0x42);
+    }
+    total_bits += 8 + 576 * 8;
+    start = micros();
+    if (!clockcom.tramsmit())
+    {
+      Serial.println("Übertragung fehlgeschlagen. Testergebnis ungültig!");
+    }
+    end = micros();
+    long current_time = end - start;
+    total_time += current_time;
+    Serial.println("Transmission " + String(i) + " took " + String(current_time) + " µs");
+  }
+
+  Serial.println("Speedtest finished\nTrasmitted " + String(total_bits) + " bits in " + String(total_time) + " µs\nSpeed: " + String(total_bits / (total_time / 1000. / 1000.)) + " bits/second");
+}
+
 void setup()
 {
   Serial.begin(9600);
@@ -71,6 +103,8 @@ void setup()
   // digitalWrite(OUT_DATA, 0);
   // Serial.println("Pintest complete");
   // +++++++++++++++++++++++++
+
+  test_communication_speed();
 
   setup_wifi_connection();
 

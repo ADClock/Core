@@ -52,6 +52,8 @@ void DataManager::tick()
     {
       this->out.enqueue(this->in.dequeue());
     }
+  case CommandState::TESTING:
+    in.clear(); // Dafür sorgen, dass Buffer nicht überläuft
 
   default:
     break;
@@ -93,6 +95,10 @@ void DataManager::set_current_command()
   case 0x02:
     sendCommand(0x02);
     this->state = CommandState::READING_IMAGE;
+    break;
+
+  case 0x03:
+    this->state = CommandState::TESTING;
     break;
 
   default:

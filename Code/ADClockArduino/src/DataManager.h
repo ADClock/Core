@@ -12,7 +12,8 @@ enum class CommandState
   IDLE,
   READING_COMMAND,
   READING_IMAGE,
-  PIPEING
+  PIPEING,
+  TESTING
 };
 
 class DataManager

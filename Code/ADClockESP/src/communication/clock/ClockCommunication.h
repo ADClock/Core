@@ -26,11 +26,15 @@ public:
   // reads the result from last transmission
   bool was_successful();
 
-private:
+  // Garantiert, dass Übertragungskanal frei ist
+  void cleanup_communication();
+
   void sendCommand(uint8_t command);
+
   void sendData(uint8_t *data, size_t length);
   void sendByte(uint8_t byte);
 
+private:
   size_t getClockX(size_t &position);
   size_t getClockY(size_t &position);
 
