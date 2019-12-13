@@ -79,10 +79,10 @@ void Hand::setDelayBetweenSteps(size_t delay)
 JSONValue Hand::asJson()
 {
   JSONValue v;
-  v["pos"] = static_cast<int>(this->position);
-  v["direction"] = this->direction;
-  v["waiting"] = static_cast<int>(this->waitSteps);
-  v["delay"] = static_cast<int>(this->stepDelay);
+  v["p"] = static_cast<int>(this->position);
+  v["d"] = this->direction;
+  v["w"] = static_cast<int>(this->waitSteps);
+  v["s"] = static_cast<int>(this->stepDelay);
   return v;
 }
 

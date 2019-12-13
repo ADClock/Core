@@ -203,14 +203,18 @@ JSONValue ClockWall::asJson()
 
   v["clocks-x"] = WALL_SIZE_X;
   v["clocks-y"] = WALL_SIZE_Y;
-  for (size_t x = 0; x < WALL_SIZE_X; x++)
+  for (size_t x = 0; x < 9; x++)
   {
     for (size_t y = 0; y < WALL_SIZE_Y; y++)
     {
       //v["matrix"][index] = matrix[index][0].asJson();
-      v["matrix"][getClockPosition(x, y)] = matrix[x][y].asJson();
-      v["matrix"][getClockPosition(x, y)]["x"] = static_cast<int>(x);
-      v["matrix"][getClockPosition(x, y)]["y"] = static_cast<int>(y);
+      //v["matrix"][getClockPosition(x, y)] = matrix[x][y].asJson();
+      //v["matrix"][getClockPosition(x, y)]["x"] = static_cast<int>(x);
+      //v["matrix"][getClockPosition(x, y)]["y"] = static_cast<int>(y);
+
+      v["matrix"][x][y] = matrix[x][y].asJson();
+      v["matrix"][x][y]["x"] = static_cast<int>(x);
+      v["matrix"][x][y]["y"] = static_cast<int>(y);
     }
   }
 

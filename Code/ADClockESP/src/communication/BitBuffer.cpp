@@ -18,6 +18,7 @@ void BitBuffer::clear()
   tail = head;
 }
 
+// TODO Das klappt irgendwie nicht glaube ich
 size_t BitBuffer::size()
 {
   if (tail >= head)

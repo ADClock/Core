@@ -9,8 +9,8 @@ void Clock::init()
 JSONValue Clock::asJson()
 {
   JSONValue v;
-  v["hour"] = hour.asJson();
-  v["minute"] = minute.asJson();
+  v["h"] = hour.asJson();
+  v["m"] = minute.asJson();
   return v;
 }
 

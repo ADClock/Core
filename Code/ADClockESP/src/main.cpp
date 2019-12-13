@@ -52,6 +52,18 @@ void test_communication_speed()
 {
   long start = 0;
   long end = 0;
+
+  Serial.println("Toggling");
+  start = micros();
+
+  for (size_t i = 0; i < 10000; i++)
+  {
+    digitalWrite(18, 1);
+    digitalWrite(18, 0);
+  }
+  end = micros();
+  Serial.println("10000 Pin-Toggles took " + String(end - start) + " µs");
+
   double total_bits = 0;
   double total_time = 0;
   Serial.println("Speedtesting...");
@@ -77,7 +89,7 @@ void test_communication_speed()
     Serial.println("Transmission " + String(i) + " took " + String(current_time) + " µs");
   }
 
-  Serial.println("Speedtest finished\nTrasmitted " + String(total_bits) + " bits in " + String(total_time) + " µs\nSpeed: " + String(total_bits / (total_time / 1000. / 1000.)) + " bits/second");
+  Serial.println("Speedtest finished\nTransmitted " + String(total_bits) + " bits in " + String(total_time) + " µs\nSpeed: " + String(total_bits / (total_time / 1000. / 1000.)) + " bits/second");
 }
 
 void setup()
