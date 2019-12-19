@@ -64,6 +64,30 @@ void testPinSpeed()
   Serial.println("1000 x Pin on off took " + String(end - startTime) + " µs.");
 }*/
 
+void in_clock_on()
+{
+  // Serial.println("in clock on");
+  receiver.read_next_bit();
+}
+
+void in_clock_off()
+{
+  // Serial.println("in clock off");
+  receiver.recive_clock_off();
+}
+
+void in_clock_change()
+{
+  if (FastGPIO::Pin<IN_CLOCK>::isInputHigh())
+  {
+    in_clock_on();
+  }
+  else
+  {
+    in_clock_off();
+  }
+}
+
 void setup()
 {
 
@@ -82,6 +106,9 @@ void setup()
   moma.calibrate();
   // rotateUntilTomorrow();
 
+  attachInterrupt(digitalPinToInterrupt(IN_CLOCK), in_clock_change, CHANGE);
+
+  Serial.println("Done!");
 #ifdef DEBUG
   Serial.println("Done!");
 #endif

@@ -39,11 +39,12 @@ public:
   // Returns the time since last action
   unsigned long time_waiting();
 
-private:
   // IDLE -> WAIT_FOR_CLOCK_OFF
   void read_next_bit();
   // WAIT_FOR_CLOCK_OFF -> WAIT_FOR_NEXT_BIT
   void recive_clock_off();
+
+private:
   // x -> FAILED
   void timeout();
 

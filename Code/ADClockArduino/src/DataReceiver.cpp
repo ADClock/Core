@@ -14,7 +14,8 @@ void DataReceiver::tick()
   case ReceiverState::WAIT_FOR_CLOCK_OFF:
     if (!FastGPIO::Pin<IN_CLOCK>::isInputHigh())
     {
-      this->recive_clock_off();
+      // Der interrupt sollte sich hierdrum kümmern
+      //this->recive_clock_off();
     }
     else if (this->time_waiting() > RECEIVER_TIMEOUT_CLOCK_OFF)
     {
@@ -26,7 +27,8 @@ void DataReceiver::tick()
   case ReceiverState::WAIT_FOR_NEXT_BIT:
     if (FastGPIO::Pin<IN_CLOCK>::isInputHigh())
     {
-      this->read_next_bit();
+      // Der interrupt sollte sich hierdrum kümmern
+      //  this->read_next_bit();
     }
     else if (this->time_waiting() > RECEIVER_TIMEOUT_NEXT_DATA)
     {

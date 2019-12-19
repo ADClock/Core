@@ -32,7 +32,7 @@ void ClockApi::updateHand(ApiResponse &response, uint8_t x, uint8_t y, uint8_t h
   // Neue Position updaten
   if (value.hasMember("target_pos"))
   {
-    if (value["target_pos"].getType() == JSONValue::Type::TypeBoolean)
+    if (value["target_pos"].getType() == JSONValue::Type::TypeInt)
     {
       updateHandPosition(response, x, y, handId, value["target_pos"].get<int>());
     }

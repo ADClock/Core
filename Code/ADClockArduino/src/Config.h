@@ -44,6 +44,6 @@
 // Pins for DataReceiver
 #define IN_RESPONSE A2
 #define IN_DATA A3
-#define IN_CLOCK A4
+#define IN_CLOCK 2
 
 #endif
