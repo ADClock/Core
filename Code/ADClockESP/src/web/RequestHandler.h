@@ -22,11 +22,11 @@ JsonDocument &getJsonBody(HttpServer &server, ApiResponse &response)
 
   if (body.length() == 0)
   {
-    response.error("No body was sent.");
+    response.error(F("No body was sent."));
   }
   else if (body.length() >= 32000)
   {
-    response.error("The body was long. Limit is 32000 bytes.");
+    response.error(F("The body was long. Limit is 32000 bytes."));
   }
 
   char bodyArray[body.length() + 1];
