@@ -81,21 +81,27 @@ void ClockPositions::update(ClockWall &wall)
   }
 }
 
-JSONValue ClockPositions::asJson()
+JsonDocument ClockPositions::asJson()
 {
-  JSONValue v;
+  DynamicJsonDocument v(8192);
 
   v["clocks-x"] = WALL_SIZE_X;
   v["clocks-y"] = WALL_SIZE_Y;
+
+  JsonArray mat = v["matrix"].to<JsonArray>();
   for (size_t x = 0; x < WALL_SIZE_X; x++)
   {
     for (size_t y = 0; y < WALL_SIZE_Y; y++)
     {
+      DynamicJsonDocument docforobj(JSON_OBJECT_SIZE(4));
+      JsonObject obj = docforobj.to<JsonObject>();
       //v["matrix"][index] = matrix[index][0].asJson();
-      v["matrix"][x][y]["current_position"] = static_cast<int>(current[x][y].hour.current_pos);
-      v["matrix"][x][y]["wait_steps"] = static_cast<int>(current[x][y].hour.wait_steps);
-      v["matrix"][x][y]["x"] = static_cast<int>(x);
-      v["matrix"][x][y]["y"] = static_cast<int>(y);
+      obj["current_position"] = static_cast<int>(current[x][y].hour.current_pos);
+      obj["wait_steps"] = static_cast<int>(current[x][y].hour.wait_steps);
+      obj["x"] = static_cast<int>(x);
+      obj["y"] = static_cast<int>(y);
+
+      mat.add(obj);
     }
   }
 

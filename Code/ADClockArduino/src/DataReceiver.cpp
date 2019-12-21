@@ -15,11 +15,12 @@ void DataReceiver::tick()
     if (!FastGPIO::Pin<IN_CLOCK>::isInputHigh())
     {
       // Der interrupt sollte sich hierdrum kümmern
-      //this->recive_clock_off();
+      // this->recive_clock_off();
     }
-    else if (this->time_waiting() > RECEIVER_TIMEOUT_CLOCK_OFF)
+    // Da der Interrupt in der IF Bedingung eintreten kann, zusätzlich nochmals prüfen, dass die Clock auch sicher 1 ist.
+    else if (this->time_waiting() > RECEIVER_TIMEOUT_CLOCK_OFF && FastGPIO::Pin<IN_CLOCK>::isInputHigh())
     {
-      Serial.println("Clock stil on after " + String(this->time_waiting()));
+      // Serial.println("Clock stil on after " + String(this->time_waiting()) + " clockpin = " + String(FastGPIO::Pin<IN_CLOCK>::isInputHigh()));
       timeout();
     }
     break;
@@ -30,7 +31,8 @@ void DataReceiver::tick()
       // Der interrupt sollte sich hierdrum kümmern
       //  this->read_next_bit();
     }
-    else if (this->time_waiting() > RECEIVER_TIMEOUT_NEXT_DATA)
+    // Da der Interrupt in der IF Bedingung eintreten kann, zusätzlich nochmals prüfen, dass die Clock auch sicher 0 ist.
+    else if (this->time_waiting() > RECEIVER_TIMEOUT_NEXT_DATA && !FastGPIO::Pin<IN_CLOCK>::isInputHigh())
     {
       this->state = ReceiverState::COMPLETE;
     }
@@ -87,15 +89,17 @@ void DataReceiver::timeout()
 
 unsigned long DataReceiver::time_waiting()
 {
-  auto current_time = micros();
+  /*auto current_time = micros();
   if (current_time < last_action)
   {
-    return current_time + 0; // TODO Hier fehlt noch die Zeit von MAX_VALUE - last_action
+    Serial.println("Überlauf micros = " + String(current_time)); // TODO
+    return current_time + (0UL - 1UL) - last_action;             // TODO Hier fehlt noch die Zeit von MAX_VALUE - last_action
   }
   else
   {
     return current_time - last_action;
-  }
+  }*/
+  return (unsigned long)(micros() - last_action);
 }
 
 // sends response for reviced bit

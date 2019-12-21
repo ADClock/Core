@@ -18,7 +18,7 @@ public:
   void sendPlan(ClockWall &plan);
 
   // sends hole data. returns result
-  bool tramsmit();
+  bool transmit();
 
   // checks if currently transmitting
   bool is_transmitting();

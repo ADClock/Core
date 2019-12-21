@@ -11,8 +11,8 @@ class Clock
 public:
   void init();
 
-  JSONValue asJson();
-  void update(JSONValue &json);
+  JsonDocument asJson();
+  void update(JsonDocument &json);
   void update(Clock &clock);
 
   bool equals(Clock &clock);

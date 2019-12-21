@@ -46,6 +46,7 @@ void MotorManager::setMotorData(DataStruct data[2]) const
   motor2.set_direction(data[1].direction);
 
 #ifdef DEBUG
+  Serial.println("m1=" + String(data[0].position) + " m2=" + String(data[1].position));
   // Serial.println("MotorManager >> Motorendaten neu gesetzt.");
 #endif
 }

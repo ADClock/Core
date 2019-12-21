@@ -2,7 +2,7 @@
 #ifndef _HAND_H_
 #define _HAND_H_
 #include "Arduino.h"
-#include "../parser/JSONValue.h"
+#include "ArduinoJson.h"
 #include "../Config.h"
 #include <cstdlib>
 using namespace std;
@@ -29,8 +29,8 @@ public:
   size_t getStepDelay();
   bool getDirection();
 
-  JSONValue asJson();
-  void update(JSONValue &json);
+  JsonDocument asJson();
+  void update(JsonDocument &json);
   void update(Hand &hand);
 
   bool equals(Hand &hand);

@@ -30,9 +30,9 @@ private:
   // IDLE -> WAIT_FOR_RESPONSE_ON
   void send_next_bit();
   // WAIT_FOR_RESPONSE_ON -> WAIT_FOR_RESPONSE_OFF
-  void recive_response_on();
+  void receive_response_on();
   // WAIT_FOR_RESPONSE_OFF -> IDLE or sendNextBit();
-  void recive_response_off();
+  void receive_response_off();
   // x -> FAILED
   void timeout();
 

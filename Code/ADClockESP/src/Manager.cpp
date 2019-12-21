@@ -20,8 +20,9 @@ void Manager::init()
   }
 
   clockcom.sendInitCommand();
+  last_init = micros();
 #ifdef DEBUG
-  if (clockcom.tramsmit())
+  if (clockcom.transmit())
   {
     Debug::println("Manager init >> transmitted init command");
   }
@@ -46,27 +47,27 @@ void Manager::executePlan()
   // +++++++++++++++++++++++++++++++++++++++++
 
   this->clockcom.sendPlan(this->planned);
-  if (clockcom.tramsmit())
+  if (clockcom.transmit())
   {
+    digitalWrite(OUT_CLOCK, 0);
     // Den Plan als Goal setzen
     this->aiming.update(this->planned);
     // Motordaten entsprechend aktualisieren (z.B. waitSteps übernehmen)
     this->current.update(this->aiming);
-#ifdef DEBUG
-    Debug::println("Manager exec >> Sending done. Executing plan...");
-#endif
+    // #ifdef DEBUG
+    Serial.println("Manager exec >> Sending done. Executing plan...");
+    // #endif
   }
   else
   {
-#ifdef DEBUG
-    Debug::println("Manager exec >> Failed to send plan.");
-#endif
+    // #ifdef DEBUG
+    Serial.println("Manager exec >> Failed to send plan.");
+    // #endif
   }
 }
 
 bool Manager::hasPendingMoves()
 {
-
   for (size_t x = 0; x < WALL_SIZE_X; x++)
   {
     for (size_t y = 0; y < WALL_SIZE_Y; y++)
@@ -80,7 +81,7 @@ bool Manager::hasPendingMoves()
 
 bool Manager::hasPendingPlan()
 {
-  return !plan_protected && !this->aiming.equals(this->planned);
+  return !plan_protected && this->aiming.different_target(this->planned);
 }
 
 void Manager::try_step()
@@ -92,4 +93,9 @@ void Manager::try_step()
       this->current.try_step(x, y, this->aiming.getClock(x, y));
     }
   }
+}
+
+bool Manager::isInitialized()
+{
+  return (this->last_init + CLOCK_INIT_TIME) < micros();
 }

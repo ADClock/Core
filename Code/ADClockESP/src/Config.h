@@ -25,7 +25,9 @@
 #define COMMAND_IMAGE 0x02
 
 // TODO Nochmal richtigen Wert einstellen in us
-#define DELAY_BETWEEN_COMMANDS 100000
+#define DELAY_BETWEEN_COMMANDS 6000
+
+#define CLOCK_INIT_TIME 10000000
 // =================================================
 
 // =================================================
@@ -36,8 +38,8 @@
 
 // =================================================
 // Clock DataSender params
-#define SENDER_TIMEOUT_RESPONSE_ON 100000  //60000
-#define SENDER_TIMEOUT_RESPONSE_OFF 100000 //60000
+#define SENDER_TIMEOUT_RESPONSE_ON 100  //60000
+#define SENDER_TIMEOUT_RESPONSE_OFF 100 //60000
 
 // =================================================
 

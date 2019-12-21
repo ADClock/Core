@@ -1,8 +1,8 @@
 #ifndef _API_RESPONSE_H_
 #define _API_RESPONSE_H_
 
-#include "../parser/JSONValue.h"
 #include "Arduino.h"
+#include "ArduinoJson.h"
 
 // Alle API Aktionen müssen irgendwie gescheit beantwortet werden.
 // Am besten so, dass der User auch weiß, was schief gelaufen ist.
@@ -10,11 +10,10 @@
 class ApiResponse
 {
 public:
-  ApiResponse()
+  ApiResponse() : json(DynamicJsonDocument(1024))
   {
-    json = JSONValue();
-    counter = 0;
     maxValence = 0;
+    json.createNestedArray("messages");
   }
 
   void inform(String message)
@@ -42,19 +41,20 @@ public:
     return 200; // Alles gut gegangen
   }
 
-  JSONValue &getJson()
+  JsonDocument &getJson()
   {
     json["valence"] = maxValence;
     return json;
   }
 
 private:
-  void addMessage(String &message, uint8_t valence)
+  void addMessage(String message, uint8_t valence)
   {
     Serial.println(String(valence) + ": " + message);
-    json["messages"][counter]["message"] = message.c_str();
-    json["messages"][counter]["valence"] = valence;
-    counter++;
+    JsonArray arr = json["messages"].as<JsonArray>();
+    JsonObject obj = arr.createNestedObject();
+    obj["message"] = String(message);
+    obj["valence"] = valence;
 
     if (valence > maxValence)
     {
@@ -62,9 +62,8 @@ private:
     }
   }
 
-  JSONValue json;
+  JsonDocument json;
   uint8_t maxValence;
-  uint8_t counter;
 };
 
 #endif

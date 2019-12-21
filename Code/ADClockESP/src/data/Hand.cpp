@@ -7,14 +7,13 @@ void Hand::setPositionSteps(size_t steps)
 
 void Hand::setPositionDegree(size_t degree)
 {
-  this->position = degree * STEPS_PER_DEGREE;
+  this->position = (degree % 360) * STEPS_PER_DEGREE;
 }
 
 // TODO In Clockcom packen
 uint8_t *Hand::serialize()
 {
   static uint8_t image[4];
-  // Stepper 1: Hour
   image[0] = (position >> 4) & 0xFF;
   image[1] = ((position & 0x0F) << 4);
 
@@ -76,9 +75,9 @@ void Hand::setDelayBetweenSteps(size_t delay)
   this->stepDelay = delay;
 }
 
-JSONValue Hand::asJson()
+JsonDocument Hand::asJson()
 {
-  JSONValue v;
+  StaticJsonDocument<JSON_OBJECT_SIZE(4)> v;
   v["p"] = static_cast<int>(this->position);
   v["d"] = this->direction;
   v["w"] = static_cast<int>(this->waitSteps);

@@ -19,6 +19,8 @@ public:
 
   bool hasPendingPlan(); // Prüft, ob Änderungen geplant sind.
 
+  bool isInitialized();
+
   void init(); // Initalisiert die Matrix
 
   void preventSendingPlan() { plan_protected = true; }
@@ -34,5 +36,6 @@ public:
 
 private:
   bool plan_protected; // Wenn der Plan protected ist, wird er nicht direkt ausgeführt. // TODO
+  unsigned long last_init;
 };
 #endif

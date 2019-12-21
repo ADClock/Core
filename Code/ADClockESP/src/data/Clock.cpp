@@ -6,9 +6,9 @@ void Clock::init()
   this->minute.init();
 }
 
-JSONValue Clock::asJson()
+JsonDocument Clock::asJson()
 {
-  JSONValue v;
+  DynamicJsonDocument v(1024);
   v["h"] = hour.asJson();
   v["m"] = minute.asJson();
   return v;

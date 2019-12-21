@@ -4,6 +4,7 @@
 #include "Arduino.h"
 #include "Manager.h"
 #include "ApiResponse.h"
+#include "NTPTime.h"
 
 #define MINUTE_HANDLE 1
 #define HOUR_HANDLE 2
@@ -23,10 +24,10 @@ public:
   }
 
   // Updates a hole Clock
-  void updateClock(ApiResponse &response, uint8_t x, uint8_t y, JSONValue &value);
+  void updateClock(ApiResponse &response, uint8_t x, uint8_t y, JsonDocument &value);
 
   // Updates a single Handle
-  void updateHand(ApiResponse &response, uint8_t x, uint8_t y, uint8_t hand, JSONValue &value);
+  void updateHand(ApiResponse &response, uint8_t x, uint8_t y, uint8_t hand, JsonObject value);
 
   // Was kann alles beim Handle aktualisiert werden?
   void updateHandPosition(ApiResponse &response, uint8_t x, uint8_t y, uint8_t hand, size_t position);
@@ -37,6 +38,8 @@ public:
 
   void updateHandWaitStep(ApiResponse &response, uint8_t x, uint8_t y, uint8_t hand, size_t wait_steps);
 
+  void showCurrentTime(ApiResponse &response);
+
   void initClocks();
 
   // Manager undsooo
@@ -45,10 +48,15 @@ public:
     this->manager = m;
   }
 
-  Manager datamanager()
+  Manager &datamanager()
   {
     return *manager;
   }
+
+  NTPTime &time()
+  {
+    return ntp_time;
+  };
 
 private:
   ClockApi(){};
@@ -57,6 +65,8 @@ private:
   bool isValidPosition(size_t position);
 
   Manager *manager;
+
+  NTPTime ntp_time;
 };
 
 #endif

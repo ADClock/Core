@@ -33,7 +33,7 @@ public:
 
   void update(ClockWall &wall);
 
-  JSONValue asJson();
+  JsonDocument asJson();
   /**
   * Hilfsfunktionen für Positionen
   */

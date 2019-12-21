@@ -50,7 +50,7 @@ bool ClockWall::setHourDirection(size_t x, size_t y, bool direction)
   if (!isValidCoordinates(x, y))
     return false;
 
-  matrix[x][y].hour.setPositionDegree(direction);
+  matrix[x][y].hour.setDirection(direction);
   return true;
 }
 
@@ -197,13 +197,15 @@ bool ClockWall::setMinuteSpeed(size_t speed)
   return true;
 }
 
-JSONValue ClockWall::asJson()
+JsonDocument ClockWall::asJson()
 {
-  JSONValue v;
+  DynamicJsonDocument doc(8192);
 
-  v["clocks-x"] = WALL_SIZE_X;
-  v["clocks-y"] = WALL_SIZE_Y;
-  for (size_t x = 0; x < 9; x++)
+  doc["clocks-x"] = WALL_SIZE_X;
+  doc["clocks-y"] = WALL_SIZE_Y;
+
+  JsonArray xelem = doc["matrix"].to<JsonArray>();
+  for (size_t x = 0; x < WALL_SIZE_X; x++)
   {
     for (size_t y = 0; y < WALL_SIZE_Y; y++)
     {
@@ -211,14 +213,14 @@ JSONValue ClockWall::asJson()
       //v["matrix"][getClockPosition(x, y)] = matrix[x][y].asJson();
       //v["matrix"][getClockPosition(x, y)]["x"] = static_cast<int>(x);
       //v["matrix"][getClockPosition(x, y)]["y"] = static_cast<int>(y);
-
-      v["matrix"][x][y] = matrix[x][y].asJson();
-      v["matrix"][x][y]["x"] = static_cast<int>(x);
-      v["matrix"][x][y]["y"] = static_cast<int>(y);
+      JsonDocument foo = this->matrix[x][y].asJson();
+      foo["x"] = static_cast<int>(x);
+      foo["y"] = static_cast<int>(y);
+      xelem.add(foo);
     }
   }
 
-  return v;
+  return doc;
 }
 
 // Übernimmt alle Einstellunge der anderen Wall
@@ -228,7 +230,7 @@ void ClockWall::update(ClockWall &wall)
   {
     for (size_t y = 0; y < WALL_SIZE_Y; y++)
     {
-      matrix[x][y].update(wall.getClock(x, y));
+      matrix[x][y].update(wall.matrix[x][y]);
     }
   }
 }
@@ -244,4 +246,20 @@ bool ClockWall::equals(ClockWall &wall)
     }
   }
   return true;
+}
+
+//  Ein Plan muss nur neu verschickt werden, wenn sich die Zielposition unterscheidet.
+bool ClockWall::different_target(ClockWall &wall)
+{
+  for (size_t x = 0; x < WALL_SIZE_X; x++)
+  {
+    for (size_t y = 0; y < WALL_SIZE_Y; y++)
+    {
+      if (matrix[x][y].hour.getPosition() != wall.matrix[x][y].hour.getPosition())
+        return true;
+      if (matrix[x][y].minute.getPosition() != wall.matrix[x][y].minute.getPosition())
+        return true;
+    }
+  }
+  return false;
 }

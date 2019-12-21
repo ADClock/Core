@@ -14,7 +14,7 @@ void DataSender::tick()
   case SenderState::WAIT_FOR_RESPONSE_ON:
     if (digitalRead(OUT_RESPONSE))
     {
-      this->recive_response_on();
+      this->receive_response_on();
     }
     else if (this->time_waiting() > SENDER_TIMEOUT_RESPONSE_ON)
     {
@@ -26,8 +26,7 @@ void DataSender::tick()
   case SenderState::WAIT_FOR_RESPONSE_OFF:
     if (!digitalRead(OUT_RESPONSE))
     {
-
-      this->recive_response_off();
+      this->receive_response_off();
     }
     else if (this->time_waiting() > SENDER_TIMEOUT_RESPONSE_OFF)
     {
@@ -69,14 +68,14 @@ void DataSender::send_next_bit()
   // Serial.println("Sending bit..");
 }
 
-void DataSender::recive_response_on()
+void DataSender::receive_response_on()
 {
   digitalWrite(OUT_CLOCK, 0);
   this->state = SenderState::WAIT_FOR_RESPONSE_OFF;
   this->last_action = micros();
 }
 
-void DataSender::recive_response_off()
+void DataSender::receive_response_off()
 {
   if (!this->buffer.is_empty())
   {

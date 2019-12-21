@@ -28,17 +28,17 @@ void setup_wifi_connection()
   WiFi.begin(ssid, password);
 
   size_t attempts = 0;
-  while (WiFi.waitForConnectResult() != WL_CONNECTED)
+  while (WiFi.status() != WL_CONNECTED)
   {
-    if (attempts > 3)
+    if (attempts > 10)
     {
       Serial.println("Failed! Restarting...");
       ESP.restart();
       return;
     }
     Serial.print(".");
-    delay(1000);
-    WiFi.reconnect();
+    delay(500);
+    //WiFi.reconnect();
     attempts++;
   }
 
@@ -46,6 +46,18 @@ void setup_wifi_connection()
   Serial.println(ssid);
   Serial.print("IP Address: ");
   Serial.println(WiFi.localIP());
+}
+
+void test_json()
+{
+  // Test Json
+  StaticJsonDocument<JSON_OBJECT_SIZE(10)> doc;
+  StaticJsonDocument<JSON_OBJECT_SIZE(2)> obj;
+  obj["abc"] = "foo";
+  obj["def"] = 42;
+  doc["ohh"] = obj;
+  doc["ooo"] = true;
+  serializeJson(doc, Serial);
 }
 
 void test_communication_speed()
@@ -79,7 +91,7 @@ void test_communication_speed()
     }
     total_bits += 8 + 576 * 8;
     start = micros();
-    if (!clockcom.tramsmit())
+    if (!clockcom.transmit())
     {
       Serial.println("Übertragung fehlgeschlagen. Testergebnis ungültig!");
     }
@@ -95,47 +107,42 @@ void test_communication_speed()
 void setup()
 {
   Serial.begin(9600);
-  Serial.println("Booting");
+  Serial.println("[STARTUP] Booting...");
   pinMode(OUT_RESPONSE, INPUT);
-  // +++++++++++++++++++++++++
-  // Pintest
-  // pinMode(OUT_RESPONSE, INPUT);
-  // Serial.println("Respone Pin says: " + String(digitalRead(OUT_RESPONSE)) + " should be 1");
-  // Serial.println("Pintest Clock On");
-  // digitalWrite(OUT_CLOCK, 1);
-  // delay(1000);
-  // Serial.println("Respone Pin says: " + String(digitalRead(OUT_RESPONSE)) + " should be 1");
-  // delay(1000);
-  // digitalWrite(OUT_CLOCK, 0);
-  // Serial.println("Pintest Data On");
-  // digitalWrite(OUT_DATA, 1);
-  // delay(1000);
-  // Serial.println("Respone Pin says: " + String(digitalRead(OUT_RESPONSE)) + " should be 0");
-  // delay(1000);
-  // digitalWrite(OUT_DATA, 0);
-  // Serial.println("Pintest complete");
-  // +++++++++++++++++++++++++
 
-  test_communication_speed();
+  // test_json();
+  // test_communication_speed();
+
+  Serial.println("[STARTUP] Begin Clock init...");
+  manager.preventSendingPlan();
+  manager.init();
+  if (!clockcom.transmit())
+  {
+    Serial.println("[STARTUP] Error: Clocks not listening!\n[STARTUP] Restarting!");
+    ESP.restart();
+  }
+  Serial.println("[STARTUP] Clocks initalizing...");
 
   setup_wifi_connection();
 
   server.begin();
 
-  Serial.println("HTTP-Server now online!");
-
-  // Uhren vorbereiten
-  manager.preventSendingPlan();
-  manager.init();
-  clockcom.tramsmit(); // TODO Das gescheiter lösen..
+  Serial.println("[STARTUP] HTTP-Server online...");
 
   ClockApi::instance().setManager(&manager);
-  Serial.println("Clock API initalisiert!");
+  ClockApi::instance().time().load_time();
+  Serial.println("[STARTUP] API initalized...");
 
   // Ab jetzt dürfen die Uhren gestellt werden
   manager.allowSendingPlan();
-  Serial.println("Ab jetzzt können sich die Zeiger drehen.. ");
-  manager.planned.setMinutePosition(0, 5, 180);
+  Serial.println("[STARTUP] Enabled direct plan sending...");
+  // Die Zeilen machen das gleiche,.. manger.planned.setMinutePosition(0, 5, 180);
+  ClockApi::instance().datamanager().planned.setMinutePosition(0, 5, 180);
+  ClockApi::instance().datamanager().planned.setMinutePosition(0, 4, 90);
+  ClockApi::instance().datamanager().planned.setHourPosition(0, 5, 270);
+  ClockApi::instance().datamanager().planned.setHourPosition(0, 4, 45);
+  Serial.println("[STARTUP] Set basic image...");
+  Serial.println("[STARTUP] Finshed!");
 }
 
 void loop()
@@ -146,10 +153,13 @@ void loop()
   // Uhrdaten aktuell halten
   manager.try_step();
 
-  // Sending data
-  clockout.tick();
+  // Sending data, if there is anything left
   if (!bufferout.is_empty())
-    Serial.println("Buffer remaining bits " + String(bufferout.size()));
+    clockcom.transmit();
+
+  // Erst den Plan verschicken, wenn die Uhr initalisiert ist.
+  if (!manager.isInitialized())
+    return;
 
   if (manager.hasPendingPlan())
   {
@@ -157,6 +167,10 @@ void loop()
     if (!manager.hasPendingMoves())
     {
       manager.executePlan();
+    }
+    else
+    {
+      Serial.println("Es gibt bereits einen neuen Plan, aber die Zeiger drehen noch!");
     }
   }
 }

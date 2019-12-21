@@ -75,6 +75,7 @@ void DataManager::tick()
     {
       this->sender.tick();
     }
+    // Serial.println("Receiver failed. Resetted.");
   }
 }
 
@@ -102,6 +103,9 @@ void DataManager::set_current_command()
     break;
 
   default:
+    // received invalid command
+    this->receiver.reset();
+    this->state = CommandState::IDLE;
     break;
   }
 }
@@ -154,7 +158,7 @@ void DataManager::processImage()
     input[i] = read_byte();
   }
 
-  finish_transmission();
+  // finish_transmission();
 #ifdef DEBUG
   // Serial.println("DataManager >> Loading new image..");
 #endif

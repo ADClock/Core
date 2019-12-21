@@ -13,11 +13,10 @@ void finishRequest(HttpServer &server, ApiResponse &response)
   server.send_error_code(response.getHttpCode());
   server.send_content_type("application/json");
   server.end_headers();
-  server.print(response.getJson().serialize().c_str());
-  Serial.println(response.getJson().serialize().c_str());
+  serializeJson(response.getJson(), server);
 }
 
-JSONValue &getJsonBody(HttpServer &server, ApiResponse &response)
+JsonDocument &getJsonBody(HttpServer &server, ApiResponse &response)
 {
   String body = server.get_client().readString();
 
@@ -33,15 +32,17 @@ JSONValue &getJsonBody(HttpServer &server, ApiResponse &response)
   char bodyArray[body.length() + 1];
   body.toCharArray(bodyArray, body.length() + 1);
 
-  static JSONValue jsonValue;
-  auto errors = parse(jsonValue, bodyArray);
-  if (errors.length() > 0)
+  static StaticJsonDocument<200> doc;
+  auto error = deserializeJson(doc, body);
+  if (error)
   {
-    response.error(errors.c_str());
-    Serial.println("JSON-Error: " + String(errors.c_str()));
+    response.error(error.c_str());
+    Serial.print(F("deserializeJson() failed with code "));
+    Serial.println(error.c_str());
+    return doc;
   }
 
-  return jsonValue;
+  return doc;
 }
 
 boolean index(HttpServer &server)
@@ -82,6 +83,16 @@ boolean clock_post(HttpServer &server)
   return true;
 };
 
+// GET /currenttime
+boolean currenttime_get(HttpServer &server)
+{
+  ApiResponse response;
+  ClockApi::instance().showCurrentTime(response);
+
+  finishRequest(server, response);
+  return true;
+};
+
 // GET /clock/X/Y
 boolean clock_get(HttpServer &server)
 {
@@ -96,7 +107,7 @@ boolean clock_get(HttpServer &server)
   server.send_error_code(200);
   server.send_content_type("application/json");
   server.end_headers();
-  server.print(c.asJson().serialize().c_str());
+  serializeJson(c.asJson(), server);
   return true;
 };
 
@@ -106,7 +117,7 @@ boolean aiming_all_get(HttpServer &server)
   server.send_error_code(200);
   server.send_content_type("application/json");
   server.end_headers();
-  server.print(ClockApi::instance().datamanager().aiming.asJson().serialize().c_str());
+  serializeJson(ClockApi::instance().datamanager().aiming.asJson(), server);
   return true;
 };
 
@@ -116,7 +127,7 @@ boolean planned_all_get(HttpServer &server)
   server.send_error_code(200);
   server.send_content_type("application/json");
   server.end_headers();
-  server.print(ClockApi::instance().datamanager().planned.asJson().serialize().c_str());
+  serializeJson(ClockApi::instance().datamanager().planned.asJson(), server);
   return true;
 };
 
@@ -126,13 +137,16 @@ boolean current_all_get(HttpServer &server)
   server.send_error_code(200);
   server.send_content_type("application/json");
   server.end_headers();
-  server.print(ClockApi::instance().datamanager().current.asJson().serialize().c_str());
+  DynamicJsonDocument doc(1024);
+  doc.set(ClockApi::instance().datamanager().current.asJson());
+  serializeJson(doc, server);
   return true;
 };
 
 HttpServer::PathHandler handlers[] = {
     {"/", HttpServer::GET, &index},
     {"/init", HttpServer::GET, &init_get},
+    {"/currenttime", HttpServer::GET, &currenttime_get},
     {"/planned",
      HttpServer::GET, &planned_all_get},
     {"/aiming",

@@ -41,11 +41,14 @@ public:
    * Web API Kommunikation
    */
 
-  JSONValue asJson();
-  void update(JSONValue &json);
+  JsonDocument asJson();
+  void update(JsonObject &json);
   void update(ClockWall &wall);
 
+  // Überprüft ob alle Einstellungen gleich sind
   bool equals(ClockWall &wall);
+  // Überprüft ob alle Target Positions gleich sind. (Falls nicht, könnte der Plan erneut versendet werden)
+  bool different_target(ClockWall &wall);
 
   /**
   * Hilfsfunktionen für Positionen

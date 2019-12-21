@@ -1,6 +1,6 @@
 #include "ClockApi.h"
 
-void ClockApi::updateClock(ApiResponse &response, uint8_t x, uint8_t y, JSONValue &value)
+void ClockApi::updateClock(ApiResponse &response, uint8_t x, uint8_t y, JsonDocument &value)
 {
   if (!isValidCoordinates(x, y))
   {
@@ -9,12 +9,12 @@ void ClockApi::updateClock(ApiResponse &response, uint8_t x, uint8_t y, JSONValu
   }
 
   // Hands aus JSON auslesen und verarbeiten
-  if (value.hasMember("hour"))
+  if (value.containsKey("hour"))
   {
     updateHand(response, x, y, HOUR_HANDLE, value["hour"]);
   }
 
-  if (value.hasMember("minute"))
+  if (value.containsKey("minute"))
   {
     updateHand(response, x, y, MINUTE_HANDLE, value["minute"]);
   }
@@ -22,7 +22,7 @@ void ClockApi::updateClock(ApiResponse &response, uint8_t x, uint8_t y, JSONValu
   return;
 }
 
-void ClockApi::updateHand(ApiResponse &response, uint8_t x, uint8_t y, uint8_t handId, JSONValue &value)
+void ClockApi::updateHand(ApiResponse &response, uint8_t x, uint8_t y, uint8_t handId, JsonObject value)
 {
   if (!isValidCoordinates(x, y))
   {
@@ -30,11 +30,11 @@ void ClockApi::updateHand(ApiResponse &response, uint8_t x, uint8_t y, uint8_t h
     return;
   }
   // Neue Position updaten
-  if (value.hasMember("target_pos"))
+  if (value.containsKey("target_pos"))
   {
-    if (value["target_pos"].getType() == JSONValue::Type::TypeInt)
+    if (value["target_pos"].is<int>())
     {
-      updateHandPosition(response, x, y, handId, value["target_pos"].get<int>());
+      updateHandPosition(response, x, y, handId, value["target_pos"].as<int>());
     }
     else
     {
@@ -43,11 +43,11 @@ void ClockApi::updateHand(ApiResponse &response, uint8_t x, uint8_t y, uint8_t h
   }
 
   // Neue Richtung setzen
-  if (value.hasMember("direction"))
+  if (value.containsKey("direction"))
   {
-    if (value["direction"].getType() == JSONValue::Type::TypeBoolean)
+    if (value["direction"].is<boolean>())
     {
-      updateHandRotation(response, x, y, handId, value["direction"].get<boolean>());
+      updateHandRotation(response, x, y, handId, value["direction"].as<boolean>());
     }
     else
     {
@@ -56,11 +56,11 @@ void ClockApi::updateHand(ApiResponse &response, uint8_t x, uint8_t y, uint8_t h
   }
 
   // Step delay updaten
-  if (value.hasMember("step_delay"))
+  if (value.containsKey("step_delay"))
   {
-    if (value["step_delay"].getType() == JSONValue::Type::TypeBoolean)
+    if (value["step_delay"].is<int>())
     {
-      updateHandStepDelay(response, x, y, handId, value["step_delay"].get<int>());
+      updateHandStepDelay(response, x, y, handId, value["step_delay"].as<int>());
     }
     else
     {
@@ -69,11 +69,11 @@ void ClockApi::updateHand(ApiResponse &response, uint8_t x, uint8_t y, uint8_t h
   }
 
   // Wait steps updaten
-  if (value.hasMember("wait_steps"))
+  if (value.containsKey("wait_steps"))
   {
-    if (value["wait_steps"].getType() == JSONValue::Type::TypeBoolean)
+    if (value["wait_steps"].is<int>())
     {
-      updateHandStepDelay(response, x, y, handId, value["wait_steps"].get<int>());
+      updateHandStepDelay(response, x, y, handId, value["wait_steps"].is<int>());
     }
     else
     {
@@ -177,6 +177,20 @@ void ClockApi::updateHandWaitStep(ApiResponse &response, uint8_t x, uint8_t y, u
   }
 
   return;
+}
+
+void ClockApi::showCurrentTime(ApiResponse &response)
+{
+  if (!this->time().is_time_set())
+  {
+    this->time().load_time();
+  }
+  auto hour = 360 - 360. / 12 * (this->time().get_hour() % 12);
+  auto minute = 360 - 360. / 60 * this->time().get_minute();
+  this->datamanager().planned.setMutiplePositions(0, 0, WALL_SIZE_X - 1, WALL_SIZE_Y - 1, hour, minute);
+  response.inform("Current time set on each clock.");
+
+  Serial.println("Hands set to hour=" + String(hour) + " minute=" + String(minute));
 }
 
 bool ClockApi::isValidPosition(size_t position)

@@ -15,12 +15,12 @@ void ClockCommunication::sendInitCommand()
 void ClockCommunication::sendPlan(ClockWall &plan)
 {
 #ifdef DEBUG
-  // Debug::println("ClockCom >> Sending plan...");
-  for (size_t i = 0; i < WALL_CLOCKS; i++)
+  Serial.println("ClockCom >> Sending plan...");
+  for (size_t i = 0; i < 2; i++)
   {
     auto &clock = plan.getClock(getClockX(i), getClockY(i));
 
-    Debug::serial.printf("Clock %u x=%u y=%u hourPos=%u minutePos=%u\n", i, getClockX(i), getClockY(i), clock.hour.getPosition(), clock.minute.getPosition());
+    Serial.printf("Clock %u x=%u y=%u hourPos=%u minutePos=%u\n", i, getClockX(i), getClockY(i), clock.hour.getPosition(), clock.minute.getPosition());
   }
 #endif
 
@@ -49,7 +49,7 @@ void ClockCommunication::sendPlan(ClockWall &plan)
 void ClockCommunication::sendCommand(uint8_t command)
 {
   cleanup_communication();
-  //Serial.println("CockCom: Send Command..");
+  // Serial.println("CockCom: Send Command.. " + String(command));
   sendByte(command);
 }
 
@@ -83,7 +83,7 @@ size_t ClockCommunication::getClockY(size_t &pos)
   }
 }
 
-bool ClockCommunication::tramsmit()
+bool ClockCommunication::transmit()
 {
   this->sender.tick();
   while (is_transmitting())
@@ -107,8 +107,7 @@ void ClockCommunication::cleanup_communication()
   // Serial.println("CockCom: Cleaning..");
   while (sender.sending() || sender.time_waiting() < DELAY_BETWEEN_COMMANDS)
   {
-    sender.tick(); // Push out previous command
-    if (sender.failed())
+    if (!transmit())
       sender.reset();
     delay(1); // wait vor last command to finish
   }
