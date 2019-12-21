@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<title>ADClock v0.1</title>
+</head>
+<body>
+
+
+<p>Bitte gebe die Koordinaten einer Uhr ein und wähle die Einstellungen.</p>
+<form id="clock_f" >
+<label>X-Koordinate</label>
+  <input type="number" placeholder="X-Koordinate" id="xcord" value=0><br>
+<label>Y-Koordinate</label>
+  <input type="number" placeholder="Y-Koordinate" id="ycord" value=5><br>
+  
+  <p>Stundenzeiger</p>
+<label>Zielposition</label>
+  <input type="number" placeholder="Zielposition" id="hour_target_pos" value=90><br>
+<label>Richtung</label><br>
+  <input type="radio" placeholder="Richtung" name="hour_direction" value="false" checked="checked" >mit dem Uhrzeigersinn<br>
+  <input type="radio" placeholder="Richtung" name="hour_direction" value="true">gegen den Uhrzeigersinn<br>
+ 
+
+  <p>Minutenzeiger</p>
+<label>Zielposition</label>
+  <input type="number" placeholder="Zielposition" id="minute_target_pos" value=90><br>
+<label>Richtung</label><br>
+  <input type="radio" placeholder="Richtung" name="minute_direction" value="false" checked="checked" >mit dem Uhrzeigersinn<br>
+  <input type="radio" placeholder="Richtung" name="minute_direction" value="true">gegen den Uhrzeigersinn<br>
+ 
+
+  <button type="button" onclick="updateClock()">Ausführen</button>
+</form>
+
+<script>
+function updateClock() {
+var xhr = new XMLHttpRequest();
+var url = 'http://192.168.178.61/clock/' + document.getElementById('xcord').value + '/' + document.getElementById('ycord').value + '/';
+xhr.open("POST", url, true);
+
+xhr.setRequestHeader("Content-Type", "application/json");
+
+xhr.onreadystatechange = function () {
+        console.log('triggerd onreadystatechange');
+    };
+
+var data = '{"hour": {"target_pos": ' + document.getElementById('hour_target_pos').value  +   ', "direction": ' + document.querySelector('input[name="hour_direction"]:checked').value  + 
+      ' }, "minute": {"target_pos": ' + document.getElementById('minute_target_pos').value  + ', "direction": ' + document.querySelector('input[name="minute_direction"]:checked').value  + ' }}';
+xhr.send(data);
+}
+</script>
+</body>
+</html>

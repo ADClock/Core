@@ -50,7 +50,14 @@ boolean index(HttpServer &server)
   server.send_error_code(200);
   server.send_content_type("text/html");
   server.end_headers();
-  server.print(F("<html><body>Chris is doof :)</body></html>\n"));
+  if (!SPIFFS.exists("/index.html"))
+  {
+    server.print(F("<html><body>Chris is doof :)</body></html>\n"));
+    return true;
+  }
+  auto file = SPIFFS.open("/index.html");
+  server.print(file.readString());
+  file.close();
   return true;
 }
 

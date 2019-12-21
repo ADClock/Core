@@ -1,5 +1,6 @@
 #include <WiFi.h>
 #include "Manager.h"
+#include "SPIFFS.h"
 #include "web/RequestHandler.h"
 
 // Daten Uhren
@@ -16,23 +17,28 @@ ClockCommunication clockcom(bufferout, clockout);
 Manager manager(clockcom, current, aiming, planned);
 
 // WLAN Verbindung zu einem Netzwerk herstellen
-const char *ssid = "Home_Net";
-const char *password = "@zwerge99";
+const char *ssid = "Home_Net";      //"Paule";        //
+const char *password = "@zwerge99"; //"QQqq1111"; //
 
 HttpServer server(RequestHandler::handlers, NULL);
 
 void setup_wifi_connection()
 {
-  Serial.print("Establish WiFi connection");
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
-
-  size_t attempts = 0;
+  Serial.println("Connecting to " + String(ssid));
+  size_t status = WiFi.waitForConnectResult();
+  if (status != WL_CONNECTED)
+  {
+    Serial.println("Connection failed with Code " + String(status) + "\nRestarting...");
+    ESP.restart();
+  }
+  /* size_t attempts = 0;
   while (WiFi.status() != WL_CONNECTED)
   {
     if (attempts > 10)
     {
-      Serial.println("Failed! Restarting...");
+      Serial.println("Failed! Restarting... (WiFi Status = " + String(WiFi.status()) + ")");
       ESP.restart();
       return;
     }
@@ -40,11 +46,11 @@ void setup_wifi_connection()
     delay(500);
     //WiFi.reconnect();
     attempts++;
-  }
+  }*/
 
-  Serial.print("\nConnected to: ");
+  Serial.print("Connected to: ");
   Serial.println(ssid);
-  Serial.print("IP Address: ");
+  Serial.print("IP Address:   ");
   Serial.println(WiFi.localIP());
 }
 
@@ -122,6 +128,12 @@ void setup()
     ESP.restart();
   }
   Serial.println("[STARTUP] Clocks initalizing...");
+
+  if (!SPIFFS.begin(true))
+  {
+    Serial.println("An Error has occurred while mounting SPIFFS");
+    return;
+  }
 
   setup_wifi_connection();
 
