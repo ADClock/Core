@@ -33,7 +33,7 @@ void MotorManager::try_step() const
   this->motor2.try_step();
 }
 
-void MotorManager::setMotorData(DataStruct data[2]) const
+void MotorManager::set_motor_data(MotorData data[2]) const
 {
   motor1.set_target_pos(data[0].position);
   motor1.set_step_delay(data[0].delay);

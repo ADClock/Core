@@ -4,13 +4,11 @@
 #include "Arduino.h"
 #include "Motor.h"
 
-#define MIN_STEPS_OUTSIDE_FIELD 20
-
 enum CalibrationState
 {
   LEAVEMAGNET,
   FINDMAGNET,
-  INAPPEAL,
+  INFIELD,
   CENTERING,
   CALIBRATED
 };
@@ -28,9 +26,8 @@ private:
 
   Motor &motor;
   size_t hall_pin;
-
   CalibrationState state;
-  size_t steps; // Anzahl der Schritte. Wird je nach State anders verwendet.
+  size_t steps;
 };
 
 #endif

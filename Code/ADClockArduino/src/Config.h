@@ -1,26 +1,23 @@
 #ifndef _CONFIG_H_
 #define _CONFIG_H_
 
-// Kalibierung überspringen, wenn z.B. kein Magnet verbaut ist
-// #define SKIPCALIBRATION
-// Debug Nachrichten +ber Serial senden?
-// #define DEBUG
+// Buffer
+#define BUFFER_SIZE 512
 
-// TODO Nochmal richtigen Wert einstellen in us
-#define DELAY_BETWEEN_COMMANDS 5000
-// Clock DataSender params
-#define SENDER_TIMEOUT_RESPONSE_ON 90000
-#define SENDER_TIMEOUT_RESPONSE_OFF 200000
+// Calibration
+#define MIN_STEPS_OUTSIDE_FIELD 20
 
-#define RECEIVER_TIMEOUT_CLOCK_OFF 1000
-#define RECEIVER_TIMEOUT_NEXT_DATA 1000
-
-// #define IS_LAST_CLOCK
+// Communication parameters
+#define DELAY_BETWEEN_COMMANDS 5000        // us
+#define SENDER_TIMEOUT_RESPONSE_ON 90000   // us
+#define SENDER_TIMEOUT_RESPONSE_OFF 200000 // us
+#define RECEIVER_TIMEOUT_CLOCK_OFF 1000    // us
+#define RECEIVER_TIMEOUT_NEXT_DATA 1000    // us
+// #define IS_LAST_CLOCK // Disables sending Data to next clock
 
 // Motor
 #define MAX_STEPS 1705
-// in micros
-#define MIN_STEP_DELAY 4000
+#define MIN_STEP_DELAY 4000 // us
 
 // Pins
 #define HALL_DATA_PIN_1 A0
@@ -36,14 +33,19 @@
 #define MOTOR_2_PIN_3 7
 #define MOTOR_2_PIN_4 6
 
-// Pins for DataSender
+// Pins for DataSender (Sending to next Arduino)
 #define OUT_RESPONSE 3
 #define OUT_DATA 4
 #define OUT_CLOCK 5
 
-// Pins for DataReceiver
+// Pins for DataReceiver (Receiving from previous Arduino or ESP)
 #define IN_RESPONSE A2
 #define IN_DATA A3
 #define IN_CLOCK 2
+
+// Skip Calibration (for unfinished clock modules with no magnet)
+// #define SKIPCALIBRATION
+// Enable Debug messages for Serial
+// #define DEBUG
 
 #endif

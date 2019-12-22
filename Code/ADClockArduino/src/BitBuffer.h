@@ -2,12 +2,10 @@
 #define _BIT_BUFFER_H_
 
 #include "Arduino.h"
-
-#define BUFFER_SIZE 512
+#include "Config.h"
 
 class BitBuffer
 {
-
 public:
   BitBuffer();
 
@@ -19,7 +17,6 @@ public:
   void enqueue(bool b);
   bool dequeue();
   bool front();
-
   void clear();
 
 private:

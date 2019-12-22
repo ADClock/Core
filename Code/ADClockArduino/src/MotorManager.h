@@ -4,7 +4,7 @@
 #include "Arduino.h"
 #include "Calibration.h"
 
-struct DataStruct
+struct MotorData
 {
   uint16_t position;
   uint16_t waitSteps;
@@ -18,10 +18,8 @@ public:
   MotorManager(Motor &motor1, Motor &motor2, Calibration &calibration1, Calibration &calibration2);
 
   void calibrate() const;
-
   void try_step() const;
-
-  void setMotorData(DataStruct data[2]) const;
+  void set_motor_data(MotorData data[2]) const;
 
 private:
   Motor &motor1;

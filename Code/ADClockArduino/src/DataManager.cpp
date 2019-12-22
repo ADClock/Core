@@ -43,7 +43,7 @@ void DataManager::tick()
     if (this->in.size() >= 8 * 8)
     {
       this->state = CommandState::PIPEING;
-      processImage();
+      read_my_data();
     }
     break;
 
@@ -63,7 +63,6 @@ void DataManager::tick()
   {
     this->state = CommandState::IDLE;
     this->receiver.reset();
-    // Serial.println("receiving complete");
   }
 
   if (this->receiver.failed())
@@ -75,7 +74,6 @@ void DataManager::tick()
     {
       this->sender.tick();
     }
-    // Serial.println("Receiver failed. Resetted.");
   }
 }
 
@@ -84,17 +82,19 @@ void DataManager::set_current_command()
   auto command = read_byte();
   this->receiver.confirm();
 
-  // Serial.println("Processing command.. cmd = " + String(command));
+#ifdef DEBUG
+// Serial.println("Processing command.. cmd = " + String(command));
+#endif
   switch (command)
   {
   case 0x01:
-    sendCommand(0x01);
+    send_command(0x01);
     finish_transmission();
     moma.calibrate();
     break;
 
   case 0x02:
-    sendCommand(0x02);
+    send_command(0x02);
     this->state = CommandState::READING_IMAGE;
     break;
 
@@ -110,7 +110,7 @@ void DataManager::set_current_command()
   }
 }
 
-void DataManager::sendCommand(uint8_t command)
+void DataManager::send_command(uint8_t command)
 {
   while (sender.sending() || sender.time_waiting() < DELAY_BETWEEN_COMMANDS)
   {
@@ -118,10 +118,10 @@ void DataManager::sendCommand(uint8_t command)
       sender.reset();
     this->receiver.tick();
   }
-  sendByte(command);
+  send_byte(command);
 }
 
-void DataManager::sendByte(uint8_t byte)
+void DataManager::send_byte(uint8_t byte)
 {
 #ifdef IS_LAST_CLOCK
   return;
@@ -144,9 +144,8 @@ void DataManager::finish_transmission()
     this->tick();
 }
 
-void DataManager::processImage()
+void DataManager::read_my_data()
 {
-
   static uint8_t input[8];
   // 8 Byte lesen (4 je Motor)
   // -- Position  (16 Bit)
@@ -163,16 +162,16 @@ void DataManager::processImage()
   // Serial.println("DataManager >> Loading new image..");
 #endif
 
-  DataStruct motordata[2];
-  motordata[0] = deserialze(&input[0]);
-  motordata[1] = deserialze(&input[4]);
+  MotorData motordata[2];
+  motordata[0] = deserialize(&input[0]);
+  motordata[1] = deserialize(&input[4]);
 
-  this->moma.setMotorData(motordata);
+  this->moma.set_motor_data(motordata);
 }
 
-DataStruct DataManager::deserialze(uint8_t *stream)
+MotorData DataManager::deserialize(uint8_t *stream)
 {
-  DataStruct data;
+  MotorData data;
   data.position = ((stream[0] << 4u) + ((stream[1] >> 4u) & 0x0Fu));
   data.waitSteps = ((stream[1] & 0x0Fu) << 8u) + stream[2];
   data.delay = (stream[3] >> 1u);

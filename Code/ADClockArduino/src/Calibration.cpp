@@ -18,8 +18,8 @@ void Calibration::start_calibration()
 // 0. Der Motor muss das Magnetfeld finden (FINDMAGNET) und zählt die Steps
 // 1. Der Motor muss sich mindestens MIN_STEPS_OUTSIDE_FIELD Steps außerhalb des Magnetfelds drehen, damit die initalisierung richtig funktioniert. (LEAVEMAGNET)
 // 2. Der Motor muss das Magnetfeld finden (FINDMAGNET) und zählt die Steps
-// 3. Der Motor durchwandert das Magnetfeld (INAPPEAL) und zählt die Steps
-// 4. Der Motor verlässt das Magnetfeld nimmt die Stepps von INAPPEAL/2 und läuft diese zurück (CENTERING)
+// 3. Der Motor durchwandert das Magnetfeld (INFIELD) und zählt die Steps
+// 4. Der Motor verlässt das Magnetfeld nimmt die Stepps von INFIELD/2 und läuft diese zurück (CENTERING)
 // 5. Der Motor ist kalibiert (CALIBRATED)
 bool Calibration::calibrate()
 {
@@ -49,7 +49,7 @@ bool Calibration::calibrate()
     else if (in_field && this->steps > MIN_STEPS_OUTSIDE_FIELD)
     {
       this->steps = 0;
-      this->state = INAPPEAL;
+      this->state = INFIELD;
 #ifdef DEBUG
       Serial.println("Calibration >> Magnet in über 20 Schritten gefunden. Durchlaufe das Feld.");
 #endif
@@ -76,7 +76,7 @@ bool Calibration::calibrate()
     }
     break;
 
-  case INAPPEAL:
+  case INFIELD:
     if (!in_field)
     {
       this->state = CENTERING;

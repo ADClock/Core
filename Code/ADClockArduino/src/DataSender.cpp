@@ -14,24 +14,28 @@ void DataSender::tick()
   case SenderState::WAIT_FOR_RESPONSE_ON:
     if (FastGPIO::Pin<OUT_RESPONSE>::isInputHigh())
     {
-      this->recive_response_on();
+      this->receive_response_on();
     }
     else if (this->time_waiting() > SENDER_TIMEOUT_RESPONSE_ON)
     {
       timeout();
+#ifdef DEBUG
       Serial.println("WAIT_FOR_RESPONSE_ON");
+#endif
     }
     break;
 
   case SenderState::WAIT_FOR_RESPONSE_OFF:
     if (!FastGPIO::Pin<OUT_RESPONSE>::isInputHigh())
     {
-      this->recive_response_off();
+      this->receive_response_off();
     }
     else if (this->time_waiting() > SENDER_TIMEOUT_RESPONSE_OFF)
     {
       timeout();
+#ifdef DEBUG
       Serial.println("WAIT_FOR_RESPONSE_OFF");
+#endif
     }
     break;
 
@@ -54,7 +58,9 @@ void DataSender::reset()
 {
   FastGPIO::Pin<OUT_CLOCK>::setOutputValueLow();
   this->state = SenderState::IDLE;
+#ifdef DEBUG
   Serial.println("Resetting sender remaining bits = " + String(buffer.size()));
+#endif
   this->buffer.clear();
   this->last_action = micros();
 }
@@ -65,17 +71,16 @@ void DataSender::send_next_bit()
   FastGPIO::Pin<OUT_CLOCK>::setOutputValueHigh();
   this->state = SenderState::WAIT_FOR_RESPONSE_ON;
   this->last_action = micros();
-  // Serial.println("Sending bit..");
 }
 
-void DataSender::recive_response_on()
+void DataSender::receive_response_on()
 {
   FastGPIO::Pin<OUT_CLOCK>::setOutputValueLow();
   this->state = SenderState::WAIT_FOR_RESPONSE_OFF;
   this->last_action = micros();
 }
 
-void DataSender::recive_response_off()
+void DataSender::receive_response_off()
 {
   if (!this->buffer.is_empty())
   {
@@ -90,18 +95,9 @@ void DataSender::recive_response_off()
 void DataSender::timeout()
 {
   this->state = SenderState::FAILED;
-  Serial.println("Failed sending.");
 }
 
 unsigned long DataSender::time_waiting()
 {
-  auto current_time = micros();
-  if (current_time < last_action)
-  {
-    return current_time + 0; // TODO Hier fehlt noch die Zeit von MAX_VALUE - last_action
-  }
-  else
-  {
-    return current_time - last_action;
-  }
+  return (unsigned long)(micros() - last_action);
 }

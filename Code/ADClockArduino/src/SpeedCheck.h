@@ -1,6 +1,8 @@
+
 #ifndef _SPEEDCHECK_H_
 #define _SPEEDCHECK_H_
 
+#ifdef DEBUG
 #include "Arduino.h"
 
 class SpeedCheck
@@ -29,4 +31,5 @@ private:
   size_t pushes;
 };
 
+#endif
 #endif

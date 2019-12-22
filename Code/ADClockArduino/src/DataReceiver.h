@@ -31,9 +31,10 @@ public:
   void tick();
   void confirm();
 
-  bool recieving(); // true -> currently recieving
+  bool receiving(); // true -> currently receiving
   bool failed();    // true -> last transmission failed
   bool complete();  // true -> no more data recived
+
   void reset();
 
   // Returns the time since last action
@@ -42,10 +43,10 @@ public:
   // IDLE -> WAIT_FOR_CLOCK_OFF
   void read_next_bit();
   // WAIT_FOR_CLOCK_OFF -> WAIT_FOR_NEXT_BIT
-  void recive_clock_off();
+  void receive_clock_off();
 
 private:
-  // x -> FAILED
+  // Change State from x -> FAILED
   void timeout();
 
   ReceiverState state = ReceiverState::IDLE;

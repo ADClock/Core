@@ -22,27 +22,22 @@ public:
   DataManager(DataSender &sender, BitBuffer &out, DataReceiver &receiver, BitBuffer &in, MotorManager &moma);
 
   void tick();
-
-  void finish_transmission(); // Ends the transmission (finish sending and receiving)
-
-  void sendCommand(uint8_t command);
-  void sendByte(uint8_t byte);
+  void finish_transmission();
+  void send_command(uint8_t command);
+  void send_byte(uint8_t byte);
 
 private:
-  // Handle reading
   uint8_t read_byte();        // reads one byte from input buffer
   void set_current_command(); // Sets the current command based on input data
 
-  // Verarbeitet den Image Command
-  void processImage();
+  void read_my_data();
 
-  DataStruct deserialze(uint8_t stream[4]);
+  MotorData deserialize(uint8_t stream[4]);
 
   DataSender &sender;
   BitBuffer &out;
   DataReceiver &receiver;
   BitBuffer &in;
-
   MotorManager &moma;
 
   CommandState state = CommandState::IDLE;

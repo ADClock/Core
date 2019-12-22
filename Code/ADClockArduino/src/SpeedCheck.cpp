@@ -1,3 +1,4 @@
+#ifdef DEBUG
 #include "SpeedCheck.h"
 
 void SpeedCheck::start()
@@ -47,3 +48,5 @@ void SpeedCheck::printBandwidth(size_t &bytes)
 {
   Serial.println("Bandwith " + String(bandwidth(bytes)) + " µs");
 }
+
+#endif

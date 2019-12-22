@@ -17,6 +17,7 @@ DataReceiver receiver(inbuffer);
 
 DataManager com(sender, outbuffer, receiver, inbuffer, moma);
 
+#ifdef DEBUG
 // Wir steppen im Kreis und zählen wie viele Schritte es von Hall High bis Hall High ist.
 void rotateUntilTomorrow()
 {
@@ -41,17 +42,17 @@ void rotateUntilTomorrow()
 void testDataTransferSpeed()
 {
   unsigned long startTime = micros();
-  com.sendCommand(0x03); // Command Speedtest
+  com.send_command(0x03); // Command Speedtest
   for (int i = 0; i < 1000; i++)
   {
     com.tick();
-    com.sendByte(0x42);
+    com.send_byte(0x42);
   }
   unsigned long end = micros();
   Serial.println("1000 Bytes took " + String(end - startTime) + " µs to send.");
   delay(1000);
 }
-/*
+
 void testPinSpeed()
 {
   unsigned long startTime = micros();
@@ -62,55 +63,42 @@ void testPinSpeed()
   }
   unsigned long end = micros();
   Serial.println("1000 x Pin on off took " + String(end - startTime) + " µs.");
-}*/
-
-void in_clock_on()
-{
-  // Serial.println("in clock on");
-  receiver.read_next_bit();
 }
+#endif
 
-void in_clock_off()
-{
-  // Serial.println("in clock off");
-  receiver.recive_clock_off();
-}
-
-void in_clock_change()
+void isr_clock_change()
 {
   if (FastGPIO::Pin<IN_CLOCK>::isInputHigh())
   {
-    in_clock_on();
+    receiver.read_next_bit();
   }
   else
   {
-    in_clock_off();
+    receiver.receive_clock_off();
   }
 }
 
 void setup()
 {
 
-  // #ifdef DEBUG
+#ifdef DEBUG
   Serial.begin(115200);
-  // #endif
+#endif
 
-  // #ifdef DEBUG
-  Serial.print("Setup...");
-
-  // testPinSpeed();
-
-  //testDataTransferSpeed();
-  // #endif
+#ifdef DEBUG
+  Serial.println("Setup...");
+// testPinSpeed();
+//testDataTransferSpeed();
+#endif
 
   moma.calibrate();
-  // rotateUntilTomorrow();
 
-  attachInterrupt(digitalPinToInterrupt(IN_CLOCK), in_clock_change, CHANGE);
+  // ISR for DataReceiver
+  attachInterrupt(digitalPinToInterrupt(IN_CLOCK), isr_clock_change, CHANGE);
 
-  Serial.println("Done!");
 #ifdef DEBUG
-  Serial.println("Done!");
+  // rotateUntilTomorrow();
+  Serial.println("Setup done!");
 #endif
 }
 
@@ -118,6 +106,4 @@ void loop()
 {
   com.tick();
   moma.try_step();
-
-  // testDataTransferSpeed();
 }
