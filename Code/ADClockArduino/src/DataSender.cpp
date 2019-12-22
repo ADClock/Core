@@ -12,11 +12,9 @@ void DataSender::tick()
     break;
 
   case SenderState::WAIT_FOR_RESPONSE_ON:
-    if (FastGPIO::Pin<OUT_RESPONSE>::isInputHigh())
-    {
-      this->receive_response_on();
-    }
-    else if (this->time_waiting() > SENDER_TIMEOUT_RESPONSE_ON)
+    // The Interrupt Service Routine is taking care of the Response
+    // After the timer expired we need to doublecheck the Response-Signal. ISR could kicked in during this condition
+    if (this->time_waiting() > SENDER_TIMEOUT_RESPONSE_ON && !FastGPIO::Pin<OUT_RESPONSE>::isInputHigh())
     {
       timeout();
 #ifdef DEBUG
@@ -26,11 +24,9 @@ void DataSender::tick()
     break;
 
   case SenderState::WAIT_FOR_RESPONSE_OFF:
-    if (!FastGPIO::Pin<OUT_RESPONSE>::isInputHigh())
-    {
-      this->receive_response_off();
-    }
-    else if (this->time_waiting() > SENDER_TIMEOUT_RESPONSE_OFF)
+    // The Interrupt Service Routine is taking care of the Response
+    // After the timer expired we need to doublecheck the Response-Signal. ISR could kicked in during this condition
+    if (this->time_waiting() > SENDER_TIMEOUT_RESPONSE_OFF && FastGPIO::Pin<OUT_RESPONSE>::isInputHigh())
     {
       timeout();
 #ifdef DEBUG

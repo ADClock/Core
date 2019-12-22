@@ -48,7 +48,7 @@ public:
   }
 
 private:
-  void addMessage(String message, uint8_t valence)
+  void addMessage(String &message, uint8_t valence)
   {
     Serial.println(String(valence) + ": " + message);
     JsonArray arr = json["messages"].as<JsonArray>();

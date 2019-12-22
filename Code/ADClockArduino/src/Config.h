@@ -13,7 +13,7 @@
 #define SENDER_TIMEOUT_RESPONSE_OFF 200000 // us
 #define RECEIVER_TIMEOUT_CLOCK_OFF 1000    // us
 #define RECEIVER_TIMEOUT_NEXT_DATA 1000    // us
-// #define IS_LAST_CLOCK // Disables sending Data to next clock
+// #define IS_LAST_CLOCK                      // Disables sending Data to next clock
 
 // Motor
 #define MAX_STEPS 1705

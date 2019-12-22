@@ -14,6 +14,7 @@ void finishRequest(HttpServer &server, ApiResponse &response)
   server.send_content_type("application/json");
   server.end_headers();
   serializeJson(response.getJson(), server);
+  response.getJson().clear(); // free memory
 }
 
 JsonDocument &getJsonBody(HttpServer &server, ApiResponse &response)
@@ -22,21 +23,22 @@ JsonDocument &getJsonBody(HttpServer &server, ApiResponse &response)
 
   if (body.length() == 0)
   {
-    response.error(F("No body was sent."));
+    response.error("No body was sent.");
   }
   else if (body.length() >= 32000)
   {
-    response.error(F("The body was long. Limit is 32000 bytes."));
+    response.error("The body was long. Limit is 32000 bytes.");
   }
 
   char bodyArray[body.length() + 1];
   body.toCharArray(bodyArray, body.length() + 1);
 
-  static StaticJsonDocument<200> doc;
+  // 234 = JSON_OBJECT_SIZE(2) + 2*JSON_OBJECT_SIZE(4) + 110;
+  static StaticJsonDocument<258> doc;
   auto error = deserializeJson(doc, body);
   if (error)
   {
-    response.error(error.c_str());
+    response.error(String(error.c_str()));
     Serial.print(F("deserializeJson() failed with code "));
     Serial.println(error.c_str());
     return doc;

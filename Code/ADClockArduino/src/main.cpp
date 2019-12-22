@@ -66,7 +66,8 @@ void testPinSpeed()
 }
 #endif
 
-void isr_clock_change()
+// Triggers on Clock-Signal from DataReceiver
+void isr_data_receiving()
 {
   if (FastGPIO::Pin<IN_CLOCK>::isInputHigh())
   {
@@ -75,6 +76,19 @@ void isr_clock_change()
   else
   {
     receiver.receive_clock_off();
+  }
+}
+
+// Triggers on Response-Signal from DataSender
+void isr_data_sending()
+{
+  if (FastGPIO::Pin<OUT_RESPONSE>::isInputHigh())
+  {
+    sender.receive_response_on();
+  }
+  else
+  {
+    sender.receive_response_off();
   }
 }
 
@@ -94,7 +108,11 @@ void setup()
   moma.calibrate();
 
   // ISR for DataReceiver
-  attachInterrupt(digitalPinToInterrupt(IN_CLOCK), isr_clock_change, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(IN_CLOCK), isr_data_receiving, CHANGE);
+#ifndef IS_LAST_CLOCK
+  // ISR for DataSender
+  attachInterrupt(digitalPinToInterrupt(OUT_RESPONSE), isr_data_sending, CHANGE);
+#endif
 
 #ifdef DEBUG
   // rotateUntilTomorrow();

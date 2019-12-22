@@ -15,7 +15,7 @@ void MotorManager::calibrate() const
     motor1Calibrated = calibration1.calibrate();
     motor2Calibrated = calibration2.calibrate();
     stepcounter++;
-    delay(10);
+    delay(5);
 
     if (stepcounter > MAX_STEPS * 3)
     {

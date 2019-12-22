@@ -9,9 +9,9 @@ enum class SenderState
 {
   // ready for sending data
   IDLE,
-  // waiting for reciver reading bit
+  // waiting for receiver reading bit
   WAIT_FOR_RESPONSE_ON,
-  // waiting for reciver confirms successfull communication
+  // waiting for receiver confirms successfull communication
   WAIT_FOR_RESPONSE_OFF,
   // Waiting for reset...
   FAILED
@@ -34,16 +34,16 @@ public:
   bool failed();  // true -> last transmission failed
   void reset();
 
+  // WAIT_FOR_RESPONSE_ON -> WAIT_FOR_RESPONSE_OFF
+  void receive_response_on();
+  // WAIT_FOR_RESPONSE_OFF -> IDLE or sendNextBit();
+  void receive_response_off();
   // Returns the time since last action
   unsigned long time_waiting();
 
 private:
   // IDLE -> WAIT_FOR_RESPONSE_ON
   void send_next_bit();
-  // WAIT_FOR_RESPONSE_ON -> WAIT_FOR_RESPONSE_OFF
-  void receive_response_on();
-  // WAIT_FOR_RESPONSE_OFF -> IDLE or sendNextBit();
-  void receive_response_off();
   // x -> FAILED
   void timeout();
 

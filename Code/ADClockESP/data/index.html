@@ -7,7 +7,13 @@
 <body>
 
 
-<p>Bitte gebe die Koordinaten einer Uhr ein und wähle die Einstellungen.</p>
+<p>Die AD-Clock wurde von Janik Schumacher und Paul Krüger entwickelt.</p>
+
+  <button type="button" onclick="execGet('/init')">Uhren initalisieren</button>
+  <button type="button" onclick="execGet('/currenttime')">Aktuelle Uhrzeit setzen</button>
+
+  <p>Für das Stellen eines Uhrmoduls muss die jeweilige Koordinate ausgewählt werden.</p>
+  
 <form id="clock_f" >
 <label>X-Koordinate</label>
   <input type="number" placeholder="X-Koordinate" id="xcord" value=0><br>
@@ -15,22 +21,30 @@
   <input type="number" placeholder="Y-Koordinate" id="ycord" value=5><br>
   
   <p>Stundenzeiger</p>
-<label>Zielposition</label>
+<label>Zielposition in Grad</label>
   <input type="number" placeholder="Zielposition" id="hour_target_pos" value=90><br>
 <label>Richtung</label><br>
   <input type="radio" placeholder="Richtung" name="hour_direction" value="false" checked="checked" >mit dem Uhrzeigersinn<br>
   <input type="radio" placeholder="Richtung" name="hour_direction" value="true">gegen den Uhrzeigersinn<br>
+<label>Geschwindigkeit in irgendwas</label>
+  <input type="number" placeholder="Geschwindigkeit" id="hour_speed" value=0><br>
+<label>Verzögerung in Grad</label>
+  <input type="number" placeholder="Delay" id="hour_delay" value=0><br>
  
 
   <p>Minutenzeiger</p>
-<label>Zielposition</label>
+<label>Zielposition in Grad</label>
   <input type="number" placeholder="Zielposition" id="minute_target_pos" value=90><br>
 <label>Richtung</label><br>
   <input type="radio" placeholder="Richtung" name="minute_direction" value="false" checked="checked" >mit dem Uhrzeigersinn<br>
   <input type="radio" placeholder="Richtung" name="minute_direction" value="true">gegen den Uhrzeigersinn<br>
+<label>Geschwindigkeit in irgendwas</label>
+  <input type="number" placeholder="Geschwindigkeit" id="minute_speed" value=0><br>
+<label>Verzögerung in Grad</label>
+  <input type="number" placeholder="Delay" id="minute_delay" value=0><br>
  
 
-  <button type="button" onclick="updateClock()">Ausführen</button>
+  <button type="button" onclick="updateClock()">Uhr stellen</button>
 </form>
 
 <script>
@@ -45,9 +59,19 @@ xhr.onreadystatechange = function () {
         console.log('triggerd onreadystatechange');
     };
 
-var data = '{"hour": {"target_pos": ' + document.getElementById('hour_target_pos').value  +   ', "direction": ' + document.querySelector('input[name="hour_direction"]:checked').value  + 
-      ' }, "minute": {"target_pos": ' + document.getElementById('minute_target_pos').value  + ', "direction": ' + document.querySelector('input[name="minute_direction"]:checked').value  + ' }}';
+var data = '{"hour": {"target_pos": ' + document.getElementById('hour_target_pos').value  +   ', "direction": ' + document.querySelector('input[name="hour_direction"]:checked').value  
+                + ', "step_delay": ' + document.getElementById('hour_speed').value + ', "wait_steps": ' + document.getElementById('hour_delay').value + 
+      ' }, "minute": {"target_pos": ' + document.getElementById('minute_target_pos').value  + ', "direction": ' + document.querySelector('input[name="minute_direction"]:checked').value  
+                + ', "step_delay": ' + document.getElementById('minute_speed').value + ', "wait_steps": ' + document.getElementById('minute_delay').value + ' }}';
 xhr.send(data);
+}
+
+
+function execGet(method) {
+var xhr = new XMLHttpRequest();
+var url = 'http://192.168.178.61' + method;
+xhr.open("GET", url, true);
+xhr.send();
 }
 </script>
 </body>
