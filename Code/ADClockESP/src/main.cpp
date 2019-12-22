@@ -22,22 +22,21 @@ HttpServer server(RequestHandler::handlers, NULL);
 
 void setup_wifi_connection()
 {
+
   if (!Settings::has_wifi_config())
   {
-    /*Serial.println("open ap....");
-    // Open AP
-    WiFi.mode(WIFI_AP);
-    WiFi.softAP("ADClock", "12345678");
-    Serial.println("[STARTUP] Accesspoint open. My Adress: " + WiFi.softAPIP());
-    return;*/
-    Settings::WiFiSettings con = {"Home_Net", "@zwerge99"};
-    Settings::set_wifi_config(con);
+    WiFi.softAP("ADClock");
+    return;
   }
 
   WiFi.mode(WIFI_STA);
-  Settings::WiFiSettings config = {"Home_Net", "@zwerge99"}; //Settings::load_wifi_config();
-  Serial.println("Connecting to " + String(config.ssid));
-  WiFi.begin(config.ssid, config.password);
+
+  // TODO: Wifi kann automatisch wiederverbunden werden.
+  /*Settings::WiFiSettings config = {"Home_Net", "@zwerge99"}; // Settings::load_wifi_config(); // {"Home_Net", "@zwerge99"}; //
+  Serial.println("Connecting to '" + String(config.ssid) + "' with password '" + String(config.password) + "'");
+  // WiFi.begin(config.ssid, config.password);*/
+
+  WiFi.begin();
 
   size_t status = WiFi.waitForConnectResult();
   if (status != WL_CONNECTED)
@@ -47,7 +46,7 @@ void setup_wifi_connection()
   }
 
   Serial.print("Connected to: ");
-  Serial.println(config.ssid);
+  Serial.println(WiFi.SSID());
   Serial.print("IP Address:   ");
   Serial.println(WiFi.localIP());
 }

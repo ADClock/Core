@@ -82,7 +82,18 @@ boolean wifi_post(HttpServer &server)
   // TODO Check if ssid and password is present
   Settings::WiFiSettings config = {doc["ssid"], doc["password"]};
   Settings::set_wifi_config(config);
+  response.inform("Wifi config set");
 
+  finishRequest(server, response);
+  return true;
+};
+
+// DELETE /wifi
+boolean wifi_delete(HttpServer &server)
+{
+  ApiResponse response;
+  Settings::delete_wifi_config();
+  response.inform("Wifi config deleted");
   finishRequest(server, response);
   return true;
 };
@@ -169,6 +180,7 @@ boolean current_all_get(HttpServer &server)
 HttpServer::PathHandler handlers[] = {
     {"/", HttpServer::GET, &index},
     {"/wifi", HttpServer::POST, &wifi_post},
+    {"/wifi", HttpServer::DELETE, &wifi_delete},
     {"/init", HttpServer::GET, &init_get},
     {"/currenttime", HttpServer::GET, &currenttime_get},
     {"/planned",
