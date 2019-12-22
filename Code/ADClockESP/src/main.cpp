@@ -1,7 +1,9 @@
 #include <WiFi.h>
+#include <WiFiAP.h>
 #include "Manager.h"
 #include "SPIFFS.h"
 #include "web/RequestHandler.h"
+#include "Settings.h"
 
 // Daten Uhren
 ClockWall aiming;
@@ -16,40 +18,36 @@ ClockCommunication clockcom(bufferout, clockout);
 // Manager
 Manager manager(clockcom, current, aiming, planned);
 
-// WLAN Verbindung zu einem Netzwerk herstellen
-const char *ssid = "Home_Net";      //"Paule";        //
-const char *password = "@zwerge99"; //"QQqq1111"; //
-
 HttpServer server(RequestHandler::handlers, NULL);
 
 void setup_wifi_connection()
 {
+  if (!Settings::has_wifi_config())
+  {
+    /*Serial.println("open ap....");
+    // Open AP
+    WiFi.mode(WIFI_AP);
+    WiFi.softAP("ADClock", "12345678");
+    Serial.println("[STARTUP] Accesspoint open. My Adress: " + WiFi.softAPIP());
+    return;*/
+    Settings::WiFiSettings con = {"Home_Net", "@zwerge99"};
+    Settings::set_wifi_config(con);
+  }
+
   WiFi.mode(WIFI_STA);
-  WiFi.begin(ssid, password);
-  Serial.println("Connecting to " + String(ssid));
+  Settings::WiFiSettings config = {"Home_Net", "@zwerge99"}; //Settings::load_wifi_config();
+  Serial.println("Connecting to " + String(config.ssid));
+  WiFi.begin(config.ssid, config.password);
+
   size_t status = WiFi.waitForConnectResult();
   if (status != WL_CONNECTED)
   {
     Serial.println("Connection failed with Code " + String(status) + "\nRestarting...");
     ESP.restart();
   }
-  /* size_t attempts = 0;
-  while (WiFi.status() != WL_CONNECTED)
-  {
-    if (attempts > 10)
-    {
-      Serial.println("Failed! Restarting... (WiFi Status = " + String(WiFi.status()) + ")");
-      ESP.restart();
-      return;
-    }
-    Serial.print(".");
-    delay(500);
-    //WiFi.reconnect();
-    attempts++;
-  }*/
 
   Serial.print("Connected to: ");
-  Serial.println(ssid);
+  Serial.println(config.ssid);
   Serial.print("IP Address:   ");
   Serial.println(WiFi.localIP());
 }
@@ -114,13 +112,11 @@ void setup()
 {
   Serial.begin(9600);
   Serial.println("[STARTUP] Booting...");
-  pinMode(OUT_RESPONSE, INPUT);
 
   // test_json();
   // test_communication_speed();
 
   Serial.println("[STARTUP] Begin Clock init...");
-  manager.preventSendingPlan();
   manager.init();
   if (!clockcom.transmit())
   {
@@ -169,7 +165,7 @@ void loop()
   if (!bufferout.is_empty())
     clockcom.transmit();
 
-  // Erst den Plan verschicken, wenn die Uhr initalisiert ist.
+  // Erst den Plan verschicken, wenn die Uhr initialisiert ist.
   if (!manager.isInitialized())
     return;
 
@@ -179,10 +175,6 @@ void loop()
     if (!manager.hasPendingMoves())
     {
       manager.executePlan();
-    }
-    else
-    {
-      Serial.println("Es gibt bereits einen neuen Plan, aber die Zeiger drehen noch!");
     }
   }
 }

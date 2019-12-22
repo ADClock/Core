@@ -1,6 +1,7 @@
 #ifndef _REQUESTHANDLER_H_
 #define _REQUESTHANDLER_H_
 #include "Arduino.h"
+#include "Settings.h"
 #include "HttpServer.h"
 #include "../api/ClockApi.h"
 #include "../api/ApiResponse.h"
@@ -72,6 +73,19 @@ boolean init_get(HttpServer &server)
   server.print(F("<html><body>Init triggerd</body></html>\n"));
   return true;
 }
+
+// POST /wifi
+boolean wifi_post(HttpServer &server)
+{
+  ApiResponse response;
+  auto doc = getJsonBody(server, response);
+  // TODO Check if ssid and password is present
+  Settings::WiFiSettings config = {doc["ssid"], doc["password"]};
+  Settings::set_wifi_config(config);
+
+  finishRequest(server, response);
+  return true;
+};
 
 // POST /clock/X/Y
 boolean clock_post(HttpServer &server)
@@ -154,6 +168,7 @@ boolean current_all_get(HttpServer &server)
 
 HttpServer::PathHandler handlers[] = {
     {"/", HttpServer::GET, &index},
+    {"/wifi", HttpServer::POST, &wifi_post},
     {"/init", HttpServer::GET, &init_get},
     {"/currenttime", HttpServer::GET, &currenttime_get},
     {"/planned",
