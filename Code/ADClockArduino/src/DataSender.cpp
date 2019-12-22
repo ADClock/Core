@@ -16,10 +16,10 @@ void DataSender::tick()
     // After the timer expired we need to doublecheck the Response-Signal. ISR could kicked in during this condition
     if (this->time_waiting() > SENDER_TIMEOUT_RESPONSE_ON && !FastGPIO::Pin<OUT_RESPONSE>::isInputHigh())
     {
-      timeout();
 #ifdef DEBUG
-      Serial.println("WAIT_FOR_RESPONSE_ON");
+      Serial.println("WAIT_FOR_RESPONSE_ON " + String(this->time_waiting()) + " " + String(FastGPIO::Pin<OUT_RESPONSE>::isInputHigh()) + String(static_cast<int>(state)));
 #endif
+      timeout();
     }
     break;
 
@@ -30,7 +30,7 @@ void DataSender::tick()
     {
       timeout();
 #ifdef DEBUG
-      Serial.println("WAIT_FOR_RESPONSE_OFF");
+      Serial.println("WAIT_FOR_RESPONSE_OFF " + String(this->time_waiting()));
 #endif
     }
     break;

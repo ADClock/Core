@@ -9,6 +9,32 @@ void DataManager::tick()
   this->receiver.tick();
   this->sender.tick();
 
+  this->process_incoming_data();
+
+  if (this->receiver.complete())
+  {
+    this->process_incoming_data();
+    this->state = CommandState::IDLE;
+    this->receiver.reset();
+
+    // If sending failed resetting now. (Otherwise it could send half command)
+    if (this->sender.failed())
+      this->sender.reset();
+  }
+
+  if (this->receiver.failed())
+  {
+    this->state = CommandState::IDLE;
+    this->receiver.reset();
+
+    // If sending failed resetting now. (Otherwise it could send half command)
+    if (this->sender.failed())
+      this->sender.reset();
+  }
+}
+
+void DataManager::process_incoming_data()
+{
   switch (state)
   {
   case CommandState::IDLE:
@@ -16,7 +42,7 @@ void DataManager::tick()
     {
       this->state = CommandState::READING_COMMAND;
     }
-    else
+    /*else
     {
       // Wenn kein Command ankommt können wir ja auch alles senden
       if (!this->out.is_empty())
@@ -25,11 +51,8 @@ void DataManager::tick()
 
         while (this->sender.sending() && !this->sender.failed())
           this->sender.tick();
-
-        if (this->sender.failed())
-          this->sender.reset();
       }
-    }
+    }*/
     break;
 
   case CommandState::READING_COMMAND:
@@ -50,30 +73,17 @@ void DataManager::tick()
   case CommandState::PIPEING:
     while (!this->in.is_empty())
     {
+#ifndef IS_LAST_CLOCK
       this->out.enqueue(this->in.dequeue());
+#else
+      this->in.clear();
+#endif
     }
   case CommandState::TESTING:
     in.clear(); // Dafür sorgen, dass Buffer nicht überläuft
 
   default:
     break;
-  }
-
-  if (this->receiver.complete())
-  {
-    this->state = CommandState::IDLE;
-    this->receiver.reset();
-  }
-
-  if (this->receiver.failed())
-  {
-    this->state = CommandState::IDLE;
-    this->receiver.reset();
-
-    while (this->receiver.time_waiting() < DELAY_BETWEEN_COMMANDS)
-    {
-      this->sender.tick();
-    }
   }
 }
 
@@ -89,6 +99,7 @@ void DataManager::set_current_command()
   {
   case 0x01:
     send_command(0x01);
+    this->state = CommandState::IDLE;
     finish_transmission();
     moma.calibrate();
     break;
@@ -140,7 +151,8 @@ uint8_t DataManager::read_byte()
 
 void DataManager::finish_transmission()
 {
-  while (this->state != CommandState::IDLE || !this->out.is_empty())
+  this->tick();
+  while (this->state != CommandState::IDLE || !this->out.is_empty() || this->sender.sending())
     this->tick();
 }
 
@@ -157,7 +169,7 @@ void DataManager::read_my_data()
     input[i] = read_byte();
   }
 
-  // finish_transmission();
+  finish_transmission();
 #ifdef DEBUG
   // Serial.println("DataManager >> Loading new image..");
 #endif
@@ -167,6 +179,7 @@ void DataManager::read_my_data()
   motordata[1] = deserialize(&input[4]);
 
   this->moma.set_motor_data(motordata);
+  // Serial.println("Image updated");
 }
 
 MotorData DataManager::deserialize(uint8_t *stream)

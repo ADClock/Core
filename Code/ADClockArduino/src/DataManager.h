@@ -22,6 +22,7 @@ public:
   DataManager(DataSender &sender, BitBuffer &out, DataReceiver &receiver, BitBuffer &in, MotorManager &moma);
 
   void tick();
+  void process_incoming_data();
   void finish_transmission();
   void send_command(uint8_t command);
   void send_byte(uint8_t byte);
