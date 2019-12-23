@@ -31,9 +31,14 @@ public:
     addMessage(message, 30);
   }
 
+  bool is_okay()
+  {
+    return maxValence < 30;
+  }
+
   size_t getHttpCode()
   {
-    if (maxValence >= 30)
+    if (!is_okay())
     {
       return 400; // Wertigkeit 30 -> Fehler in Anfrage
     }
@@ -50,12 +55,12 @@ public:
 private:
   void addMessage(String &message, uint8_t valence)
   {
-    Serial.println(String(valence) + ": " + message);
+    /* Serial.println(String(valence) + ": " + message);
     JsonArray arr = json["messages"].as<JsonArray>();
     JsonObject obj = arr.createNestedObject();
     obj["message"] = String(message);
     obj["valence"] = valence;
-
+*/
     if (valence > maxValence)
     {
       maxValence = valence;
