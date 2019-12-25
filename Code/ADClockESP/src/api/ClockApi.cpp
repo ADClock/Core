@@ -1,5 +1,25 @@
 #include "ClockApi.h"
 
+/**
+ * Updates Clock by JsonData
+ * 
+ * Json must contain 'both', 'hour' or 'minute' Json Hand Data
+ * 
+ * Example:
+ * {
+ *    "hour": {
+ *        "target_pos": 180,
+ *        "direction": false,
+ *        "step_delay": 0,
+ *        "wait_steps": 0
+ *    },
+ *    "minute": {
+ *        "target_pos": 90,
+ *        "direction": false
+ *    }
+ * }
+ * 
+ * */
 void ClockApi::updateClock(ApiResponse &response, uint8_t x, uint8_t y, JsonDocument &value)
 {
   if (!isValidCoordinates(x, y))
@@ -7,22 +27,25 @@ void ClockApi::updateClock(ApiResponse &response, uint8_t x, uint8_t y, JsonDocu
     response.error("Clock position (" + String(x) + "/" + String(y) + ") is invalid. Clock not processed.");
     return;
   }
+  if (value.containsKey("both"))
+  {
+    update_hand(response, x, y, HOUR, value["both"]);
+  }
 
-  // Hands aus JSON auslesen und verarbeiten
   if (value.containsKey("hour"))
   {
-    updateHand(response, x, y, HOUR_HANDLE, value["hour"]);
+    update_hand(response, x, y, HOUR, value["hour"]);
   }
 
   if (value.containsKey("minute"))
   {
-    updateHand(response, x, y, MINUTE_HANDLE, value["minute"]);
+    update_hand(response, x, y, MINUTE, value["minute"]);
   }
 
   return;
 }
 
-void ClockApi::updateHand(ApiResponse &response, uint8_t x, uint8_t y, uint8_t handId, JsonObject value)
+void ClockApi::update_hand(ApiResponse &response, uint8_t x, uint8_t y, HandSelection hand, JsonObject value)
 {
   if (!isValidCoordinates(x, y))
   {
@@ -34,7 +57,7 @@ void ClockApi::updateHand(ApiResponse &response, uint8_t x, uint8_t y, uint8_t h
   {
     if (value["target_pos"].is<int>())
     {
-      updateHandPosition(response, x, y, handId, value["target_pos"].as<int>());
+      update_position(response, x, y, hand, value["target_pos"].as<int>());
     }
     else
     {
@@ -47,7 +70,7 @@ void ClockApi::updateHand(ApiResponse &response, uint8_t x, uint8_t y, uint8_t h
   {
     if (value["direction"].is<boolean>())
     {
-      updateHandRotation(response, x, y, handId, value["direction"].as<boolean>());
+      update_direction(response, x, y, hand, value["direction"].as<boolean>());
     }
     else
     {
@@ -60,7 +83,7 @@ void ClockApi::updateHand(ApiResponse &response, uint8_t x, uint8_t y, uint8_t h
   {
     if (value["step_delay"].is<int>())
     {
-      updateHandStepDelay(response, x, y, handId, value["step_delay"].as<int>());
+      update_step_delay(response, x, y, hand, value["step_delay"].as<int>());
     }
     else
     {
@@ -73,7 +96,7 @@ void ClockApi::updateHand(ApiResponse &response, uint8_t x, uint8_t y, uint8_t h
   {
     if (value["wait_steps"].is<int>())
     {
-      updateHandStepDelay(response, x, y, handId, value["wait_steps"].is<int>());
+      update_wait_degree(response, x, y, hand, value["wait_steps"].is<int>());
     }
     else
     {
@@ -84,11 +107,10 @@ void ClockApi::updateHand(ApiResponse &response, uint8_t x, uint8_t y, uint8_t h
   return;
 }
 
-void ClockApi::updateHandPosition(ApiResponse &response, uint8_t x, uint8_t y, uint8_t handId, size_t degree)
+void ClockApi::update_position(ApiResponse &response, uint8_t x, uint8_t y, HandSelection hand, size_t degree)
 {
   if (!isValidCoordinates(x, y))
   {
-    // TODO X + Y wären cool
     response.error("Clock position (" + String(x) + "/" + String(y) + ") is invalid. Hand position not processed.");
     return;
   }
@@ -99,21 +121,13 @@ void ClockApi::updateHandPosition(ApiResponse &response, uint8_t x, uint8_t y, u
     return;
   }
 
-  if (handId == HOUR_HANDLE)
-  {
-    this->datamanager().planned.setHourPosition(x, y, degree);
-    response.inform("Position of hour hand was updated");
-  }
-  else
-  {
-    this->datamanager().planned.setMinutePosition(x, y, degree);
-    response.inform("Position of minute hand was updated");
-  }
+  planned.set_position(x, y, hand, degree);
+  response.inform("Position of hand was updated");
 
   return;
 }
 
-void ClockApi::updateHandRotation(ApiResponse &response, uint8_t x, uint8_t y, uint8_t handId, bool rotation)
+void ClockApi::update_direction(ApiResponse &response, uint8_t x, uint8_t y, HandSelection hand, bool rotation)
 {
   if (!isValidCoordinates(x, y))
   {
@@ -121,21 +135,13 @@ void ClockApi::updateHandRotation(ApiResponse &response, uint8_t x, uint8_t y, u
     return;
   }
 
-  if (handId == HOUR_HANDLE)
-  {
-    this->datamanager().planned.setHourDirection(x, y, rotation);
-    response.inform("Rotation of hour hand was updated");
-  }
-  else
-  {
-    this->datamanager().planned.setMinuteDirection(x, y, rotation);
-    response.inform("Rotation of minute hand was updated");
-  }
+  planned.set_direction(x, y, hand, rotation);
+  response.inform("Rotation of hand was updated");
 
   return;
 }
 
-void ClockApi::updateHandStepDelay(ApiResponse &response, uint8_t x, uint8_t y, uint8_t handId, size_t step_delay)
+void ClockApi::update_step_delay(ApiResponse &response, uint8_t x, uint8_t y, HandSelection hand, size_t step_delay)
 {
   if (!isValidCoordinates(x, y))
   {
@@ -143,21 +149,13 @@ void ClockApi::updateHandStepDelay(ApiResponse &response, uint8_t x, uint8_t y, 
     return;
   }
 
-  if (handId == HOUR_HANDLE)
-  {
-    this->datamanager().planned.setHourStepDelay(x, y, step_delay);
-    response.inform("Step delay of hour hand was updated");
-  }
-  else
-  {
-    this->datamanager().planned.setMinuteStepDelay(x, y, step_delay);
-    response.inform("Step delay of minute hand was updated");
-  }
+  planned.set_step_delay(x, y, hand, step_delay);
+  response.inform("Step delay of hand was updated");
 
   return;
 }
 
-void ClockApi::updateHandWaitStep(ApiResponse &response, uint8_t x, uint8_t y, uint8_t handId, size_t wait_steps)
+void ClockApi::update_wait_degree(ApiResponse &response, uint8_t x, uint8_t y, HandSelection hand, size_t wait_steps)
 {
   if (!isValidCoordinates(x, y))
   {
@@ -165,32 +163,21 @@ void ClockApi::updateHandWaitStep(ApiResponse &response, uint8_t x, uint8_t y, u
     return;
   }
 
-  if (handId == HOUR_HANDLE)
-  {
-    this->datamanager().planned.setHourWaitSteps(x, y, wait_steps);
-    response.inform("Wait steps of hour hand was updated");
-  }
-  else
-  {
-    this->datamanager().planned.setMinuteWaitSteps(x, y, wait_steps);
-    response.inform("Wait steps of minute hand was updated");
-  }
+  planned.set_wait_degree(x, y, hand, wait_steps);
+  response.inform("Wait steps of hand was updated");
 
   return;
 }
 
 void ClockApi::showCurrentTime(ApiResponse &response)
 {
-  if (!this->time().is_time_set())
-  {
-    this->time().load_time();
-  }
-  auto hour = 360 - 360. / 12 * (this->time().get_hour() % 12);
-  auto minute = 360 - 360. / 60 * this->time().get_minute();
-  this->datamanager().planned.setMutiplePositions(0, 0, WALL_SIZE_X - 1, WALL_SIZE_Y - 1, hour, minute);
-  response.inform("Current time set on each clock.");
 
-  Serial.println("Hands set to hour=" + String(hour) + " minute=" + String(minute));
+  if (!_time.is_time_set())
+  {
+    _time.load_time();
+  }
+  planned.show_time(_time.get_hour(), _time.get_minute());
+  response.inform("Current time set on each clock.");
 }
 
 bool ClockApi::isValidPosition(size_t position)
@@ -200,5 +187,5 @@ bool ClockApi::isValidPosition(size_t position)
 
 void ClockApi::initClocks()
 {
-  this->datamanager().init();
+  _manager.init();
 }

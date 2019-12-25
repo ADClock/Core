@@ -1,14 +1,14 @@
 #ifndef _CLOCK_API_H_
 #define _CLOCK_API_H_
-
-#include "Arduino.h"
-#include "Manager.h"
+#include "../Config.h"
+#include "../data/ClockWall.h"
+#include "../Manager.h"
+#include "../data/NTPTime.h"
 #include "ApiResponse.h"
-#include "NTPTime.h"
 
-#define MINUTE_HANDLE 1
-#define HOUR_HANDLE 2
-
+extern ClockWall planned;
+extern Manager _manager;
+extern NTPTime _time;
 class ClockApi
 {
 public:
@@ -26,47 +26,26 @@ public:
   // Updates a hole Clock
   void updateClock(ApiResponse &response, uint8_t x, uint8_t y, JsonDocument &value);
 
-  // Updates a single Handle
-  void updateHand(ApiResponse &response, uint8_t x, uint8_t y, uint8_t hand, JsonObject value);
+  void update_hand(ApiResponse &response, uint8_t x, uint8_t y, HandSelection hand, JsonObject value);
 
   // Was kann alles beim Handle aktualisiert werden?
-  void updateHandPosition(ApiResponse &response, uint8_t x, uint8_t y, uint8_t hand, size_t position);
+  void update_position(ApiResponse &response, uint8_t x, uint8_t y, HandSelection hand, size_t position);
 
-  void updateHandRotation(ApiResponse &response, uint8_t x, uint8_t y, uint8_t hand, bool rotation);
+  void update_direction(ApiResponse &response, uint8_t x, uint8_t y, HandSelection hand, bool rotation);
 
-  void updateHandStepDelay(ApiResponse &response, uint8_t x, uint8_t y, uint8_t hand, size_t step_delay);
+  void update_step_delay(ApiResponse &response, uint8_t x, uint8_t y, HandSelection hand, size_t step_delay);
 
-  void updateHandWaitStep(ApiResponse &response, uint8_t x, uint8_t y, uint8_t hand, size_t wait_steps);
+  void update_wait_degree(ApiResponse &response, uint8_t x, uint8_t y, HandSelection hand, size_t wait_steps);
 
   void showCurrentTime(ApiResponse &response);
 
   void initClocks();
-
-  // Manager undsooo
-  void setManager(Manager *m)
-  {
-    this->manager = m;
-  }
-
-  Manager &datamanager()
-  {
-    return *manager;
-  }
-
-  NTPTime &time()
-  {
-    return ntp_time;
-  };
 
 private:
   ClockApi(){};
 
   // Validierungsroutinen
   bool isValidPosition(size_t position);
-
-  Manager *manager;
-
-  NTPTime ntp_time;
 };
 
 #endif

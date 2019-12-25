@@ -18,100 +18,111 @@ size_t ClockWall::getClockPosition(size_t x, size_t y)
   return clockPos;
 }
 
-bool ClockWall::setHourPosition(size_t x, size_t y, size_t degree)
+bool ClockWall::set_position(HandSelection selection, size_t degree)
 {
-  if (!isValidCoordinates(x, y))
-    return false;
-
-  matrix[x][y].hour.setPositionDegree(degree);
-  return true;
-}
-
-bool ClockWall::setMinutePosition(size_t x, size_t y, size_t degree)
-{
-  if (!isValidCoordinates(x, y))
-    return false;
-
-  matrix[x][y].minute.setPositionDegree(degree);
-  return true;
-}
-
-bool ClockWall::setMinuteDirection(size_t x, size_t y, bool direction)
-{
-  if (!isValidCoordinates(x, y))
-    return false;
-
-  matrix[x][y].minute.setDirection(direction);
-  return true;
-}
-
-bool ClockWall::setHourDirection(size_t x, size_t y, bool direction)
-{
-  if (!isValidCoordinates(x, y))
-    return false;
-
-  matrix[x][y].hour.setDirection(direction);
-  return true;
-}
-
-bool ClockWall::setMinuteStepDelay(size_t x, size_t y, size_t step_delay)
-{
-  if (!isValidCoordinates(x, y))
-    return false;
-
-  matrix[x][y].minute.setDelayBetweenSteps(step_delay);
-  return true;
-}
-
-bool ClockWall::setHourStepDelay(size_t x, size_t y, size_t step_delay)
-{
-  if (!isValidCoordinates(x, y))
-    return false;
-
-  matrix[x][y].hour.setDelayBetweenSteps(step_delay);
-  return true;
-}
-
-bool ClockWall::setMinuteWaitSteps(size_t x, size_t y, size_t wait_steps)
-{
-  if (!isValidCoordinates(x, y))
-    return false;
-
-  matrix[x][y].minute.setWaitSteps(wait_steps);
-  return true;
-}
-
-bool ClockWall::setHourWaitSteps(size_t x, size_t y, size_t wait_steps)
-{
-  if (!isValidCoordinates(x, y))
-    return false;
-
-  matrix[x][y].hour.setWaitSteps(wait_steps);
-  return true;
-}
-
-bool ClockWall::setMutiplePositions(size_t x_from, size_t y_from, size_t x_to, size_t y_to, size_t degreeHour, size_t degreeMinute)
-{
-
-  if (!isValidCoordinates(x_from, y_from))
-    return false;
-
-  if (!isValidCoordinates(x_to, y_to))
-    return false;
-
-  for (size_t x = x_from; x <= x_to; x++)
+  for (size_t x = 0; x < WALL_SIZE_X; x++)
   {
-    for (size_t y = y_from; y <= y_to; y++)
+    for (size_t y = 0; y < WALL_SIZE_Y; y++)
     {
-      matrix[x][y].hour.setPositionDegree(degreeHour);
-      matrix[x][y].minute.setPositionDegree(degreeMinute);
+      set_position(x, y, selection, degree);
     }
   }
+  return true;
+}
+
+bool ClockWall::set_position(size_t x, size_t y, HandSelection selection, size_t degree)
+{
+  if (!valid_clock_cords(x, y))
+    return false;
+
+  if (selection == HOUR || selection == BOTH)
+    matrix[x][y].hour.setPositionDegree(degree);
+
+  if (selection == MINUTE || selection == BOTH)
+    matrix[x][y].minute.setPositionDegree(degree);
 
   return true;
 }
 
-bool ClockWall::isValidCoordinates(size_t x, size_t y)
+bool ClockWall::set_wait_degree(HandSelection selection, size_t degree)
+{
+  for (size_t x = 0; x < WALL_SIZE_X; x++)
+  {
+    for (size_t y = 0; y < WALL_SIZE_Y; y++)
+    {
+      set_wait_degree(x, y, selection, degree);
+    }
+  }
+  return true;
+}
+
+bool ClockWall::set_wait_degree(size_t x, size_t y, HandSelection selection, size_t degree)
+{
+  if (!valid_clock_cords(x, y))
+    return false;
+
+  if (selection == HOUR || selection == BOTH)
+    matrix[x][y].hour.setWaitDegree(degree);
+
+  if (selection == MINUTE || selection == BOTH)
+    matrix[x][y].minute.setWaitDegree(degree);
+
+  return true;
+}
+
+bool ClockWall::set_step_delay(HandSelection selection, size_t step_delay)
+{
+  for (size_t x = 0; x < WALL_SIZE_X; x++)
+  {
+    for (size_t y = 0; y < WALL_SIZE_Y; y++)
+    {
+      set_step_delay(x, y, selection, step_delay);
+    }
+  }
+  return true;
+}
+
+bool ClockWall::set_step_delay(size_t x, size_t y, HandSelection selection, size_t step_delay)
+{
+  if (!valid_clock_cords(x, y))
+    return false;
+
+  if (selection == HOUR || selection == BOTH)
+    matrix[x][y].hour.setDelayBetweenSteps(step_delay);
+
+  if (selection == MINUTE || selection == BOTH)
+    matrix[x][y].minute.setDelayBetweenSteps(step_delay);
+
+  return true;
+}
+
+bool ClockWall::set_direction(HandSelection selection, bool direction)
+{
+  for (size_t x = 0; x < WALL_SIZE_X; x++)
+  {
+    for (size_t y = 0; y < WALL_SIZE_Y; y++)
+    {
+      set_direction(x, y, selection, direction);
+    }
+  }
+  return true;
+}
+
+bool ClockWall::set_direction(size_t x, size_t y, HandSelection selection, bool direction)
+{
+  if (!valid_clock_cords(x, y))
+    return false;
+
+  if (selection == HOUR || selection == BOTH)
+    matrix[x][y].hour.setDirection(direction);
+
+  if (selection == MINUTE || selection == BOTH)
+    matrix[x][y].minute.setDirection(direction);
+
+  return true;
+}
+
+bool ClockWall::valid_clock_cords(size_t x, size_t y)
 {
   // usigned int always >= 0
   return x < WALL_SIZE_X && y < WALL_SIZE_Y;
@@ -125,75 +136,9 @@ bool ClockWall::printChar(uint8_t segment, char c)
   for (int y = 0; y < WALL_SIZE_Y; y++)
     for (int x = segment; x < (segment + 1) * 3; x++)
     {
-      setHourPosition(x, y, positions[currentElement++]);
-      setMinutePosition(x, y, positions[currentElement++]);
+      set_position(x, y, HOUR, positions[currentElement++]);
+      set_position(x, y, MINUTE, positions[currentElement++]);
     }
-  return true;
-}
-
-bool ClockWall::setHourRotation(bool direction)
-{
-  for (size_t x = 0; x < WALL_SIZE_X; x++)
-  {
-    for (size_t y = 0; y < WALL_SIZE_Y; y++)
-    {
-      matrix[x][y].hour.setDirection(direction);
-    }
-  }
-  return true;
-}
-
-bool ClockWall::setMinuteRotation(bool direction)
-{
-  for (size_t x = 0; x < WALL_SIZE_X; x++)
-  {
-    for (size_t y = 0; y < WALL_SIZE_Y; y++)
-    {
-      matrix[x][y].minute.setDirection(direction);
-    }
-  }
-  return true;
-}
-
-bool ClockWall::setAnimationStart(size_t hourDeg, size_t minuteDeg)
-{
-  return setAnimationStartStep(hourDeg * STEPS_PER_DEGREE, minuteDeg * STEPS_PER_DEGREE);
-}
-
-bool ClockWall::setAnimationStartStep(size_t hourStart, size_t minuteStart)
-{
-  for (size_t x = 0; x < WALL_SIZE_X; x++)
-  {
-    for (size_t y = 0; y < WALL_SIZE_Y; y++)
-    {
-      matrix[x][y].hour.setSimultaneouslyMove(hourStart);
-      matrix[x][y].minute.setSimultaneouslyMove(minuteStart);
-    }
-  }
-  return true;
-}
-
-bool ClockWall::setHourSpeed(size_t speed)
-{
-  for (size_t x = 0; x < WALL_SIZE_X; x++)
-  {
-    for (size_t y = 0; y < WALL_SIZE_Y; y++)
-    {
-      matrix[x][y].hour.setDelayBetweenSteps(speed);
-    }
-  }
-  return true;
-}
-
-bool ClockWall::setMinuteSpeed(size_t speed)
-{
-  for (size_t x = 0; x < WALL_SIZE_X; x++)
-  {
-    for (size_t y = 0; y < WALL_SIZE_Y; y++)
-    {
-      matrix[x][y].minute.setDelayBetweenSteps(speed);
-    }
-  }
   return true;
 }
 
@@ -262,4 +207,13 @@ bool ClockWall::different_target(ClockWall &wall)
     }
   }
   return false;
+}
+
+bool ClockWall::show_time(uint8_t hour, uint8_t minute)
+{
+
+  auto hour_degree = 360 - 360. / 12 * (hour % 12);
+  auto minute_degree = 360 - 360. / 60 * minute;
+  set_position(HOUR, hour_degree);
+  set_position(MINUTE, minute_degree);
 }

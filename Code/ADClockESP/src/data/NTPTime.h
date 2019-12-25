@@ -7,16 +7,14 @@
 class NTPTime
 {
 public:
-  NTPTime()
-  {
-    configTime(3600, 3600, "pool.ntp.org");
-  };
+  NTPTime(){};
   void load_time();
   bool is_time_set();
   size_t get_hour();
   size_t get_minute();
 
 private:
+  bool is_configured;
   unsigned long last_update;
   struct tm timedata;
 };

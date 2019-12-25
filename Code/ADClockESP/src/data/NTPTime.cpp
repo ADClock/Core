@@ -2,6 +2,12 @@
 
 void NTPTime::load_time()
 {
+  if (!is_configured)
+  {
+    configTime(3600, 3600, "pool.ntp.org");
+    is_configured = true;
+  }
+
   if (!getLocalTime(&this->timedata))
   {
     this->last_update = 0;

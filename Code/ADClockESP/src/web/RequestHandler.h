@@ -7,7 +7,8 @@
 #include "../api/ApiResponse.h"
 #include "WebUtils.h"
 #include "RESTClock.h"
-
+#include "RESTAnimation.h"
+extern Manager _manager;
 namespace RequestHandler
 {
 
@@ -76,7 +77,7 @@ boolean clock_get(HttpServer &server)
   uint8_t x = path.substring(7, 7).toInt();
   uint8_t y = path.substring(9, 9).toInt();
 
-  Clock c = ClockApi::instance().datamanager().aiming.getClock(x, y);
+  Clock c = _manager.aiming.getClock(x, y);
 
   server.send_error_code(200);
   server.send_content_type("application/json");
@@ -91,7 +92,7 @@ boolean aiming_all_get(HttpServer &server)
   server.send_error_code(200);
   server.send_content_type("application/json");
   server.end_headers();
-  serializeJson(ClockApi::instance().datamanager().aiming.asJson(), server);
+  serializeJson(_manager.aiming.asJson(), server);
   return true;
 };
 
@@ -101,7 +102,7 @@ boolean planned_all_get(HttpServer &server)
   server.send_error_code(200);
   server.send_content_type("application/json");
   server.end_headers();
-  serializeJson(ClockApi::instance().datamanager().planned.asJson(), server);
+  serializeJson(_manager.planned.asJson(), server);
   return true;
 };
 
@@ -112,11 +113,15 @@ boolean current_all_get(HttpServer &server)
   server.send_content_type("application/json");
   server.end_headers();
   DynamicJsonDocument doc(1024);
-  doc.set(ClockApi::instance().datamanager().current.asJson());
+  doc.set(_manager.current.asJson());
   serializeJson(doc, server);
   return true;
 };
 
+// TODO Organize API Paths to
+// /v1/clock
+// /v1/animation/
+// /v1/wifi/
 HttpServer::PathHandler handlers[] = {
     {"/", HttpServer::GET, &index},
     {"/wifi", HttpServer::POST, &wifi_post},
@@ -135,6 +140,16 @@ HttpServer::PathHandler handlers[] = {
     {"/clock"
      "*",
      HttpServer::GET, &clock_get},
+    {"/animation/run/"
+     "*",
+     HttpServer::GET, &RESTAnimation::run_get},
+    {"/animation/add/"
+     "*",
+     HttpServer::POST, &RESTAnimation::add_post},
+    {"/animation/play",
+     HttpServer::GET, &RESTAnimation::play_animation},
+    {"/animation/pause",
+     HttpServer::GET, &RESTAnimation::pause_animation},
     {"/*", HttpServer::GET, &send_file},
     {NULL}}; // Terminate Array with NULL!
 

@@ -7,8 +7,8 @@ namespace Settings
 {
 struct WiFiSettings
 {
-  const char *ssid;
-  const char *password;
+  String ssid;
+  String password;
 };
 
 static bool has_wifi_config()
@@ -25,15 +25,8 @@ static void delete_wifi_config()
 static WiFiSettings load_wifi_config()
 {
   auto wf = SPIFFS.open("/wifi.config");
-  char ssid[64];
-  char password[64];
-  size_t terminator;
-  terminator = wf.readBytesUntil('\n', ssid, sizeof(ssid));
-
-  Serial.println("Length ssid: " + String(terminator));
-  //ssid[terminator] = 0;
-  terminator = wf.readBytesUntil('\n', password, sizeof(password));
-  Serial.println("Length password: " + String(terminator));
+  auto ssid = wf.readStringUntil(';');
+  auto password = wf.readString();
   // password[terminator] = 0;
   wf.close();
   Serial.print("ssid: ");
@@ -48,8 +41,9 @@ static void set_wifi_config(WiFiSettings &settings)
   delete_wifi_config();
 
   auto file = SPIFFS.open("/wifi.config", "w");
-  file.println(settings.ssid);
-  file.println(settings.password);
+  file.print(settings.ssid);
+  file.print(';');
+  file.print(settings.password);
   file.close();
   Serial.println("WIFI Config has been updated.");
 }

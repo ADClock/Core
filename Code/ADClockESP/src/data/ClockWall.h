@@ -5,37 +5,32 @@
 #include "../Config.h"
 #include "Clock.h"
 
+enum HandSelection
+{
+  BOTH,
+  HOUR,
+  MINUTE
+};
+
 class ClockWall
 {
 public:
   ClockWall();
 
-  /**
-  * Clock Image setzen 
-  */
-  bool setMutiplePositions(size_t x_from, size_t y_from, size_t x_to, size_t y_to, size_t degreeHour, size_t degreeMinute);
+  bool set_position(HandSelection selection, size_t degree);
+  bool set_position(size_t x, size_t y, HandSelection selection, size_t degree);
 
-  bool setHourPosition(size_t x, size_t y, size_t degree);
-  bool setMinutePosition(size_t x, size_t y, size_t degree);
+  bool set_step_delay(HandSelection selection, size_t step_delay);
+  bool set_step_delay(size_t x, size_t y, HandSelection selection, size_t step_delay);
 
-  bool setHourDirection(size_t x, size_t y, bool direction);
-  bool setMinuteDirection(size_t x, size_t y, bool direction);
+  bool set_wait_degree(HandSelection selection, size_t degree);
+  bool set_wait_degree(size_t x, size_t y, HandSelection selection, size_t degree);
 
-  bool setHourStepDelay(size_t x, size_t y, size_t step_delay);
-  bool setMinuteStepDelay(size_t x, size_t y, size_t step_delay);
-
-  bool setHourWaitSteps(size_t x, size_t y, size_t wait_steps);
-  bool setMinuteWaitSteps(size_t x, size_t y, size_t wait_steps);
+  bool set_direction(HandSelection selection, bool direction);
+  bool set_direction(size_t x, size_t y, HandSelection selection, bool direction);
 
   bool printChar(uint8_t segment, char c);
-
-  bool setHourRotation(bool direction);
-  bool setMinuteRotation(bool direction);
-
-  bool setAnimationStart(size_t hourStartDeg, size_t minuteStartDeg);
-
-  bool setHourSpeed(size_t speed);
-  bool setMinuteSpeed(size_t speed);
+  bool show_time(uint8_t hour, uint8_t minute);
 
   /**
    * Web API Kommunikation
@@ -53,13 +48,12 @@ public:
   /**
   * Hilfsfunktionen für Positionen
   */
-  size_t getClockPosition(size_t x, size_t y);
+  static size_t getClockPosition(size_t x, size_t y);
 
   Clock &getClock(size_t x, size_t y) { return matrix[x][y]; };
 
 private:
-  bool isValidCoordinates(size_t x, size_t y);
-  bool setAnimationStartStep(size_t hourStart, size_t minuteStart);
+  bool valid_clock_cords(size_t x, size_t y);
 
   // Matrix der Uhren
   Clock matrix[WALL_SIZE_X][WALL_SIZE_X];

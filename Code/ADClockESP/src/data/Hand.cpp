@@ -70,6 +70,11 @@ void Hand::setWaitSteps(size_t steps)
   this->waitSteps = steps;
 }
 
+void Hand::setWaitDegree(size_t degree)
+{
+  this->waitSteps = (degree % 360) * STEPS_PER_DEGREE;
+}
+
 void Hand::setDelayBetweenSteps(size_t delay)
 {
   this->stepDelay = delay;

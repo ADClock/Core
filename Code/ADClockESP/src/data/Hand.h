@@ -18,6 +18,7 @@ public:
   void setPositionDegree(size_t degree);
   void setDelayBetweenSteps(size_t delay);
   void setWaitSteps(size_t steps);
+  void setWaitDegree(size_t steps);
   void setDirection(bool direction);
 
   void setSimultaneouslyMove(size_t steps);
