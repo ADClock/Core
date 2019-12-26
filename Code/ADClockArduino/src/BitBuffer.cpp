@@ -22,7 +22,7 @@ size_t BitBuffer::size()
 {
   if (tail >= head)
     return tail - head;
-  return BUFFER_SIZE - head - tail;
+  return BUFFER_SIZE - head + tail;
 }
 
 size_t BitBuffer::free_space()
