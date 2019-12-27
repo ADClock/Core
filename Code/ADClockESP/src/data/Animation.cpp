@@ -2,14 +2,18 @@
 
 Animation::Animation(String name)
 {
-  // Zur Sicherheit...
+  // Zur Sicherheit... (Tritt auf bei Start des Mikrocontrollers)
   if (name.isEmpty())
+  {
+    this->no_more_step = true;
     return;
+  }
 
   Serial.println("Animation: Loading '" + name + "'");
   auto file = SPIFFS.open("/animations/" + name + ".ani");
   if (!file)
   {
+    this->no_more_step = true;
     Serial.println("Error while opening file... :(");
     return;
   }
