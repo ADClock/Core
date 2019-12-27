@@ -1,16 +1,20 @@
 #ifndef _WEB_UTILS_H_
 #define _WEB_UTILS_H_
 #include "api/ApiResponse.h"
-#include "HttpServer.h"
+#include "WebServer.h"
 #include "SPIFFS.h"
+
+extern WebServer server;
 
 namespace WebUtils
 {
-void finishRequest(HttpServer &server, ApiResponse &response);
+void finishRequest(ApiResponse &response);
 
-JsonDocument &getJsonBody(HttpServer &server, ApiResponse &response);
+JsonDocument &getJsonBody(ApiResponse &response);
 
-void send_file(HttpServer &server, String filename);
+void send_file(String filename = server.uri());
+
+String get_content_type(String &filename);
 
 }; // namespace WebUtils
 

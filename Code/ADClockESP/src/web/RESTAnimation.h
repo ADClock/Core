@@ -7,11 +7,11 @@ extern AnimationManager _animations;
 namespace RESTAnimation
 {
 
-boolean run_get(HttpServer &server);
-boolean add_post(HttpServer &server);
+boolean run_get();
+boolean add_post();
 
-boolean pause_animation(HttpServer &server);
-boolean play_animation(HttpServer &server);
+boolean pause_animation();
+boolean play_animation();
 
 Step parse_step(ApiResponse &response, JsonDocument &json);
 

@@ -1,18 +1,18 @@
 #include "WebUtils.h"
+#include "WebServer.h"
 
-void WebUtils::finishRequest(HttpServer &server, ApiResponse &response)
+void WebUtils::finishRequest(ApiResponse &response)
 {
   Serial.println("Finished Http-Request with " + String(response.getHttpCode()));
-  server.send_error_code(response.getHttpCode());
-  server.send_content_type("application/json");
-  server.end_headers();
-  serializeJson(response.getJson(), server);
+  String s;
+  serializeJson(response.getJson(), s);
   response.getJson().clear(); // free memory
+  server.send(response.getHttpCode(), "application/json", s);
 }
 
-JsonDocument &WebUtils::getJsonBody(HttpServer &server, ApiResponse &response)
+JsonDocument &WebUtils::getJsonBody(ApiResponse &response)
 {
-  String body = server.get_client().readString();
+  String body = server.client().readString();
 
   if (body.length() == 0)
   {
@@ -40,21 +40,28 @@ JsonDocument &WebUtils::getJsonBody(HttpServer &server, ApiResponse &response)
   return doc;
 }
 
-void WebUtils::send_file(HttpServer &server, String filename)
+void WebUtils::send_file(String filename)
 {
   if (!SPIFFS.exists(filename))
   {
-    server.send_error_code(200);
-    server.send_content_type("text/html");
-    server.end_headers();
-    server.print("<html><body>Request resource not found.</body></html>");
+    server.send(404, "text/plain", "Requested resource not found!");
     return;
   }
 
-  server.send_error_code(200);
-  server.send_content_type("text/html");
-  server.end_headers();
   auto file = SPIFFS.open(filename);
-  server.print(file.readString());
+  server.send(200, get_content_type(filename), file.readString());
   file.close();
+}
+
+String WebUtils::get_content_type(String &filename)
+{
+  if (filename.endsWith(".html"))
+    return "text/html";
+  else if (filename.endsWith(".css"))
+    return "text/css";
+  else if (filename.endsWith(".js"))
+    return "application/javascript";
+  else if (filename.endsWith(".ico"))
+    return "image/x-icon";
+  return "text/plain";
 }

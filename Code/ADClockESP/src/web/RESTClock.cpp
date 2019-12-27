@@ -1,26 +1,40 @@
 #include "RESTClock.h"
+#include "WebServer.h"
 
-boolean RESTClock::clock_post(HttpServer &server)
+extern WebServer server;
+
+boolean RESTClock::clock_post()
 {
   ApiResponse response;
-  auto clock = parse_path(server, response);
-  auto &json = WebUtils::getJsonBody(server, response);
+  auto clock = parse_path(response);
+  auto &json = WebUtils::getJsonBody(response);
 
   if (response.is_okay())
     ClockApi::instance().updateClock(response, clock.x, clock.y, json);
 
-  WebUtils::finishRequest(server, response);
+  WebUtils::finishRequest(response);
   return true;
 };
 
-SelectedClock RESTClock::parse_path(HttpServer &server, ApiResponse &response)
+SelectedClock RESTClock::parse_path(ApiResponse &response)
 {
-  // TODO Im Fehlerfall APIResponse füllen
-  String path = String(server.get_path());
 
-  String x_path = path.substring(7, 8);
-  String y_path = path.substring(9, 10);
-  uint8_t x = x_path.toInt();
-  uint8_t y = y_path.toInt();
+  if (!server.hasArg("x"))
+  {
+    response.error("Please add argument x.");
+    return {0, 0};
+  }
+
+  if (!server.hasArg("y"))
+  {
+    response.error("Please add argument y.");
+    return {0, 0};
+  }
+
+  String x_arg = server.arg("x");
+  String y_arg = server.arg("y");
+  // TODO Nur validieren wenn gültig
+  uint8_t x = x_arg.toInt();
+  uint8_t y = y_arg.toInt();
   return {x, y};
 }

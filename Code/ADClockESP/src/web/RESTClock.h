@@ -11,9 +11,8 @@ struct SelectedClock
 
 namespace RESTClock
 {
-
-boolean clock_post(HttpServer &server);
-SelectedClock parse_path(HttpServer &server, ApiResponse &response);
+boolean clock_post();
+SelectedClock parse_path(ApiResponse &response);
 
 }; // namespace RESTClock
 

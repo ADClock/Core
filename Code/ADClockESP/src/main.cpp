@@ -1,8 +1,12 @@
 #include <WiFi.h>
 #include <WiFiAP.h>
-#include "SPIFFS.h"
-#include "web/RequestHandler.h"
+#include <SPIFFS.h>
+#include <WebServer.h>
 #include "Settings.h"
+#include "web/RESTAnimation.h"
+#include "web/RESTClock.h"
+#include "web/RESTConfig.h"
+#include "web/RESTWall.h"
 
 // Daten Uhren
 ClockWall aiming;
@@ -20,7 +24,9 @@ Manager _manager(clockcom, current, aiming, planned);
 // Animation Manager
 AnimationManager _animations;
 
-HttpServer server(RequestHandler::handlers, NULL);
+// HttpServer server(RequestHandler::handlers, NULL);
+
+WebServer server(80);
 
 // Aktuelle Uhrzeit
 NTPTime _time;
@@ -68,6 +74,30 @@ void setup_wifi_connection()
   Serial.println(WiFi.localIP());
 }
 
+void start_webserver()
+{
+  server.enableCrossOrigin();
+  server.on("/", HTTP_GET, [] { WebUtils::send_file("/index.html"); });
+
+  server.on("/v1/animation/add", HTTP_POST, RESTAnimation::add_post);
+  server.on("/v1/animation/pause", HTTP_GET, RESTAnimation::play_animation);
+  server.on("/v1/animation/play", HTTP_GET, RESTAnimation::play_animation);
+  server.on("/v1/animation/run", HTTP_GET, RESTAnimation::run_get);
+
+  server.on("/v1/clock", HTTP_POST, RESTClock::clock_post);
+
+  server.on("/v1/config/wifi", HTTP_POST, RESTConfig::wifi_post);
+  server.on("/v1/config/wifi", HTTP_DELETE, RESTConfig::wifi_delete);
+
+  server.on("/v1/wall/init", HTTP_GET, RESTWall::init_get);
+  server.on("/v1/wall/currenttime", HTTP_GET, RESTWall::currenttime_get);
+
+  server.onNotFound([] { WebUtils::send_file(server.uri()); });
+
+  server.begin();
+  Serial.println("[SETUP] HTTP-Server online...");
+}
+
 void setup()
 {
   Serial.begin(115200);
@@ -93,8 +123,7 @@ void setup()
 
   _time.load_time();
 
-  server.begin();
-  Serial.println("[SETUP] HTTP-Server online...");
+  start_webserver();
 
   /* // Ab jetzt dürfen die Uhren gestellt werden
   manager.allowSendingPlan();
@@ -111,7 +140,7 @@ void setup()
 void loop()
 {
   // HTTP Anfragen frühstücken
-  server.process();
+  server.handleClient();
 
   // Uhrdaten aktuell halten
   _manager.try_step();

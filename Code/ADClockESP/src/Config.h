@@ -15,8 +15,6 @@
 #define STEPS_FOR_CIRCLE 1705
 #define STEPS_PER_DEGREE STEPS_FOR_CIRCLE / 360.
 
-#define RIGHT true
-#define LEFT false
 // =================================================
 
 // =================================================

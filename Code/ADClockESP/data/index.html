@@ -20,10 +20,10 @@
 </form>
 
 <p>Ich habe auch ein paar Standardfunktionen für dich mitgebracht:</p>
-  <button type="button" onclick="execGet('/init')">Uhren initalisieren</button>
-  <button type="button" onclick="execGet('/currenttime')">Aktuelle Uhrzeit setzen</button>
-  <button type="button" onclick="execGet('/animation/pause')">Animation anhalten</button>
-  <button type="button" onclick="execGet('/animation/play')">Animation fortsetzen</button>
+  <button type="button" onclick="execGet('/v1/wall/init')">Uhren initalisieren</button>
+  <button type="button" onclick="execGet('/v1/wall/currenttime')">Aktuelle Uhrzeit setzen</button>
+  <button type="button" onclick="execGet('/v1/animation/pause')">Animation anhalten</button>
+  <button type="button" onclick="execGet('/v1/animation/play')">Animation fortsetzen</button>
 
   <p>Für das Stellen eines Uhrmoduls muss die jeweilige Koordinate ausgewählt werden.</p>
   
@@ -98,7 +98,7 @@
 <script>
 function updateClock() {
 var xhr = new XMLHttpRequest();
-var url = '/clock/' + document.getElementById('xcord').value + '/' + document.getElementById('ycord').value + '/';
+var url = '/v1/clock?x=' + document.getElementById('xcord').value + '&y=' + document.getElementById('ycord').value;
 xhr.open("POST", url, true);
 
 xhr.setRequestHeader("Content-Type", "application/json");
@@ -117,7 +117,7 @@ xhr.send(data);
 
 function appendStep() {
 var xhr = new XMLHttpRequest();
-var url = '/animation/add/' + document.getElementById('as_animation').value ;
+var url = '/v1/animation/add?name=' + document.getElementById('as_animation').value ;
 xhr.open("POST", url, true);
 
 xhr.setRequestHeader("Content-Type", "application/json");
@@ -135,7 +135,7 @@ xhr.send(data);
 
 function setWlan() {
 var xhr = new XMLHttpRequest();
-var url = '/wifi';
+var url = '/v1/config/wifi';
 xhr.open("POST", url, true);
 
 xhr.setRequestHeader("Content-Type", "application/json");
@@ -149,7 +149,7 @@ xhr.send(data);
 }
 
 function runAnimation() {
-execGet('/animation/run/' + document.getElementById('as_animation').value);
+execGet('/v1/animation/run?name=' + document.getElementById('as_animation').value);
 }
 
 

@@ -1,9 +1,12 @@
 #include "RESTAnimation.h"
+#include "WebServer.h"
 
-boolean RESTAnimation::run_get(HttpServer &server)
+extern WebServer server;
+
+boolean RESTAnimation::run_get()
 {
   ApiResponse response;
-  String name = String(server.get_path()).substring(15);
+  String name = server.arg("name"); // TODO Validieren ob vorhaden
 
   if (response.is_okay())
   {
@@ -11,15 +14,15 @@ boolean RESTAnimation::run_get(HttpServer &server)
     _animations.play_animation();
   }
 
-  WebUtils::finishRequest(server, response);
+  WebUtils::finishRequest(response);
   return true;
 };
 
-boolean RESTAnimation::add_post(HttpServer &server)
+boolean RESTAnimation::add_post()
 {
   ApiResponse response;
-  String name = String(server.get_path()).substring(15);
-  auto &json = WebUtils::getJsonBody(server, response);
+  String name = server.arg("name"); // TODO Validieren ob vorhaden
+  auto &json = WebUtils::getJsonBody(response);
   auto step = parse_step(response, json);
 
   if (response.is_okay())
@@ -35,29 +38,29 @@ boolean RESTAnimation::add_post(HttpServer &server)
     }
   }
 
-  WebUtils::finishRequest(server, response);
+  WebUtils::finishRequest(response);
   return true;
 };
 
-boolean RESTAnimation::pause_animation(HttpServer &server)
+boolean RESTAnimation::pause_animation()
 {
   ApiResponse response;
 
   _animations.pause_animation();
   response.inform("Animation paused.");
 
-  WebUtils::finishRequest(server, response);
+  WebUtils::finishRequest(response);
   return true;
 }
 
-boolean RESTAnimation::play_animation(HttpServer &server)
+boolean RESTAnimation::play_animation()
 {
   ApiResponse response;
 
   _animations.play_animation();
   response.inform("Animation continued.");
 
-  WebUtils::finishRequest(server, response);
+  WebUtils::finishRequest(response);
   return true;
 }
 

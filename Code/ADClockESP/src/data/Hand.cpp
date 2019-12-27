@@ -29,7 +29,7 @@ uint8_t *Hand::serialize()
 void Hand::init()
 {
   this->position = 0;
-  this->direction = RIGHT;
+  this->direction = 0;
   this->waitSteps = 0;
   this->stepDelay = 0;
 }
