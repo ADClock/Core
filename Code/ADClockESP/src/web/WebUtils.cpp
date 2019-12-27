@@ -12,7 +12,9 @@ void WebUtils::finishRequest(ApiResponse &response)
 
 JsonDocument &WebUtils::getJsonBody(ApiResponse &response)
 {
-  String body = server.client().readString();
+  String body = server.arg("plain");
+  Serial.print("The Body: ");
+  Serial.println(body);
 
   if (body.length() == 0)
   {
@@ -49,7 +51,7 @@ void WebUtils::send_file(String filename)
   }
 
   auto file = SPIFFS.open(filename);
-  server.send(200, get_content_type(filename), file.readString());
+  server.streamFile(file, get_content_type(filename));
   file.close();
 }
 
