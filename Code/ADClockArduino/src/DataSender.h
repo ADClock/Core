@@ -13,6 +13,8 @@ enum class SenderState
   WAIT_FOR_RESPONSE_ON,
   // waiting for receiver confirms successfull communication
   WAIT_FOR_RESPONSE_OFF,
+  // If it sends faster then filling the buffer.. (could only be short time of period)
+  WAIT_FOR_DATA,
   // Waiting for reset...
   FAILED
 };

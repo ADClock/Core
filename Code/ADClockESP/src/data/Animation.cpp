@@ -117,7 +117,7 @@ void Animation::load_next_step()
 void Animation::set_current_step(String &step_string)
 {
   this->current_step = {static_cast<StepType>(step_string.substring(0, step_string.indexOf("/")).toInt()),
-                        step_string.substring(step_string.indexOf("/") + 1).toInt()};
+                        (unsigned int)step_string.substring(step_string.indexOf("/") + 1).toInt()};
 }
 
 void Animation::execute_step()

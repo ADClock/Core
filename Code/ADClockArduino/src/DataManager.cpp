@@ -14,22 +14,22 @@ void DataManager::tick()
   if (this->receiver.complete())
   {
     this->process_incoming_data();
+#ifndef IS_LAST_CLOCK
+    this->state = CommandState::WAIT_FOR_DATA_SENDING_DONE;
+#else
     this->state = CommandState::IDLE;
+#endif
     this->receiver.reset();
-
-    // If sending failed resetting now. (Otherwise it could send half command)
-    if (this->sender.failed())
-      this->sender.reset();
   }
 
   if (this->receiver.failed())
   {
+#ifndef IS_LAST_CLOCK
+    this->state = CommandState::WAIT_FOR_DATA_SENDING_DONE;
+#else
     this->state = CommandState::IDLE;
+#endif
     this->receiver.reset();
-
-    // If sending failed resetting now. (Otherwise it could send half command)
-    if (this->sender.failed())
-      this->sender.reset();
   }
 }
 
@@ -69,6 +69,15 @@ void DataManager::process_incoming_data()
       read_my_data();
     }
     break;
+
+  case CommandState::WAIT_FOR_DATA_SENDING_DONE:
+    if (this->sender.failed())
+      this->sender.reset();
+    if (!this->sender.sending())
+    {
+      this->state = CommandState::IDLE;
+      // Serial.println("Command complete");
+    }
 
   case CommandState::PIPEING:
     while (!this->in.is_empty())
@@ -114,6 +123,7 @@ void DataManager::set_current_command()
     break;
 
   default:
+    Serial.println("Invalid command");
     // received invalid command
     this->receiver.reset();
     this->state = CommandState::IDLE;
@@ -125,8 +135,11 @@ void DataManager::send_command(uint8_t command)
 {
   while (sender.sending() || sender.time_waiting() < DELAY_BETWEEN_COMMANDS)
   {
+    this->sender.tick();
     if (sender.failed())
       sender.reset();
+
+    // Also Tick receiver (otherwise there could happen a timeout)
     this->receiver.tick();
   }
   send_byte(command);

@@ -35,6 +35,16 @@ void DataSender::tick()
     }
     break;
 
+  case SenderState::WAIT_FOR_DATA:
+    if (!this->buffer.is_empty())
+    {
+      this->send_next_bit();
+    }
+    else if (this->time_waiting() > SENDER_WAIT_FOR_DATA_IN_BUFFER)
+    {
+      this->state = SenderState::IDLE;
+    }
+
   default:
     break;
   }
@@ -84,7 +94,9 @@ void DataSender::receive_response_off()
   }
   else
   {
-    this->state = SenderState::IDLE;
+    // Maybe we are sending faster then receiving. Waiting short time for next data in buffer
+    this->state = SenderState::WAIT_FOR_DATA;
+    this->last_action = micros();
   }
 }
 

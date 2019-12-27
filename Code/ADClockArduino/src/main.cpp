@@ -64,6 +64,27 @@ void testPinSpeed()
   unsigned long end = micros();
   Serial.println("1000 x Pin on off took " + String(end - startTime) + " µs.");
 }
+
+void testBuffer()
+{
+
+  Serial.println("Buffer size (expected 0) = " + String(outbuffer.size()));
+  for (size_t i = 0; i < 200; i++)
+  {
+    outbuffer.enqueue(true);
+  }
+  Serial.println("Buffer size (expected 200) = " + String(outbuffer.size()));
+
+  for (size_t y = 0; y < 10; y++)
+  {
+    for (size_t i = 0; i < 75; i++)
+    {
+      outbuffer.dequeue();
+      outbuffer.enqueue(true);
+    }
+    Serial.println("Buffer size (expected 200) = " + String(outbuffer.size()));
+  }
+}
 #endif
 
 // Triggers on Clock-Signal from DataReceiver
@@ -98,11 +119,11 @@ void setup()
 #ifdef DEBUG
   Serial.begin(115200);
 #endif
-
 #ifdef DEBUG
   Serial.println("Setup...");
-// testPinSpeed();
-//testDataTransferSpeed();
+  // testPinSpeed();
+  //testDataTransferSpeed();
+  testBuffer();
 #endif
 
   moma.calibrate();
