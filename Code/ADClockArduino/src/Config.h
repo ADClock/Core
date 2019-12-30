@@ -14,7 +14,7 @@
 #define SENDER_WAIT_FOR_DATA_IN_BUFFER 800 // microseconds (no real timeout!)
 #define RECEIVER_TIMEOUT_CLOCK_OFF 1000    // microseconds
 #define RECEIVER_TIMEOUT_NEXT_DATA 1000    // microseconds
-#define IS_LAST_CLOCK                      // Disables sending Data to next clock
+// #define IS_LAST_CLOCK                      // Disables sending Data to next clock
 
 // Motor
 #define MAX_STEPS 1705
