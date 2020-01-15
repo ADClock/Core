@@ -80,7 +80,7 @@ void start_webserver()
   server.on("/", HTTP_GET, [] { WebUtils::send_file("/index.html"); });
 
   server.on("/v1/animation/add", HTTP_POST, RESTAnimation::add_post);
-  server.on("/v1/animation/pause", HTTP_GET, RESTAnimation::play_animation);
+  server.on("/v1/animation/pause", HTTP_GET, RESTAnimation::pause_animation);
   server.on("/v1/animation/play", HTTP_GET, RESTAnimation::play_animation);
   server.on("/v1/animation/run", HTTP_GET, RESTAnimation::run_get);
 

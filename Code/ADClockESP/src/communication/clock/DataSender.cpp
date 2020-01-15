@@ -95,13 +95,5 @@ void DataSender::timeout()
 
 unsigned long DataSender::time_waiting()
 {
-  auto current_time = micros();
-  if (current_time < last_action)
-  {
-    return current_time + 0; // TODO Hier fehlt noch die Zeit von MAX_VALUE - last_action
-  }
-  else
-  {
-    return current_time - last_action;
-  }
+  return (unsigned long)(micros() - last_action);
 }

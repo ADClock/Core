@@ -65,7 +65,7 @@ void DataManager::process_incoming_data()
   case CommandState::READING_IMAGE:
     if (this->in.size() >= 8 * 8)
     {
-      this->state = CommandState::PIPEING;
+      this->state = CommandState::FORWARD;
       read_my_data();
     }
     break;
@@ -79,7 +79,7 @@ void DataManager::process_incoming_data()
       // Serial.println("Command complete");
     }
 
-  case CommandState::PIPEING:
+  case CommandState::FORWARD:
     while (!this->in.is_empty())
     {
 #ifndef IS_LAST_CLOCK
@@ -108,7 +108,7 @@ void DataManager::set_current_command()
   {
   case 0x01:
     send_command(0x01);
-    this->state = CommandState::IDLE;
+    this->state = CommandState::WAIT_FOR_DATA_SENDING_DONE;
     finish_transmission();
     moma.calibrate();
     break;
