@@ -61,7 +61,7 @@ void setup_wifi_connection()
     if (status == WL_NO_SSID_AVAIL)
     {
       // Settings::delete_wifi_config();
-      Serial.println("Failed to read wifi data");
+      Serial.println("WiFi Network not found? I guess");
       return;
     }
     Serial.println("Connection failed with Code " + String(status) + "\nRestarting...");
@@ -161,8 +161,8 @@ void setup()
   _manager.init();
   if (!clockcom.transmit())
   {
-    Serial.println("[SETUP] Error starting ADClock! Restarting..");
-    ESP.restart();
+    Serial.println("[SETUP] Error starting ADClock! No Clock answers.");
+    // ESP.restart();
   }
 
   _time.load_time();

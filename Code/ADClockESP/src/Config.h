@@ -4,8 +4,8 @@
 
 // =================================================
 // Wall Layout
-#define WALL_SIZE_X 12
-#define WALL_SIZE_Y 6
+#define WALL_SIZE_X 2
+#define WALL_SIZE_Y 3
 #define WALL_CLOCKS WALL_SIZE_X *WALL_SIZE_Y
 // =================================================
 
