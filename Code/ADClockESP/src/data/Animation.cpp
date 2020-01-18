@@ -144,7 +144,7 @@ void Animation::execute_step()
     break;
 
   case SELECT_Y:
-    this->x = this->current_step.value;
+    this->y = this->current_step.value;
     break;
 
   case SELECT_HAND:
@@ -152,6 +152,7 @@ void Animation::execute_step()
     break;
 
   case TARGET_POS:
+    Serial.printf("Setting target position for %u %u %u to %u\n", this->x, this->y, this->hand, this->current_step.value);
     if (this->clock == ALL)
       planned.set_position(this->hand, this->current_step.value);
     else
@@ -193,6 +194,14 @@ void Animation::execute_step()
 
   case SHOW_CURRENT_TIME:
     // TODO
+    break;
+
+  case ENABLE_PLAN_SEND:
+    _manager.allowSendingPlan();
+    break;
+
+  case DISABLE_PLAN_SEND:
+    _manager.preventSendingPlan();
     break;
 
   default:

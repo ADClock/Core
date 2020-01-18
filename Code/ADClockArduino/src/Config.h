@@ -8,13 +8,13 @@
 #define MIN_STEPS_OUTSIDE_FIELD 20
 
 // Communication parameters
-#define DELAY_BETWEEN_COMMANDS 5000        // microseconds
-#define SENDER_TIMEOUT_RESPONSE_ON 1200    // microseconds
-#define SENDER_TIMEOUT_RESPONSE_OFF 1200   // microseconds
-#define SENDER_WAIT_FOR_DATA_IN_BUFFER 800 // microseconds (no real timeout!)
-#define RECEIVER_TIMEOUT_CLOCK_OFF 1000    // microseconds
-#define RECEIVER_TIMEOUT_NEXT_DATA 1000    // microseconds
-#define IS_LAST_CLOCK                      // Disables sending Data to next clock
+#define DELAY_BETWEEN_COMMANDS 45000         // microseconds
+#define SENDER_TIMEOUT_RESPONSE_ON 1200      // microseconds (isr - should respond fast)
+#define SENDER_TIMEOUT_RESPONSE_OFF 1200     // microseconds (isr - should respond fast)
+#define SENDER_WAIT_FOR_DATA_IN_BUFFER 10000 // microseconds (no real timeout!) (could be complex.. may wait for incomming data)
+#define RECEIVER_TIMEOUT_CLOCK_OFF 1200      // microseconds (isr - should respond fast)
+#define RECEIVER_TIMEOUT_NEXT_DATA 10000     // microseconds
+// #define IS_LAST_CLOCK                        // Disables sending Data to next clock
 
 // Motor
 #define MAX_STEPS 1705

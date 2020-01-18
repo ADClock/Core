@@ -14,15 +14,14 @@ void ClockCommunication::sendInitCommand()
 
 void ClockCommunication::sendPlan(ClockWall &plan)
 {
-#ifdef DEBUG
+  // #ifdef DEBUG
   Serial.println("ClockCom >> Sending plan...");
-  for (size_t i = 0; i < 2; i++)
+  for (size_t i = 0; i < 6; i++)
   {
     auto &clock = plan.getClock(getClockX(i), getClockY(i));
-
-    Serial.printf("Clock %u x=%u y=%u hourPos=%u minutePos=%u\n", i, getClockX(i), getClockY(i), clock.hour.getPosition(), clock.minute.getPosition());
+    Serial.printf("Clock %u x=%u y=%u Pointer=%p hourPos=%u minutePos=%u\n", i, getClockX(i), getClockY(i), &clock, clock.hour.getPosition(), clock.minute.getPosition());
   }
-#endif
+  // #endif
 
   sendCommand(COMMAND_IMAGE);
 

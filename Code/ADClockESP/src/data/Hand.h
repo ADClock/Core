@@ -26,6 +26,7 @@ public:
   uint8_t *serialize();
 
   size_t getPosition();
+  size_t getPositionDegree();
   size_t getWaitSteps();
   size_t getStepDelay();
   bool getDirection();

@@ -42,6 +42,28 @@ boolean RESTAnimation::add_post()
   return true;
 };
 
+boolean RESTAnimation::save_current_get()
+{
+  ApiResponse response;
+  String name = server.arg("name");
+
+  if (response.is_okay())
+  {
+    auto result = _animations.save_wall(name, _manager.planned);
+    if (result)
+    {
+      response.inform("Die Wand wurde erfolgreich gespeichert.");
+    }
+    else
+    {
+      response.error("Die Wand wurde nicht gespeichert.");
+    }
+  }
+
+  WebUtils::finishRequest(response);
+  return true;
+};
+
 boolean RESTAnimation::pause_animation()
 {
   ApiResponse response;

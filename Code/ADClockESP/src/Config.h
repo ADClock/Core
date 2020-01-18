@@ -23,14 +23,14 @@
 #define COMMAND_IMAGE 0x02
 
 // TODO Nochmal richtigen Wert einstellen in us
-#define DELAY_BETWEEN_COMMANDS 6000
+#define DELAY_BETWEEN_COMMANDS 50000
 
 #define CLOCK_INIT_TIME 10000000
 // =================================================
 
 // =================================================
 // Flags für Testzwecke
-#define SEND_ONLY_CLOCKS 2
+#define SEND_ONLY_CLOCKS 6
 // #define DEBUG
 // =================================================
 

@@ -4,10 +4,12 @@
 #include "AnimationManager.h"
 
 extern AnimationManager _animations;
+extern Manager _manager;
 namespace RESTAnimation
 {
 
 boolean run_get();
+boolean save_current_get();
 boolean add_post();
 
 boolean pause_animation();

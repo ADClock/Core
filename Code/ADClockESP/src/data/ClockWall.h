@@ -56,6 +56,6 @@ private:
   bool valid_clock_cords(size_t x, size_t y);
 
   // Matrix der Uhren
-  Clock matrix[WALL_SIZE_X][WALL_SIZE_X];
+  Clock matrix[WALL_SIZE_X][WALL_SIZE_Y];
 };
 #endif

@@ -4,6 +4,7 @@ DataManager::DataManager(DataSender &sender, BitBuffer &out, DataReceiver &recei
 {
 }
 
+unsigned long count_piped = 0;
 void DataManager::tick()
 {
   this->receiver.tick();
@@ -15,7 +16,10 @@ void DataManager::tick()
   {
     this->process_incoming_data();
 #ifndef IS_LAST_CLOCK
+    Serial.println("wait for sending done bits= " + String(out.size()) + " state = " + static_cast<int>(state) + " inbits = " + String(in.size()));
     this->state = CommandState::WAIT_FOR_DATA_SENDING_DONE;
+    Serial.println("piped " + String(count_piped) + " bits");
+    count_piped = 0;
 #else
     this->state = CommandState::IDLE;
 #endif
@@ -24,6 +28,7 @@ void DataManager::tick()
 
   if (this->receiver.failed())
   {
+    // TODO Oder wenn der Emfpang abbricht garnichts weiter senden?
 #ifndef IS_LAST_CLOCK
     this->state = CommandState::WAIT_FOR_DATA_SENDING_DONE;
 #else
@@ -84,6 +89,7 @@ void DataManager::process_incoming_data()
     {
 #ifndef IS_LAST_CLOCK
       this->out.enqueue(this->in.dequeue());
+      count_piped++;
 #else
       this->in.clear();
 #endif
@@ -114,7 +120,6 @@ void DataManager::set_current_command()
     break;
 
   case 0x02:
-    send_command(0x02);
     this->state = CommandState::READING_IMAGE;
     break;
 
@@ -123,7 +128,7 @@ void DataManager::set_current_command()
     break;
 
   default:
-    Serial.println("Invalid command");
+    Serial.println("Invalid command " + String(command));
     // received invalid command
     this->receiver.reset();
     this->state = CommandState::IDLE;
@@ -142,6 +147,7 @@ void DataManager::send_command(uint8_t command)
     // Also Tick receiver (otherwise there could happen a timeout)
     this->receiver.tick();
   }
+  // Serial.println("Sending command " + String(command));
   send_byte(command);
 }
 
@@ -182,11 +188,14 @@ void DataManager::read_my_data()
     input[i] = read_byte();
   }
 
+  // Send data to next clock
+  send_command(0x02);
   finish_transmission();
 #ifdef DEBUG
   // Serial.println("DataManager >> Loading new image..");
 #endif
 
+  // load received data
   MotorData motordata[2];
   motordata[0] = deserialize(&input[0]);
   motordata[1] = deserialize(&input[4]);
@@ -203,7 +212,7 @@ MotorData DataManager::deserialize(uint8_t *stream)
   data.delay = (stream[3] >> 1u);
   data.direction = stream[3] & 0x01u;
 #ifdef DEBUG
-  // Serial.println("DataManager >> Serialisierung: Pos = " + String(data.position) + " waitSteps = " + String(data.waitSteps) + " delay = " + String(data.delay) + " direction = " + String(data.direction));
+  Serial.println("DataManager >> Serialisierung: Pos = " + String(data.position) + " waitSteps = " + String(data.waitSteps) + " delay = " + String(data.delay) + " direction = " + String(data.direction));
 #endif
   return data;
 }

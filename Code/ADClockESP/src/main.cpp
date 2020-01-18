@@ -83,6 +83,7 @@ void start_webserver()
   server.on("/v1/animation/pause", HTTP_GET, RESTAnimation::pause_animation);
   server.on("/v1/animation/play", HTTP_GET, RESTAnimation::play_animation);
   server.on("/v1/animation/run", HTTP_GET, RESTAnimation::run_get);
+  server.on("/v1/animation/saveplan", HTTP_GET, RESTAnimation::save_current_get);
 
   server.on("/v1/clock", HTTP_POST, RESTClock::clock_post);
 
@@ -142,13 +143,24 @@ void test_communication_speed()
   Serial.println("Speedtest finished\nTransmitted " + String(total_bits) + " bits in " + String(total_time) + " µs\nSpeed: " + String(total_bits / (total_time / 1000. / 1000.)) + " bits/second");
 }
 
+void test_clock_to_xy()
+{
+#ifdef SEND_ONLY_CLOCKS
+  for (size_t i = 0; i < SEND_ONLY_CLOCKS; i++)
+  {
+    Serial.println("Clock " + String(i) + " x=" + String(clockcom.getClockX(i)) + " y=" + String(clockcom.getClockY(i)));
+  }
+#endif
+}
+
 void setup()
 {
   Serial.begin(115200);
   Serial.println("[STARTUP] Booting...");
 
   // test_json();
-  test_communication_speed();
+  // test_communication_speed();
+  test_clock_to_xy();
 
   if (!SPIFFS.begin(true))
   {

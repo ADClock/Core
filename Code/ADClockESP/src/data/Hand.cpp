@@ -111,6 +111,11 @@ size_t Hand::getPosition()
   return this->position;
 }
 
+size_t Hand::getPositionDegree()
+{
+  return this->position / (STEPS_PER_DEGREE);
+}
+
 size_t Hand::getWaitSteps()
 {
   return this->waitSteps;

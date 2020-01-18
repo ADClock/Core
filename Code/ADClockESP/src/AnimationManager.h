@@ -19,6 +19,7 @@ public:
   bool exists(String &name);
   bool remove(String &name);
   bool append_step(String &name, Step &step);
+  bool save_wall(String &name, ClockWall &wall);
 
 private:
   Animation animation;

@@ -42,7 +42,7 @@ void Manager::executePlan()
   // TODO Folgende zeilen wieder rauswerfen
   // this->aiming.update(this->planned);
   // this->current.update(this->aiming);
-  Serial.println("Plan wird/wurde ausgeführt! :) ");
+  // Serial.println("Plan wird/wurde ausgeführt! :) ");
   // return;
   // +++++++++++++++++++++++++++++++++++++++++
 

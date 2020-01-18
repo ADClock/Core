@@ -116,6 +116,8 @@ void isr_data_sending()
 void setup()
 {
 
+  Serial.begin(115200);
+  Serial.println("Setup");
 #ifdef DEBUG
   Serial.begin(115200);
 #endif
@@ -123,7 +125,7 @@ void setup()
   Serial.println("Setup...");
   // testPinSpeed();
   //testDataTransferSpeed();
-  testBuffer();
+  // testBuffer();
 #endif
 
   moma.calibrate();

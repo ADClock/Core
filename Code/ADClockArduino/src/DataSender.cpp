@@ -2,6 +2,7 @@
 
 void DataSender::tick()
 {
+  unsigned long waiting = this->time_waiting();
   switch (this->state)
   {
   case SenderState::IDLE:
@@ -14,10 +15,12 @@ void DataSender::tick()
   case SenderState::WAIT_FOR_RESPONSE_ON:
     // The Interrupt Service Routine is taking care of the Response
     // After the timer expired we need to doublecheck the Response-Signal. ISR could kicked in during this condition
-    if (this->time_waiting() > SENDER_TIMEOUT_RESPONSE_ON && !FastGPIO::Pin<OUT_RESPONSE>::isInputHigh())
+    if (waiting > 4000000)
+      break; // ISR triggert while getting time_waiting
+    if (waiting > SENDER_TIMEOUT_RESPONSE_ON && !FastGPIO::Pin<OUT_RESPONSE>::isInputHigh() && state == SenderState::WAIT_FOR_RESPONSE_ON)
     {
-#ifdef DEBUG
       Serial.println("WAIT_FOR_RESPONSE_ON " + String(this->time_waiting()) + " " + String(FastGPIO::Pin<OUT_RESPONSE>::isInputHigh()) + String(static_cast<int>(state)));
+#ifdef DEBUG
 #endif
       timeout();
     }
@@ -26,11 +29,13 @@ void DataSender::tick()
   case SenderState::WAIT_FOR_RESPONSE_OFF:
     // The Interrupt Service Routine is taking care of the Response
     // After the timer expired we need to doublecheck the Response-Signal. ISR could kicked in during this condition
-    if (this->time_waiting() > SENDER_TIMEOUT_RESPONSE_OFF && FastGPIO::Pin<OUT_RESPONSE>::isInputHigh())
+    if (waiting > 4000000)
+      break; // ISR triggert while getting time_waiting
+    if (waiting > SENDER_TIMEOUT_RESPONSE_OFF && FastGPIO::Pin<OUT_RESPONSE>::isInputHigh() && state == SenderState::WAIT_FOR_RESPONSE_OFF)
     {
       timeout();
-#ifdef DEBUG
       Serial.println("WAIT_FOR_RESPONSE_OFF " + String(this->time_waiting()));
+#ifdef DEBUG
 #endif
     }
     break;
@@ -64,8 +69,8 @@ void DataSender::reset()
 {
   FastGPIO::Pin<OUT_CLOCK>::setOutputValueLow();
   this->state = SenderState::IDLE;
-#ifdef DEBUG
   Serial.println("Resetting sender remaining bits = " + String(buffer.size()));
+#ifdef DEBUG
 #endif
   this->buffer.clear();
   this->last_action = micros();

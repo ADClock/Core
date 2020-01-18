@@ -1,76 +1,83 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<title>ADClock v0.1</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <title>ADClock v0.1</title>
 </head>
+
 <body>
 
 
-<p>Die AD-Clock wurde von Janik Schumacher und Paul Krüger entwickelt.</p>
+  <p>Die AD-Clock wurde von Janik Schumacher und Paul Krüger entwickelt.</p>
 
-<p>Falls noch nicht geschehen, muss das WLAN gesetzt werden.</p>
+  <p>Falls noch nicht geschehen, muss das WLAN gesetzt werden.</p>
 
-<form id="wifi_f" >
-<label>Wlan SSID</label>
-  <input type="text" placeholder="Name des Netzwerkes" id="wi_ssid" value="Home_Net"><br>
-<label>Wlan password</label>
-  <input type="password" placeholder="Passwort" id="wi_password" value=""><br>
-  <button type="button" onclick="setWlan()">WLAN abspeichern (klappt manchmal)</button>
-</form>
+  <form id="wifi_f">
+    <label>Wlan SSID</label>
+    <input type="text" placeholder="Name des Netzwerkes" id="wi_ssid" value="Home_Net"><br>
+    <label>Wlan password</label>
+    <input type="password" placeholder="Passwort" id="wi_password" value=""><br>
+    <button type="button" onclick="setWlan()">WLAN abspeichern (klappt manchmal)</button>
+  </form>
 
-<p>Ich habe auch ein paar Standardfunktionen für dich mitgebracht:</p>
+  <p>Ich habe auch ein paar Standardfunktionen für dich mitgebracht:</p>
   <button type="button" onclick="execGet('/v1/wall/init')">Uhren initalisieren</button>
   <button type="button" onclick="execGet('/v1/wall/currenttime')">Aktuelle Uhrzeit setzen</button>
   <button type="button" onclick="execGet('/v1/animation/pause')">Animation anhalten</button>
   <button type="button" onclick="execGet('/v1/animation/play')">Animation fortsetzen</button>
 
   <p>Für das Stellen eines Uhrmoduls muss die jeweilige Koordinate ausgewählt werden.</p>
-  
-<form id="clock_f" >
-<label>X-Koordinate</label>
-  <input type="number" placeholder="X-Koordinate" id="xcord" value=0><br>
-<label>Y-Koordinate</label>
-  <input type="number" placeholder="Y-Koordinate" id="ycord" value=5><br>
-  
-  <p>Stundenzeiger</p>
-<label>Zielposition in Grad</label>
-  <input type="number" placeholder="Zielposition" id="hour_target_pos" value=90><br>
-<label>Richtung</label><br>
-  <input type="radio" placeholder="Richtung" name="hour_direction" value="false" checked="checked" >mit dem Uhrzeigersinn<br>
-  <input type="radio" placeholder="Richtung" name="hour_direction" value="true">gegen den Uhrzeigersinn<br>
-<label>Geschwindigkeit in irgendwas</label>
-  <input type="number" placeholder="Geschwindigkeit" id="hour_speed" value=0><br>
-<label>Verzögerung in Grad</label>
-  <input type="number" placeholder="Delay" id="hour_delay" value=0><br>
- 
 
-  <p>Minutenzeiger</p>
-<label>Zielposition in Grad</label>
-  <input type="number" placeholder="Zielposition" id="minute_target_pos" value=90><br>
-<label>Richtung</label><br>
-  <input type="radio" placeholder="Richtung" name="minute_direction" value="false" checked="checked" >mit dem Uhrzeigersinn<br>
-  <input type="radio" placeholder="Richtung" name="minute_direction" value="true">gegen den Uhrzeigersinn<br>
-<label>Geschwindigkeit in irgendwas</label>
-  <input type="number" placeholder="Geschwindigkeit" id="minute_speed" value=0><br>
-<label>Verzögerung in Grad</label>
-  <input type="number" placeholder="Delay" id="minute_delay" value=0><br>
- 
+  <form id="clock_f">
+    <label>X-Koordinate</label>
+    <input type="number" placeholder="X-Koordinate" id="xcord" value=0><br>
+    <label>Y-Koordinate</label>
+    <input type="number" placeholder="Y-Koordinate" id="ycord" value=5><br>
 
-  <button type="button" onclick="updateClock()">Uhr stellen</button>
-</form>
-<br><br>
+    <p>Stundenzeiger</p>
+    <label>Zielposition in Grad</label>
+    <input type="number" placeholder="Zielposition" id="hour_target_pos" value=90><br>
+    <label>Richtung</label><br>
+    <input type="radio" placeholder="Richtung" name="hour_direction" value="false" checked="checked">mit dem
+    Uhrzeigersinn<br>
+    <input type="radio" placeholder="Richtung" name="hour_direction" value="true">gegen den Uhrzeigersinn<br>
+    <label>Geschwindigkeit in irgendwas</label>
+    <input type="number" placeholder="Geschwindigkeit" id="hour_speed" value=0><br>
+    <label>Verzögerung in Grad</label>
+    <input type="number" placeholder="Delay" id="hour_delay" value=0><br>
 
-<p>Folgenedes ist für die Animationen da. Um eine Animation abzuspielen, muss lediglich der Name der Animation in das Feld eingegeben werden & der Button gedrückt werden. Um einen Schritt hinzuzufügen, muss der Animationsname, der Schritt und ein Wert gefüllt sein. Aber der Wert nicht immer. Aber das wirst du verstehen.</p>
-<form id="animation_step">
 
-<label>Animation</label>
-  <input type="text" placeholder="Name Animation" id="as_animation" value="default">
-  
-  <button type="button" onclick="runAnimation()">Diese Animation abspielen</button><br>
-  
-<label>Art des Schritts</label>
-<select id="as_type" >
+    <p>Minutenzeiger</p>
+    <label>Zielposition in Grad</label>
+    <input type="number" placeholder="Zielposition" id="minute_target_pos" value=90><br>
+    <label>Richtung</label><br>
+    <input type="radio" placeholder="Richtung" name="minute_direction" value="false" checked="checked">mit dem
+    Uhrzeigersinn<br>
+    <input type="radio" placeholder="Richtung" name="minute_direction" value="true">gegen den Uhrzeigersinn<br>
+    <label>Geschwindigkeit in irgendwas</label>
+    <input type="number" placeholder="Geschwindigkeit" id="minute_speed" value=0><br>
+    <label>Verzögerung in Grad</label>
+    <input type="number" placeholder="Delay" id="minute_delay" value=0><br>
+
+
+    <button type="button" onclick="updateClock()">Uhr stellen</button>
+  </form>
+  <br><br>
+
+  <p>Folgenedes ist für die Animationen da. Um eine Animation abzuspielen, muss lediglich der Name der Animation in das
+    Feld eingegeben werden & der Button gedrückt werden. Um einen Schritt hinzuzufügen, muss der Animationsname, der
+    Schritt und ein Wert gefüllt sein. Aber der Wert nicht immer. Aber das wirst du verstehen.</p>
+  <form id="animation_step">
+
+    <label>Animation</label>
+    <input type="text" placeholder="Name Animation" id="as_animation" value="default">
+
+    <button type="button" onclick="runAnimation()">Diese Animation abspielen</button><br>
+    <button type="button" onclick="savePlanAsAnimation()">Aktuellen Plan abspeichern</button><br>
+
+    <label>Art des Schritts</label>
+    <select id="as_type">
       <option value=0>INIT</option>
       <option value=1>DELAY (in ms)</option>
       <option value=2>WAIT_UNTIL_PLAN_SEND</option>
@@ -87,78 +94,84 @@
       <option value=13>MOVE_IN_SYNC (?)</option>
       <option value=14>SHOW_CURRENT_TIME_ON_EACH (lern lesen)</option>
       <option value=15>SHOW_CURRENT_TIME (über alle)</option>
+      <option value=16>ENABLE_PLAN_SEND</option>
+      <option value=17>DISABLE_PLAN_SEND</option>
     </select><br>
-  
-<label>Wert</label>
-  <input type="text" placeholder="Value" id="as_value" value=0><br>
-  
-  
-  <button type="button" onclick="appendStep()">Schritt hinzufügen</button>
-</form>
-<script>
-function updateClock() {
-var xhr = new XMLHttpRequest();
-var url = '/v1/clock?x=' + document.getElementById('xcord').value + '&y=' + document.getElementById('ycord').value;
-xhr.open("POST", url, true);
 
-xhr.setRequestHeader("Content-Type", "application/json");
+    <label>Wert</label>
+    <input type="text" placeholder="Value" id="as_value" value=0><br>
 
-xhr.onreadystatechange = function () {
+
+    <button type="button" onclick="appendStep()">Schritt hinzufügen</button>
+  </form>
+  <script>
+    function updateClock() {
+      var xhr = new XMLHttpRequest();
+      var url = '/v1/clock?x=' + document.getElementById('xcord').value + '&y=' + document.getElementById('ycord').value;
+      xhr.open("POST", url, true);
+
+      xhr.setRequestHeader("Content-Type", "application/json");
+
+      xhr.onreadystatechange = function () {
         console.log('triggerd onreadystatechange');
-    };
+      };
 
-var data = '{"hour": {"target_pos": ' + document.getElementById('hour_target_pos').value  +   ', "direction": ' + document.querySelector('input[name="hour_direction"]:checked').value  
-                + ', "step_delay": ' + document.getElementById('hour_speed').value + ', "wait_steps": ' + document.getElementById('hour_delay').value + 
-      ' }, "minute": {"target_pos": ' + document.getElementById('minute_target_pos').value  + ', "direction": ' + document.querySelector('input[name="minute_direction"]:checked').value  
-                + ', "step_delay": ' + document.getElementById('minute_speed').value + ', "wait_steps": ' + document.getElementById('minute_delay').value + ' }}';
-xhr.send(data);
-}
+      var data = '{"hour": {"target_pos": ' + document.getElementById('hour_target_pos').value + ', "direction": ' + document.querySelector('input[name="hour_direction"]:checked').value
+        + ', "step_delay": ' + document.getElementById('hour_speed').value + ', "wait_steps": ' + document.getElementById('hour_delay').value +
+        ' }, "minute": {"target_pos": ' + document.getElementById('minute_target_pos').value + ', "direction": ' + document.querySelector('input[name="minute_direction"]:checked').value
+        + ', "step_delay": ' + document.getElementById('minute_speed').value + ', "wait_steps": ' + document.getElementById('minute_delay').value + ' }}';
+      xhr.send(data);
+    }
 
 
-function appendStep() {
-var xhr = new XMLHttpRequest();
-var url = '/v1/animation/add?name=' + document.getElementById('as_animation').value ;
-xhr.open("POST", url, true);
+    function appendStep() {
+      var xhr = new XMLHttpRequest();
+      var url = '/v1/animation/add?name=' + document.getElementById('as_animation').value;
+      xhr.open("POST", url, true);
 
-xhr.setRequestHeader("Content-Type", "application/json");
+      xhr.setRequestHeader("Content-Type", "application/json");
 
-xhr.onreadystatechange = function () {
+      xhr.onreadystatechange = function () {
         console.log('triggerd onreadystatechange');
-    };
+      };
 
-    var e = document.getElementById('as_type')
-var data = '{"type": ' + e.options[e.selectedIndex].value + ', "value": ' + document.getElementById('as_value').value + '}';
-xhr.send(data);
-}
+      var e = document.getElementById('as_type')
+      var data = '{"type": ' + e.options[e.selectedIndex].value + ', "value": ' + document.getElementById('as_value').value + '}';
+      xhr.send(data);
+    }
 
 
 
-function setWlan() {
-var xhr = new XMLHttpRequest();
-var url = '/v1/config/wifi';
-xhr.open("POST", url, true);
+    function setWlan() {
+      var xhr = new XMLHttpRequest();
+      var url = '/v1/config/wifi';
+      xhr.open("POST", url, true);
 
-xhr.setRequestHeader("Content-Type", "application/json");
+      xhr.setRequestHeader("Content-Type", "application/json");
 
-xhr.onreadystatechange = function () {
+      xhr.onreadystatechange = function () {
         console.log('triggerd onreadystatechange');
-    };
+      };
 
-var data = '{"ssid": "' + document.getElementById('wi_ssid').value + '", "password": "' + document.getElementById('wi_password').value + '"}';
-xhr.send(data);
-}
+      var data = '{"ssid": "' + document.getElementById('wi_ssid').value + '", "password": "' + document.getElementById('wi_password').value + '"}';
+      xhr.send(data);
+    }
 
-function runAnimation() {
-execGet('/v1/animation/run?name=' + document.getElementById('as_animation').value);
-}
+    function runAnimation() {
+      execGet('/v1/animation/run?name=' + document.getElementById('as_animation').value);
+    }
 
+    function savePlanAsAnimation() {
+      execGet('/v1/animation/saveplan?name=' + document.getElementById('as_animation').value);
+    }
 
-function execGet(method) {
-var xhr = new XMLHttpRequest();
-var url = method;
-xhr.open("GET", url, true);
-xhr.send();
-}
-</script>
+    function execGet(method) {
+      var xhr = new XMLHttpRequest();
+      var url = method;
+      xhr.open("GET", url, true);
+      xhr.send();
+    }
+  </script>
 </body>
+
 </html>

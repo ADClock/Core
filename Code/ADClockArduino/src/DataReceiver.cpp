@@ -2,6 +2,7 @@
 
 void DataReceiver::tick()
 {
+  unsigned long waiting = this->time_waiting();
   switch (this->state)
   {
   case ReceiverState::IDLE:
@@ -14,16 +15,21 @@ void DataReceiver::tick()
   case ReceiverState::WAIT_FOR_CLOCK_OFF:
     // The Interrupt Service Routine is taking care of the Clock and reads next Bit
     // After the timer expired we need to doublecheck the CLOCK-Signal. ISR could kicked in during this condition
-    if (this->time_waiting() > RECEIVER_TIMEOUT_CLOCK_OFF && FastGPIO::Pin<IN_CLOCK>::isInputHigh())
+    if (waiting > 4000000)
+      break; // ISR triggert while getting time_waiting
+    if (waiting > RECEIVER_TIMEOUT_CLOCK_OFF && FastGPIO::Pin<IN_CLOCK>::isInputHigh() && state == ReceiverState::WAIT_FOR_CLOCK_OFF)
     {
       timeout();
+      Serial.println("WAIT_FOR_CLOCK_OFF");
     }
     break;
 
   case ReceiverState::WAIT_FOR_NEXT_BIT:
     // The Interrupt Service Routine is taking care of the Clock and reads next Bit
     // After the timer expired we need to doublecheck the CLOCK-Signal. ISR could kicked in during this condition
-    if (this->time_waiting() > RECEIVER_TIMEOUT_NEXT_DATA && !FastGPIO::Pin<IN_CLOCK>::isInputHigh())
+    if (waiting > 4000000)
+      break; // ISR triggert while getting time_waiting
+    if (waiting > RECEIVER_TIMEOUT_NEXT_DATA && !FastGPIO::Pin<IN_CLOCK>::isInputHigh())
     {
       this->state = ReceiverState::COMPLETE;
     }
@@ -75,7 +81,7 @@ void DataReceiver::receive_clock_off()
 void DataReceiver::timeout()
 {
   this->state = ReceiverState::FAILED;
-#if DEBUG
+#ifdef DEBUG
   Serial.println("Failed receiving after " + String(this->buffer.size()) + " bits.");
 #endif
 }
