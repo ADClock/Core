@@ -19,11 +19,11 @@
           number = e.target.firstElementChild.innerHTML;
         }
         console.log('Clicked on ' + number);
-        $.get('Animations/run?name=z' + number);
+        $.get('v1/animation/run?name=z' + number);
       });
       $(".current-time").click(e => {
         console.log('Clicked on current time');
-        $.get('animations/run?name=ctime');
+        $.get('v1/animation/run?name=ctime');
       });
 
       $(".advanced-toggle").click(() => {
@@ -34,7 +34,7 @@
 
   </script>
 
-  <p>Die AD-Clock wurde von Janik Schumacher und Paul Krüger entwickelt.</p>
+  <p>Die AD-Clock wurde von Janik Schumacher und Paul Kr&uuml;ger entwickelt.</p>
 
   <button class="advanced-toggle">Show/Hide Advanced Settings</button>
 
@@ -49,13 +49,13 @@
       <button type="button" onclick="setWlan()">WLAN abspeichern (klappt manchmal)</button>
     </form>
 
-    <p>Ich habe auch ein paar Standardfunktionen für dich mitgebracht:</p>
+    <p>Ich habe auch ein paar Standardfunktionen f&uuml;r dich mitgebracht:</p>
     <button type="button" onclick="execGet('/v1/wall/init')">Uhren initalisieren</button>
     <button type="button" onclick="execGet('/v1/wall/currenttime')">Aktuelle Uhrzeit setzen</button>
     <button type="button" onclick="execGet('/v1/animation/pause')">Animation anhalten</button>
     <button type="button" onclick="execGet('/v1/animation/play')">Animation fortsetzen</button>
 
-    <p>Für das Stellen eines Uhrmoduls muss die jeweilige Koordinate ausgewählt werden.</p>
+    <p>F&uuml;r das Stellen eines Uhrmoduls muss die jeweilige Koordinate ausgewählt werden.</p>
 
     <form id="clock_f">
       <label>X-Koordinate</label>
@@ -93,10 +93,10 @@
     </form>
     <br><br>
 
-    <p>Folgenedes ist für die Animationen da. Um eine Animation abzuspielen, muss lediglich der Name der Animation in
+    <p>Folgenedes ist f&uuml;r die Animationen da. Um eine Animation abzuspielen, muss lediglich der Name der Animation in
       das
-      Feld eingegeben werden & der Button gedrückt werden. Um einen Schritt hinzuzufügen, muss der Animationsname, der
-      Schritt und ein Wert gefüllt sein. Aber der Wert nicht immer. Aber das wirst du verstehen.</p>
+      Feld eingegeben werden & der Button gedr&uuml;ckt werden. Um einen Schritt hinzuzuf&uuml;gen, muss der Animationsname, der
+      Schritt und ein Wert gef&uuml;llt sein. Aber der Wert nicht immer. Aber das wirst du verstehen.</p>
     <form id="animation_step">
 
       <label>Animation</label>
@@ -122,7 +122,7 @@
         <option value=12>STEP_DELAY (ms us? irgendwas)</option>
         <option value=13>MOVE_IN_SYNC (?)</option>
         <option value=14>SHOW_CURRENT_TIME_ON_EACH (lern lesen)</option>
-        <option value=15>SHOW_CURRENT_TIME (über alle)</option>
+        <option value=15>SHOW_CURRENT_TIME (&uuml;ber alle)</option>
         <option value=16>ENABLE_PLAN_SEND</option>
         <option value=17>DISABLE_PLAN_SEND</option>
       </select><br>
@@ -131,7 +131,7 @@
       <input type="text" placeholder="Value" id="as_value" value=0><br>
 
 
-      <button type="button" onclick="appendStep()">Schritt hinzufügen</button>
+      <button type="button" onclick="appendStep()">Schritt hinzuf&uuml;gen</button>
     </form>
 
 
