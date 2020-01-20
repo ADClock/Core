@@ -8,102 +8,215 @@
 
 <body>
 
+  <script>
+    var hidden = true;
+    $(document).ready(() => {
+      $('.advanced').hide();
+
+      $(".number").click(e => {
+        let number = e.target.innerHTML;
+        if (number.length !== 1) {
+          number = e.target.firstElementChild.innerHTML;
+        }
+        console.log('Clicked on ' + number);
+        $.get('Animations/run?name=z' + number);
+      });
+      $(".current-time").click(e => {
+        console.log('Clicked on current time');
+        $.get('animations/run?name=ctime');
+      });
+
+      $(".advanced-toggle").click(() => {
+        $('.advanced').toggle();
+      })
+    });
+
+
+  </script>
 
   <p>Die AD-Clock wurde von Janik Schumacher und Paul Krüger entwickelt.</p>
 
-  <p>Falls noch nicht geschehen, muss das WLAN gesetzt werden.</p>
+  <button class="advanced-toggle">Show/Hide Advanced Settings</button>
 
-  <form id="wifi_f">
-    <label>Wlan SSID</label>
-    <input type="text" placeholder="Name des Netzwerkes" id="wi_ssid" value="Home_Net"><br>
-    <label>Wlan password</label>
-    <input type="password" placeholder="Passwort" id="wi_password" value=""><br>
-    <button type="button" onclick="setWlan()">WLAN abspeichern (klappt manchmal)</button>
-  </form>
+  <div class="advanced">
+    <p>Falls noch nicht geschehen, muss das WLAN gesetzt werden.</p>
 
-  <p>Ich habe auch ein paar Standardfunktionen für dich mitgebracht:</p>
-  <button type="button" onclick="execGet('/v1/wall/init')">Uhren initalisieren</button>
-  <button type="button" onclick="execGet('/v1/wall/currenttime')">Aktuelle Uhrzeit setzen</button>
-  <button type="button" onclick="execGet('/v1/animation/pause')">Animation anhalten</button>
-  <button type="button" onclick="execGet('/v1/animation/play')">Animation fortsetzen</button>
+    <form id="wifi_f">
+      <label>Wlan SSID</label>
+      <input type="text" placeholder="Name des Netzwerkes" id="wi_ssid" value="Home_Net"><br>
+      <label>Wlan password</label>
+      <input type="password" placeholder="Passwort" id="wi_password" value=""><br>
+      <button type="button" onclick="setWlan()">WLAN abspeichern (klappt manchmal)</button>
+    </form>
 
-  <p>Für das Stellen eines Uhrmoduls muss die jeweilige Koordinate ausgewählt werden.</p>
+    <p>Ich habe auch ein paar Standardfunktionen für dich mitgebracht:</p>
+    <button type="button" onclick="execGet('/v1/wall/init')">Uhren initalisieren</button>
+    <button type="button" onclick="execGet('/v1/wall/currenttime')">Aktuelle Uhrzeit setzen</button>
+    <button type="button" onclick="execGet('/v1/animation/pause')">Animation anhalten</button>
+    <button type="button" onclick="execGet('/v1/animation/play')">Animation fortsetzen</button>
 
-  <form id="clock_f">
-    <label>X-Koordinate</label>
-    <input type="number" placeholder="X-Koordinate" id="xcord" value=0><br>
-    <label>Y-Koordinate</label>
-    <input type="number" placeholder="Y-Koordinate" id="ycord" value=5><br>
+    <p>Für das Stellen eines Uhrmoduls muss die jeweilige Koordinate ausgewählt werden.</p>
 
-    <p>Stundenzeiger</p>
-    <label>Zielposition in Grad</label>
-    <input type="number" placeholder="Zielposition" id="hour_target_pos" value=90><br>
-    <label>Richtung</label><br>
-    <input type="radio" placeholder="Richtung" name="hour_direction" value="false" checked="checked">mit dem
-    Uhrzeigersinn<br>
-    <input type="radio" placeholder="Richtung" name="hour_direction" value="true">gegen den Uhrzeigersinn<br>
-    <label>Geschwindigkeit in irgendwas</label>
-    <input type="number" placeholder="Geschwindigkeit" id="hour_speed" value=0><br>
-    <label>Verzögerung in Grad</label>
-    <input type="number" placeholder="Delay" id="hour_delay" value=0><br>
+    <form id="clock_f">
+      <label>X-Koordinate</label>
+      <input type="number" placeholder="X-Koordinate" id="xcord" value=0><br>
+      <label>Y-Koordinate</label>
+      <input type="number" placeholder="Y-Koordinate" id="ycord" value=5><br>
 
-
-    <p>Minutenzeiger</p>
-    <label>Zielposition in Grad</label>
-    <input type="number" placeholder="Zielposition" id="minute_target_pos" value=90><br>
-    <label>Richtung</label><br>
-    <input type="radio" placeholder="Richtung" name="minute_direction" value="false" checked="checked">mit dem
-    Uhrzeigersinn<br>
-    <input type="radio" placeholder="Richtung" name="minute_direction" value="true">gegen den Uhrzeigersinn<br>
-    <label>Geschwindigkeit in irgendwas</label>
-    <input type="number" placeholder="Geschwindigkeit" id="minute_speed" value=0><br>
-    <label>Verzögerung in Grad</label>
-    <input type="number" placeholder="Delay" id="minute_delay" value=0><br>
+      <p>Stundenzeiger</p>
+      <label>Zielposition in Grad</label>
+      <input type="number" placeholder="Zielposition" id="hour_target_pos" value=90><br>
+      <label>Richtung</label><br>
+      <input type="radio" placeholder="Richtung" name="hour_direction" value="false" checked="checked">mit dem
+      Uhrzeigersinn<br>
+      <input type="radio" placeholder="Richtung" name="hour_direction" value="true">gegen den Uhrzeigersinn<br>
+      <label>Geschwindigkeit in irgendwas</label>
+      <input type="number" placeholder="Geschwindigkeit" id="hour_speed" value=0><br>
+      <label>Verzögerung in Grad</label>
+      <input type="number" placeholder="Delay" id="hour_delay" value=0><br>
 
 
-    <button type="button" onclick="updateClock()">Uhr stellen</button>
-  </form>
-  <br><br>
-
-  <p>Folgenedes ist für die Animationen da. Um eine Animation abzuspielen, muss lediglich der Name der Animation in das
-    Feld eingegeben werden & der Button gedrückt werden. Um einen Schritt hinzuzufügen, muss der Animationsname, der
-    Schritt und ein Wert gefüllt sein. Aber der Wert nicht immer. Aber das wirst du verstehen.</p>
-  <form id="animation_step">
-
-    <label>Animation</label>
-    <input type="text" placeholder="Name Animation" id="as_animation" value="default">
-
-    <button type="button" onclick="runAnimation()">Diese Animation abspielen</button><br>
-    <button type="button" onclick="savePlanAsAnimation()">Aktuellen Plan abspeichern</button><br>
-
-    <label>Art des Schritts</label>
-    <select id="as_type">
-      <option value=0>INIT</option>
-      <option value=1>DELAY (in ms)</option>
-      <option value=2>WAIT_UNTIL_PLAN_SEND</option>
-      <option value=3>WAIT_UNTIL_CLOCKS_STAND_STILL</option>
-      <option value=4>REPEAT (wiederholt Animation von Beginn an)</option>
-      <option value=5>SELECT_CLOCK (0=ALL, 1=SINGLE)</option>
-      <option value=6>SELECT_X</option>
-      <option value=7>SELECT_Y</option>
-      <option value=8>SELECT_HAND (0=BOTH, 1=HOUR, 2=MINUTE)</option>
-      <option value=9>TARGET_POS (degree)</option>
-      <option value=10>DIRECTION (0=eine Richtung, 1=andere Richtung)</option>
-      <option value=11>WAIT_STEPS (degree?)</option>
-      <option value=12>STEP_DELAY (ms us? irgendwas)</option>
-      <option value=13>MOVE_IN_SYNC (?)</option>
-      <option value=14>SHOW_CURRENT_TIME_ON_EACH (lern lesen)</option>
-      <option value=15>SHOW_CURRENT_TIME (über alle)</option>
-      <option value=16>ENABLE_PLAN_SEND</option>
-      <option value=17>DISABLE_PLAN_SEND</option>
-    </select><br>
-
-    <label>Wert</label>
-    <input type="text" placeholder="Value" id="as_value" value=0><br>
+      <p>Minutenzeiger</p>
+      <label>Zielposition in Grad</label>
+      <input type="number" placeholder="Zielposition" id="minute_target_pos" value=90><br>
+      <label>Richtung</label><br>
+      <input type="radio" placeholder="Richtung" name="minute_direction" value="false" checked="checked">mit dem
+      Uhrzeigersinn<br>
+      <input type="radio" placeholder="Richtung" name="minute_direction" value="true">gegen den Uhrzeigersinn<br>
+      <label>Geschwindigkeit in irgendwas</label>
+      <input type="number" placeholder="Geschwindigkeit" id="minute_speed" value=0><br>
+      <label>Verzögerung in Grad</label>
+      <input type="number" placeholder="Delay" id="minute_delay" value=0><br>
 
 
-    <button type="button" onclick="appendStep()">Schritt hinzufügen</button>
-  </form>
+      <button type="button" onclick="updateClock()">Uhr stellen</button>
+    </form>
+    <br><br>
+
+    <p>Folgenedes ist für die Animationen da. Um eine Animation abzuspielen, muss lediglich der Name der Animation in
+      das
+      Feld eingegeben werden & der Button gedrückt werden. Um einen Schritt hinzuzufügen, muss der Animationsname, der
+      Schritt und ein Wert gefüllt sein. Aber der Wert nicht immer. Aber das wirst du verstehen.</p>
+    <form id="animation_step">
+
+      <label>Animation</label>
+      <input type="text" placeholder="Name Animation" id="as_animation" value="default">
+
+      <button type="button" onclick="runAnimation()">Diese Animation abspielen</button><br>
+      <button type="button" onclick="savePlanAsAnimation()">Aktuellen Plan abspeichern</button><br>
+
+      <label>Art des Schritts</label>
+      <select id="as_type">
+        <option value=0>INIT</option>
+        <option value=1>DELAY (in ms)</option>
+        <option value=2>WAIT_UNTIL_PLAN_SEND</option>
+        <option value=3>WAIT_UNTIL_CLOCKS_STAND_STILL</option>
+        <option value=4>REPEAT (wiederholt Animation von Beginn an)</option>
+        <option value=5>SELECT_CLOCK (0=ALL, 1=SINGLE)</option>
+        <option value=6>SELECT_X</option>
+        <option value=7>SELECT_Y</option>
+        <option value=8>SELECT_HAND (0=BOTH, 1=HOUR, 2=MINUTE)</option>
+        <option value=9>TARGET_POS (degree)</option>
+        <option value=10>DIRECTION (0=eine Richtung, 1=andere Richtung)</option>
+        <option value=11>WAIT_STEPS (degree?)</option>
+        <option value=12>STEP_DELAY (ms us? irgendwas)</option>
+        <option value=13>MOVE_IN_SYNC (?)</option>
+        <option value=14>SHOW_CURRENT_TIME_ON_EACH (lern lesen)</option>
+        <option value=15>SHOW_CURRENT_TIME (über alle)</option>
+        <option value=16>ENABLE_PLAN_SEND</option>
+        <option value=17>DISABLE_PLAN_SEND</option>
+      </select><br>
+
+      <label>Wert</label>
+      <input type="text" placeholder="Value" id="as_value" value=0><br>
+
+
+      <button type="button" onclick="appendStep()">Schritt hinzufügen</button>
+    </form>
+
+
+  </div>
+
+  <style>
+    .simple {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+
+    .numbers {
+      display: flex;
+      flex-wrap: wrap;
+      width: 75%;
+    }
+
+    .number {
+      background-color: gray;
+      width: 100px;
+      height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 10px;
+      cursor: pointer;
+    }
+
+    .number span {
+      font-size: 60px;
+    }
+
+    .current-time {
+      height: 100px;
+      width: 300px;
+      background-color: gray;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 35px;
+      cursor: pointer;
+    }
+  </style>
+
+  <div class="simple">
+    <div class="numbers">
+      <div class="number n0">
+        <span>0</span>
+      </div>
+      <div class="number n1">
+        <span>1</span>
+      </div>
+      <div class="number n2">
+        <span>2</span>
+      </div>
+      <div class="number n3">
+        <span>3</span>
+      </div>
+      <div class="number n4">
+        <span>4</span>
+      </div>
+      <div class="number n5">
+        <span>5</span>
+      </div>
+      <div class="number n6">
+        <span>6</span>
+      </div>
+      <div class="number n7">
+        <span>7</span>
+      </div>
+      <div class="number n8">
+        <span>8</span>
+      </div>
+      <div class="number n9">
+        <span>9</span>
+      </div>
+    </div>
+    <div class="current-time">
+      <span>
+        Aktuelle Uhrzeit
+      </span>
+    </div>
+  </div>
   <script>
     function updateClock() {
       var xhr = new XMLHttpRequest();

@@ -48,7 +48,6 @@ void setup_wifi_connection()
 
   WiFi.mode(WIFI_AP_STA);
 
-  // TODO: Wifi kann automatisch wiederverbunden werden.
   Settings::WiFiSettings config = Settings::load_wifi_config(); // {"Home_Net", "@zwerge99"}; //
   Serial.println("Connecting to '" + String(config.ssid) + "' with password '" + String(config.password) + "'");
 
