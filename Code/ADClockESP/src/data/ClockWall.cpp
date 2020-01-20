@@ -212,7 +212,8 @@ bool ClockWall::different_target(ClockWall &wall)
 bool ClockWall::show_time(uint8_t hour, uint8_t minute)
 {
 
-  auto hour_degree = 360. / 12 * (hour % 12);
+  // auto hour_degree = 360. / 12 * (hour % 12);
+  auto hour_degree = 360. / 12 * (hour % 12) + 0.5 * minute;
   auto minute_degree = 360. / 60 * minute;
   set_position(HOUR, hour_degree);
   set_position(MINUTE, minute_degree);
