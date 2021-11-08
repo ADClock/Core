@@ -1,4 +1,4 @@
 # Mark folders as vendored
-**/mbed-os/** linguist-vendored
+**/mbed/** linguist-vendored
 **/lib/** linguist-vendored
 **/include/** linguist-vendored
